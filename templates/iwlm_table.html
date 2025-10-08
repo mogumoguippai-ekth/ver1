@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}望む暮らし一覧 - 私の望む暮らし{% endblock %}
+
+{% block page_title %}望む暮らし一覧{% endblock %}
+
+{% block nickname %}{{ session.get('nickname', 'ゲスト') }}{% endblock %}
+
+{% block content %}
+<div class="iwlm-table-page">
+    <h2>望む暮らし一覧</h2>
+
+    <div class="iwlm-table">
+        <p>設定した望む暮らしの一覧を表示します。</p>
+        <!-- ここに望む暮らしの一覧が表示されます -->
+    </div>
+</div>
+{% endblock %}

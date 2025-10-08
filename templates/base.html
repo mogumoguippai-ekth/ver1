@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}私の望む暮らし{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <!-- ヘッダー -->
+    <header class="main-header">
+        <div class="header-content">
+            <!-- 左側：ロゴマーク -->
+            <div class="header-left">
+                <img src="{{ url_for('static', filename='images/logomark2.svg') }}" alt="logomark" class="header-logo">
+            </div>
+
+            <!-- 中央：ページタイトル -->
+            <div class="header-center">
+                <h1 class="page-title">{% block page_title %}ページタイトル{% endblock %}</h1>
+            </div>
+
+            <!-- 右側：ユーザー情報とログアウト -->
+            <div class="header-right">
+                <div class="user-info">
+                    <a href="{{ url_for('user') }}" class="user-link">
+                        <span class="nickname">{% block nickname %}ゲスト{% endblock %} さん</span>
+                    </a>
+                    <button class="logout-btn">ログアウト</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ナビゲーションタブ -->
+        <nav class="nav-tabs">
+            <a href="{{ url_for('dashboard') }}" class="nav-tab">HOME</a>
+            <a href="{{ url_for('profile') }}" class="nav-tab">私について</a>
+            <a href="{{ url_for('iwlm') }}" class="nav-tab">望む暮らし</a>
+            <a href="{{ url_for('diary_calendar') }}" class="nav-tab">ダイアリー</a>
+        </nav>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- フッター -->
+    <footer class="main-footer">
+        <div class="footer-content">
+            <!-- HOME -->
+            <div class="footer-section">
+                <a href="{{ url_for('dashboard') }}" class="footer-main-link">HOME</a>
+            </div>
+
+            <!-- 私について -->
+            <div class="footer-section">
+                <a href="{{ url_for('profile') }}" class="footer-main-link">私について</a>
+                <div class="footer-sub-links">
+                    <a href="{{ url_for('profile') }}" class="footer-sub-link">プロフィール登録</a>
+                    <a href="{{ url_for('profile_table') }}" class="footer-sub-link">プロフィール一覧</a>
+                </div>
+            </div>
+
+            <!-- 望む暮らし -->
+            <div class="footer-section">
+                <a href="{{ url_for('iwlm') }}" class="footer-main-link">望む暮らし</a>
+                <div class="footer-sub-links">
+                    <a href="{{ url_for('iwlm') }}" class="footer-sub-link">望む暮らし登録</a>
+                    <a href="{{ url_for('iwlm_table') }}" class="footer-sub-link">望む暮らし一覧</a>
+                </div>
+            </div>
+
+            <!-- ダイアリー -->
+            <div class="footer-section">
+                <a href="{{ url_for('diary_calendar') }}" class="footer-main-link">ダイアリー</a>
+                <div class="footer-sub-links">
+                    <a href="{{ url_for('diary_calendar') }}" class="footer-sub-link">ダイアリー登録</a>
+                    <a href="{{ url_for('diary_list') }}" class="footer-sub-link">ダイアリー一覧</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

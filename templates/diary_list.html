@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}ダイアリー一覧 - 私の望む暮らし{% endblock %}
+
+{% block page_title %}ダイアリー一覧{% endblock %}
+
+{% block nickname %}{{ session.get('nickname', 'ゲスト') }}{% endblock %}
+
+{% block content %}
+<div class="diary-list-page">
+    <h2>ダイアリー一覧</h2>
+
+    <div class="diary-list">
+        <p>過去の日記エントリを表示します。</p>
+        <!-- ここに日記の一覧が表示されます -->
+    </div>
+</div>
+{% endblock %}

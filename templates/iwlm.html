@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}望む暮らし - 私の望む暮らし{% endblock %}
+
+{% block page_title %}望む暮らし{% endblock %}
+
+{% block nickname %}{{ session.get('nickname', 'ゲスト') }}{% endblock %}
+
+{% block content %}
+<div class="iwlm-page">
+    <h2>望む暮らしの設定</h2>
+
+    <div class="iwlm-content">
+        <div class="content-card">
+            <h3>理想の生活</h3>
+            <p>あなたの理想とする生活を設定・管理できます。</p>
+            <a href="{{ url_for('iwlm_table') }}" class="content-link">望む暮らし一覧を見る</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

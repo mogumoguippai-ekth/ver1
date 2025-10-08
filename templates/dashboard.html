@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}HOME - 私の望む暮らし{% endblock %}
+
+{% block page_title %}HOME{% endblock %}
+
+{% block nickname %}{{ session.get('nickname', 'ゲスト') }}{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <h2>ダッシュボード</h2>
+    <p>ようこそ、{{ session.get('nickname', 'ゲスト') }}さん！</p>
+
+    <div class="dashboard-cards">
+        <div class="card">
+            <h3>プロフィール</h3>
+            <p>あなたの基本情報を確認・編集できます。</p>
+            <a href="{{ url_for('profile') }}" class="card-link">プロフィールを見る</a>
+        </div>
+
+        <div class="card">
+            <h3>望む暮らし</h3>
+            <p>あなたの理想の生活を設定・管理できます。</p>
+            <a href="{{ url_for('iwlm') }}" class="card-link">望む暮らしを見る</a>
+        </div>
+
+        <div class="card">
+            <h3>ダイアリー</h3>
+            <p>日々の記録を残しましょう。</p>
+            <a href="{{ url_for('diary_calendar') }}" class="card-link">ダイアリーを見る</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

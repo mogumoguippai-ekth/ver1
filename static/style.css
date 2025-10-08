@@ -188,6 +188,173 @@ img {
     background-color: #2980B9;
 }
 
+/* ===== ヘッダー ===== */
+.main-header {
+    background-color: #FFABCE;
+    border-bottom: 1px solid #ddd;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    height: 60px;
+    padding: 0 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.header-left {
+    flex: 0 0 auto;
+}
+
+.header-logo {
+    height: 40px;
+    width: auto;
+}
+
+.header-center {
+    flex: 1;
+    text-align: center;
+}
+
+.page-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+}
+
+.header-right {
+    flex: 0 0 auto;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-link {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+}
+
+.user-link:hover {
+    color: #555;
+}
+
+.logout-btn {
+    padding: 8px 16px;
+    background-color: #c71585;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.logout-btn:hover {
+    background-color: #555;
+}
+
+/* ナビゲーションタブ */
+.nav-tabs {
+    display: flex;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #ddd;
+}
+
+.nav-tab {
+    flex: 1;
+    padding: 12px 20px;
+    text-align: center;
+    text-decoration: none;
+    color: #333;
+    border-right: 1px solid #ddd;
+    transition: background-color 0.3s ease;
+}
+
+.nav-tab:last-child {
+    border-right: none;
+}
+
+.nav-tab:hover {
+    background-color: #e9ecef;
+}
+
+/* ===== メインコンテンツ ===== */
+.main-content {
+    min-height: calc(100vh - 140px);
+    /* ヘッダーとフッターの高さを除く */
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* ===== フッター ===== */
+.main-footer {
+    background-color: #DDDDDD;
+    height: 30px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    gap: 30px;
+    font-size: 12px;
+}
+
+.footer-section {
+    position: relative;
+}
+
+.footer-main-link {
+    color: #333;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.footer-main-link:hover {
+    color: #555;
+}
+
+.footer-sub-links {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px 0;
+    min-width: 150px;
+    display: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.footer-section:hover .footer-sub-links {
+    display: block;
+}
+
+.footer-sub-link {
+    display: block;
+    padding: 5px 15px;
+    color: #333;
+    text-decoration: none;
+    font-size: 11px;
+}
+
+.footer-sub-link:hover {
+    background-color: #f8f9fa;
+}
+
 /* レスポンシブデザイン */
 @media (max-width: 768px) {
     .main-container {
@@ -202,5 +369,313 @@ img {
 
     .main-content {
         min-height: 60vh;
+    }
+
+    .header-content {
+        padding: 0 10px;
+    }
+
+    .page-title {
+        font-size: 18px;
+    }
+
+    .user-info {
+        gap: 10px;
+    }
+
+    .nav-tab {
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+
+    .footer-content {
+        gap: 15px;
+        font-size: 10px;
+    }
+}
+
+/* ===== ユーザー登録フォーム ===== */
+.user-registration {
+    max-width: 750px;
+    /* 1.5倍に拡大 (500px → 750px) */
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.user-registration h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 25px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.registration-form {
+    background: white;
+    padding: 25px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.user-registration .form-group {
+    margin-bottom: 12px;
+    /* 間隔を詰める (18px → 12px) */
+}
+
+.user-registration .form-group label {
+    display: block;
+    margin-bottom: 2px;
+    /* ラベルと入力欄の間隔を詰める (5px → 2px) */
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+}
+
+.user-registration .form-group label .required {
+    color: #e74c3c;
+    margin-left: 3px;
+}
+
+.user-registration .form-group input,
+.user-registration .form-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease;
+}
+
+.user-registration .form-group input:focus,
+.user-registration .form-group select:focus {
+    outline: none;
+    border-color: #FF5192;
+    box-shadow: 0 0 0 2px rgba(255, 81, 146, 0.1);
+}
+
+.family-section {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid #ddd;
+    /* より太い横線の区切り線 */
+    position: relative;
+}
+
+.family-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -25px;
+    right: -25px;
+    height: 1px;
+    background-color: #ddd;
+}
+
+.family-section h3 {
+    color: #333;
+    margin-bottom: 12px;
+    /* 間隔を詰める (15px → 12px) */
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.form-actions {
+    text-align: center;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.submit-btn {
+    background-color: #FF5192;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-right: 10px;
+    transition: background-color 0.2s ease;
+}
+
+.submit-btn:hover {
+    background-color: #e0457a;
+}
+
+.cancel-btn {
+    background-color: #6c757d;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.cancel-btn:hover {
+    background-color: #5a6268;
+}
+
+/* ユーザー登録フォームのレスポンシブ */
+@media (max-width: 768px) {
+    .user-registration {
+        max-width: 100%;
+        padding: 15px;
+    }
+
+    .registration-form {
+        padding: 20px;
+    }
+
+    .user-registration .form-group {
+        margin-bottom: 15px;
+    }
+}
+
+/* ===== ダッシュボード ===== */
+.dashboard {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.dashboard h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.card {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card h3 {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.card p {
+    color: #666;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.card-link {
+    display: inline-block;
+    background-color: #FF5192;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.card-link:hover {
+    background-color: #e0457a;
+}
+
+/* ===== 共通ページスタイル ===== */
+.profile-page,
+.iwlm-page,
+.diary-page,
+.diary-list-page,
+.howsitgoing-page,
+.iwlm-table-page,
+.profile-table-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.profile-page h2,
+.iwlm-page h2,
+.diary-page h2,
+.diary-list-page h2,
+.howsitgoing-page h2,
+.iwlm-table-page h2,
+.profile-table-page h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+.info-card,
+.content-card {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.info-card h3,
+.content-card h3 {
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.info-card p,
+.content-card p {
+    color: #666;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.info-link,
+.content-link {
+    display: inline-block;
+    background-color: #3498DB;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.info-link:hover,
+.content-link:hover {
+    background-color: #2980B9;
+}
+
+.diary-list,
+.iwlm-table,
+.profile-table,
+.mood-content {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ダッシュボードのレスポンシブ */
+@media (max-width: 768px) {
+    .dashboard-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .card {
+        padding: 20px;
     }
 }

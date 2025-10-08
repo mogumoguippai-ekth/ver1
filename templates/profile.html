@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}プロフィール - 私の望む暮らし{% endblock %}
+
+{% block page_title %}プロフィール{% endblock %}
+
+{% block nickname %}{{ session.get('nickname', 'ゲスト') }}{% endblock %}
+
+{% block content %}
+<div class="profile-page">
+    <h2>プロフィール情報</h2>
+
+    <div class="profile-info">
+        <div class="info-card">
+            <h3>基本情報</h3>
+            <p>あなたの基本情報を確認・編集できます。</p>
+            <a href="{{ url_for('profile_table') }}" class="info-link">プロフィール一覧を見る</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

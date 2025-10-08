@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}ユーザー登録 - 私の望む暮らし{% endblock %}
+
+{% block page_title %}ユーザー登録{% endblock %}
+
+{% block nickname %}{{ session.get('nickname', 'ゲスト') }}{% endblock %}
+
+{% block content %}
+<div class="user-registration">
+    <h2>新規ユーザー登録</h2>
+
+    <form method="POST" action="{{ url_for('register_user') }}" class="registration-form">
+        <!-- ユーザーID -->
+        <div class="form-group">
+            <label for="user_id">ユーザーID <span class="required">*</span></label>
+            <input type="text" id="user_id" name="user_id" required placeholder="ログインIDになります">
+        </div>
+
+        <!-- メールアドレス -->
+        <div class="form-group">
+            <label for="email">メールアドレス <span class="required">*</span></label>
+            <input type="email" id="email" name="email" required placeholder="メールアドレスを入力">
+        </div>
+
+        <!-- パスワード -->
+        <div class="form-group">
+            <label for="password">パスワード <span class="required">*</span></label><br>
+            <input type="password" id="password" name="password" required placeholder="英数8文字のパスワードを入力">
+        </div>
+
+        <!-- 氏名 -->
+        <div class="form-group">
+            <label for="name">氏名 <span class="required">*</span></label>
+            <input type="text" id="name" name="name" required placeholder="氏名を入力">
+        </div>
+
+        <!-- フリガナ -->
+        <div class="form-group">
+            <label for="furigana">フリガナ</label>
+            <input type="text" id="furigana" name="furigana" placeholder="フリガナを入力">
+        </div>
+
+        <!-- ニックネーム -->
+        <div class="form-group">
+            <label for="nickname">ニックネーム</label>
+            <input type="text" id="nickname" name="nickname" placeholder="表示名を入力">
+        </div>
+
+        <!-- 性別 -->
+        <div class="form-group">
+            <label for="gender">性別</label>
+            <select id="gender" name="gender">
+                <option value="">選択してください</option>
+                <option value="男">男</option>
+                <option value="女">女</option>
+                <option value="その他">その他</option>
+            </select>
+        </div>
+
+        <!-- 生年月日 -->
+        <div class="form-group">
+            <label for="birth_date">生年月日</label>
+            <input type="date" id="birth_date" name="birth_date">
+        </div>
+
+        <!-- 家族情報 -->
+        <div class="family-section">
+            <h3>家族情報</h3>
+            <div class="form-group">
+                <label for="family_id1">家族ID1</label>
+                <input type="number" id="family_id1" name="family_id1" placeholder="家族ID1">
+            </div>
+
+            <div class="form-group">
+                <label for="family_id2">家族ID2</label>
+                <input type="number" id="family_id2" name="family_id2" placeholder="家族ID2">
+            </div>
+
+            <div class="form-group">
+                <label for="family_id3">家族ID3</label>
+                <input type="number" id="family_id3" name="family_id3" placeholder="家族ID3">
+            </div>
+        </div>
+
+        <!-- ボタン -->
+        <div class="form-actions">
+            <button type="submit" class="submit-btn">登録する</button>
+            <button type="button" class="cancel-btn" onclick="history.back()">キャンセル</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

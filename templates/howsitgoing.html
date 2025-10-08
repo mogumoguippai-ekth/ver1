@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}調子はどう？ - 私の望む暮らし{% endblock %}
+
+{% block page_title %}調子はどう？{% endblock %}
+
+{% block nickname %}{{ session.get('nickname', 'ゲスト') }}{% endblock %}
+
+{% block content %}
+<div class="howsitgoing-page">
+    <h2>調子はどう？</h2>
+
+    <div class="mood-content">
+        <p>今日の気分や調子を記録しましょう。</p>
+        <!-- ここに気分記録のフォームが表示されます -->
+    </div>
+</div>
+{% endblock %}

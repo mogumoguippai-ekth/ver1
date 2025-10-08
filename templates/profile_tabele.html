@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}プロフィール一覧 - 私の望む暮らし{% endblock %}
+
+{% block page_title %}プロフィール一覧{% endblock %}
+
+{% block nickname %}{{ session.get('nickname', 'ゲスト') }}{% endblock %}
+
+{% block content %}
+<div class="profile-table-page">
+    <h2>プロフィール一覧</h2>
+
+    <div class="profile-table">
+        <p>登録されているプロフィール情報の一覧を表示します。</p>
+        <!-- ここにプロフィールの一覧が表示されます -->
+    </div>
+</div>
+{% endblock %}
