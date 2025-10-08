@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>私の望む暮らし</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="main-container">
+        <!-- 左側：メインコンテンツ -->
+        <div class="main-content">
+            <p class="catchcopy">今と明日の<br>幸せな生活のために</p>
+            <br>
+            <h1>私の望む暮らし</h1>
+            <img src="{{ url_for('static', filename='images/logomark.svg') }}" alt="logomark">
+        </div>
+
+        <!-- 右側：ログインエリア -->
+        <div class="login-area">
+            <div class="tab-container">
+                <button class="tab-button active" onclick="switchTab('login')">ログイン</button>
+                <button class="tab-button" onclick="switchTab('register')">会員登録</button>
+            </div>
+
+            <!-- ログインタブ -->
+            <div id="login-tab" class="tab-content active">
+                <h3>ログイン</h3>
+                <form>
+                    <div class="form-group">
+                        <label for="login-id">ログインID</label>
+                        <input type="text" id="login-id" name="login-id" placeholder="ユーザー名を入力してください">
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">パスワード</label>
+                        <input type="password" id="login-password" name="login-password" placeholder="パスワードを入力してください">
+                    </div>
+                    <button type="submit" class="login-button">ログイン</button>
+                </form>
+            </div>
+
+            <!-- 会員登録タブ -->
+            <div id="register-tab" class="tab-content">
+                <h3>会員登録</h3>
+                <form>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="user-type" value="self" checked>
+                            <span class="radio-text">わたし(本人)</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="user-type" value="family">
+                            <span class="radio-text">家族</span>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-username">ユーザー名</label>
+                        <input type="text" id="register-username" name="register-username" placeholder="ユーザー名を入力してください">
+                    </div>
+                    <div class="form-group">
+                        <label for="register-email">メールアドレス</label>
+                        <input type="email" id="register-email" name="register-email" placeholder="メールアドレスを入力してください">
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">パスワード</label>
+                        <input type="password" id="register-password" name="register-password" placeholder="英数8文字のパスワードを設定してください">
+                    </div>
+                    <button type="submit" class="register-button">会員登録する</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            // タブボタンの切り替え
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // タブコンテンツの切り替え
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tabName + '-tab').classList.add('active');
+        }
+    </script>
+</body>
+
+</html>
