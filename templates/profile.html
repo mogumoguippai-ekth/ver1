@@ -7,15 +7,192 @@
 {% block nickname %}{{ session.get('nickname', 'ゲスト') }}{% endblock %}
 
 {% block content %}
-<div class="profile-page">
-    <h2>プロフィール情報</h2>
+<div class="user-registration">
+    <h2>私について</h2>
 
-    <div class="profile-info">
-        <div class="info-card">
-            <h3>基本情報</h3>
-            <p>あなたの基本情報を確認・編集できます。</p>
-            <a href="{{ url_for('profile_table') }}" class="info-link">プロフィール一覧を見る</a>
-        </div>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="alert alert-success">
+        {{ messages[0] }}
     </div>
+    {% endif %}
+    {% endwith %}
+    <!--  <h3>基本情報</h3> -->
+    <!-- 情報フォーム -->
+    <!-- 基本情報フォーム -->
+    <form method="POST" action="{{ url_for('update_user') }}" class="registration-form">
+
+        <!-- 氏名-->
+        <div class="form-group">
+            <label for="name">氏名</label><br>
+            <input type="text" id="name" name="name" value="{{ user[5] if user and user[5] else '' }}" placeholder="氏名を入力">
+        </div>
+
+        <!-- フリガナ -->
+        <div class="form-group">
+            <label for="furigana">フリガナ</label><br>
+            <input type="text" id="furigana" name="furigana" value="{{ user[6] if user and user[6] else '' }}" placeholder="フリガナを入力">
+        </div>
+
+        <!-- ニックネーム -->
+        <div class="form-group">
+            <label for="nickname">ニックネーム</label><br>
+            <input type="text" id="nickname" name="nickname" value="{{ user[7] if user and user[7] else '' }}" placeholder="表示名を入力">
+        </div>
+
+        <!-- 性別 -->
+        <div class="form-group">
+            <label for="gender">性別</label>
+            <select id="gender" name="gender">
+                <option value="">選択してください</option>
+                <option value="男" {% if user and user[8]=='男' %}selected{% endif %}>男</option>
+                <option value="女" {% if user and user[8]=='女' %}selected{% endif %}>女</option>
+                <option value="その他" {% if user and user[8]=='その他' %}selected{% endif %}>その他</option>
+            </select>
+        </div>
+
+        <!-- 生年月日 -->
+        <div class="form-group">
+            <label for="birth_date">生年月日</label>
+            <input type="date" id="birth_date" name="birth_date" value="{{ user[9] if user and user[9] else '' }}">
+        </div>
+
+        <!-- 基本情報のボタン -->
+        <div class="form-actions">
+            <button type="submit" class="submit-btn">基本情報を更新する</button>
+        </div>
+    </form>
+    <!-- 基本情報フォーム ここまで -->
+
+    <!-- 詳細情報フォーム -->
+    <form method="POST" action="{{ url_for('update_profile') }}" class="registration-form">
+
+        <div class="family-section">
+            <h3>今の暮らし</h3>
+            <!-- 住まい -->
+            <div class="form-group">
+                <label for="home">住まい</label>
+                <select id="home" name="home">
+                    <option value="">選択してください</option>
+                    <option value="一戸建(持家)" {% if profile and profile[2]=='一戸建(持家)' %}selected{% endif %}>一戸建(持家)</option>
+                    <option value="一戸建(賃貸)" {% if profile and profile[2]=='一戸建(賃貸)' %}selected{% endif %}>一戸建(賃貸)</option>
+                    <option value="集合住宅(持家)" {% if profile and profile[2]=='集合住宅(持家)' %}selected{% endif %}>集合住宅(持家)</option>
+                    <option value="集合住宅(賃貸)" {% if profile and profile[2]=='集合住宅(賃貸)' %}selected{% endif %}>集合住宅(賃貸)</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- 家族情報 -->
+        <div class="family-section">
+            <h3>家族情報</h3>
+            <div class="form-group">
+                <label for="spouse">配偶者について</label>
+                <input type="text" id="spouse" name="spouse" value="{{ profile[3] if profile and profile[3] else '' }}" placeholder="夫、妻、未婚。離婚、死別はそのように記入">
+            </div>
+
+            <div class="form-group">
+                <label for="children_living">同居している子どもの性別と人数</label>
+                <input type="text" id="children_living" name="children_living" value="{{ profile[4] if profile and profile[4] else '' }}" placeholder="同居 男1人、女2人">
+            </div>
+
+            <div class="form-group">
+                <label for="children_separate">別居している子どもの性別と人数</label>
+                <input type="text" id="children_separate" name="children_separate" value="{{ profile[5] if profile and profile[5] else '' }}" placeholder="別居 男2人、女1人">
+            </div>
+        </div>
+
+        <!-- 健康情報 -->
+        <div class="family-section">
+            <h3>健康情報</h3>
+            <div class="form-group">
+                <label for="Treated-illness">治療の終わった病気</label>
+                <input type="text" id="Treated-illness" name="Treated-illness" value="{{ profile[6] if profile and profile[6] else '' }}" placeholder="治療の終わった病気">
+            </div>
+
+            <div class="form-group">
+                <label for="under-treatment">治療している病気</label>
+                <input type="text" id="under-treatment" name="under-treatment" value="{{ profile[7] if profile and profile[7] else '' }}" placeholder="治療している病気">
+            </div>
+
+            <div class="form-group">
+                <label for="receiving-treatment">かかっている医療機関</label>
+                <input type="text" id="receiving-treatment" name="receiving-treatment" value="{{ profile[8] if profile and profile[8] else '' }}" placeholder="例: ◯◯病院、◯◯医院、◯◯調剤薬局">
+            </div>
+        </div>
+
+        <!-- 相談している人 -->
+        <div class="family-section">
+            <h3>頼りにしたり相談している人</h3>
+                <div class="form-group">
+                    <label for="most-relied-upon-family">一番頼りにしている家族</label>
+                    <input type="text" id="most-relied-upon-family" name="most-relied-upon-family" value="{{ profile[9] if profile and profile[9] else '' }}" placeholder="例: 山田 太郎(長男)">
+                </div>
+
+                <div class="form-group">
+                    <label for="trusted-neighbor">頼りにしている隣人</label>
+                    <input type="text" id="trusted-neighbor" name="trusted-neighbor" value="{{ profile[10] if profile and profile[10] else '' }}" placeholder="例: 鈴木 花子">
+                </div>
+
+                <div class="form-group">
+                    <label for="consulted-friend">よく相談している友人</label>
+                    <input type="text" id="consulted-friend" name="consulted-friend" value="{{ profile[11] if profile and profile[11] else '' }}" placeholder="例: 佐藤 次郎(サークルの友人)">
+                </div>
+            </div>
+
+            <!-- 経済的情報 -->
+            <div class="family-section">
+                <h3>私の暮らしを支えるお金（複数選択可）</h3>
+                <div class="form-group">
+                    <div class="checkbox-grid">
+                        <div class="checkbox-row">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="salary" name="money" value="給料" {% if profile and profile[12] and '給料' in profile[12] %}checked{% endif %}>
+                                <label for="salary">給料</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="self-employed" name="money" value="自営業" {% if profile and profile[12] and '自営業' in profile[12] %}checked{% endif %}>
+                                <label for="self-employed">自営業</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="pension" name="money" value="年金" {% if profile and profile[12] and '年金' in profile[12] %}checked{% endif %}>
+                                <label for="pension">年金</label>
+                            </div>
+                        </div>
+                        <div class="checkbox-row">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="savings" name="money" value="貯金" {% if profile and profile[12] and '貯金' in profile[12] %}checked{% endif %}>
+                                <label for="savings">貯金</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="investment" name="money" value="投資" {% if profile and profile[12] and '投資' in profile[12] %}checked{% endif %}>
+                                <label for="investment">投資</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="remittance" name="money" value="仕送り" {% if profile and profile[12] and '仕送り' in profile[12] %}checked{% endif %}>
+                                <label for="remittance">仕送り</label>
+                            </div>
+                        </div>
+                        <div class="checkbox-row">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="other" name="money" value="その他" {% if profile and profile[12] and 'その他' in profile[12] %}checked{% endif %}>
+                                <label for="other">その他</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 詳細情報のボタン -->
+            <div class="form-actions">
+                <button type="submit" class="submit-btn">詳細情報を更新する</button>
+                <button type="button" class="cancel-btn" onclick="window.location.href='{{ url_for('dashboard') }}'">キャンセル</button>
+            </div>
+    </form>
+    <!-- 詳細情報フォーム ここまで -->
+
+</div>
+
+<div class="profile-actions">
+    <a href="{{ url_for('profile_table') }}" class="info-link">プロフィール一覧を見る</a>
 </div>
 {% endblock %}

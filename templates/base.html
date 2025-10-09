@@ -28,7 +28,7 @@
                     <a href="{{ url_for('user') }}" class="user-link">
                         <span class="nickname">{% block nickname %}ゲスト{% endblock %} さん</span>
                     </a>
-                    <button class="logout-btn">ログアウト</button>
+                    <a href="{{ url_for('logout') }}" class="logout-btn" style="text-decoration: none;">ログアウト</a>
                 </div>
             </div>
         </div>
