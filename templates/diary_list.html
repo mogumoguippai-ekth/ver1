@@ -72,22 +72,5 @@
     </div>
 </div>
 
-<script>
-    function showFullImage(imagePath) {
-        document.getElementById('full-image').src = imagePath;
-        document.getElementById('image-modal').style.display = 'block';
-    }
-
-    function closeImageModal() {
-        document.getElementById('image-modal').style.display = 'none';
-    }
-
-    // モーダル外をクリックで閉じる
-    window.onclick = function (event) {
-        const modal = document.getElementById('image-modal');
-        if (event.target == modal) {
-            closeImageModal();
-        }
-    }
-</script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
 {% endblock %}

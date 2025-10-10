@@ -81,21 +81,7 @@
         </div>
     </div>
 
-    <script>
-        function switchTab(tabName) {
-            // タブボタンの切り替え
-            document.querySelectorAll('.tab-button').forEach(button => {
-                button.classList.remove('active');
-            });
-            event.target.classList.add('active');
-
-            // タブコンテンツの切り替え
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            document.getElementById(tabName + '-tab').classList.add('active');
-        }
-    </script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
 
 </html>

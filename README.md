@@ -124,18 +124,25 @@ iwlm_app/ver1/
 ├── AI_SETUP.md           # AI機能セットアップガイド
 ├── static/
 │   ├── style.css         # CSSスタイル
-│   └── images/           # 画像ファイル
+│   ├── images/           # 画像ファイル
+│   ├── js/
+│   │   └── app.js        # javascript
+│   └── uploads/
+│       ├── diary_photos/  # ダイアリー登録画像ファイル
+│       └── diary_thumbnails/  # ダイアリー登録画像のサムネイルファイル
 ├── templates/            # HTMLテンプレート
 │   ├── base.html         # ベーステンプレート
 │   ├── index.html        # ログインページ
 │   ├── dashboard.html    # ダッシュボード
-│   ├── profile.html      # プロフィール登録
-│   ├── profile_table.html # プロフィール一覧
-│   ├── iwlm.html         # 暮らし情報登録
-│   ├── iwlm_table.html   # 暮らし情報一覧
+│   ├── user.html         # 私について 基本情報登録
+│   ├── profile.html      # 私について 詳細情報登録
+│   ├── profile_table.html # 私について 一覧
+│   ├── iwlm.html         # 私の暮らし 情報登録
+│   ├── iwlm_table.html   # 私の暮らし 情報一覧
 │   ├── diary_calender.html # ダイアリー登録
 │   ├── diary_list.html   # ダイアリー一覧
-│   └── goals.html        # 目標提案
+│   ├── goals.html        # 目標提案
+│   └── goals_history.html # 目標提案履歴管理
 └── README.md             # このファイル
 ```
 
@@ -215,7 +222,7 @@ python -c "from config import db; db.init_db()"
 
 ## 更新履歴
 
-### v1.0.0 (2024年)
+### v1.0.0 (2025年)
 - 初期リリース
 - 基本機能の実装
 - ユーザー管理、プロフィール、暮らし情報、ダイアリー機能

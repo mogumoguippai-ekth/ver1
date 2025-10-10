@@ -30,6 +30,13 @@
             <div class="history-date">
                 <strong>作成日:</strong> {{ goal[5] }}
             </div>
+            {% if not loop.first %}
+            <div class="history-actions">
+                <form method="POST" action="{{ url_for('delete_goal', goal_id=goal[0]) }}" style="display: inline;" onsubmit="return confirm('この目標履歴を削除してもよろしいですか？');">
+                    <button type="submit" class="delete-btn">削除</button>
+                </form>
+            </div>
+            {% endif %}
         </div>
 
         <div class="history-content">

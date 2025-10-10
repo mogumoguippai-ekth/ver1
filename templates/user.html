@@ -8,7 +8,7 @@
 
 {% block content %}
 <div class="user-registration">
-    <h2>プロフィール編集</h2>
+    <h2>私について 基本情報編集</h2>
 
     {% with messages = get_flashed_messages() %}
     {% if messages %}
@@ -113,14 +113,5 @@
     </form>
 </div>
 
-<script>
-    function toggleEdit(field) {
-        const editSection = document.getElementById(field + '-edit');
-        if (editSection.style.display === 'none') {
-            editSection.style.display = 'block';
-        } else {
-            editSection.style.display = 'none';
-        }
-    }
-</script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
 {% endblock %}

@@ -453,6 +453,7 @@ img {
     min-height: calc(100vh - 140px);
     /* ヘッダーとフッターの高さを除く */
     padding: 20px;
+    padding-bottom: 60px;
     max-width: 1200px;
     margin: 0 auto;
 }
@@ -687,6 +688,31 @@ img {
     outline: none;
     border-color: #FF5192;
     box-shadow: 0 0 0 2px rgba(255, 81, 146, 0.1);
+}
+
+/* 基本情報表示用スタイル（profile.html） */
+.display-value {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    font-size: 14px;
+    background-color: #f8f9fa;
+    color: #333;
+    min-height: 20px;
+    line-height: 1.4;
+    box-sizing: border-box;
+}
+
+.note-text {
+    color: #666;
+    font-size: 13px;
+    font-style: italic;
+    margin: 0 0 15px 0;
+    padding: 8px 12px;
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 4px;
 }
 
 /* 家族セクション（user.html） */
@@ -1142,6 +1168,12 @@ img {
 
 /* ボタングループ（profile_table.html、iwlm_table.html） */
 .button-group {
+    display: flex;
+    gap: 10px;
+}
+
+/* ナビゲーションボタングループ（profile.html、iwlm.html） */
+.navigation-buttons {
     display: flex;
     gap: 10px;
 }
@@ -2157,6 +2189,8 @@ img {
     margin-bottom: 20px;
     padding-bottom: 10px;
     border-bottom: 1px solid #eee;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 /* 履歴ヘッダーの見出し（goals_history.html） */
@@ -2169,6 +2203,27 @@ img {
 .history-date {
     color: #666;
     font-size: 14px;
+}
+
+/* 履歴アクション（goals_history.html） */
+.history-header .history-actions {
+    display: flex;
+    align-items: center;
+}
+
+.history-header .delete-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.history-header .delete-btn:hover {
+    background-color: #c82333;
 }
 
 /* 履歴コンテンツ（goals_history.html） */

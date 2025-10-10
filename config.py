@@ -237,7 +237,7 @@ class Database:
             cursor.execute(
                 """
                 UPDATE profiles 
-                SET home = ?, spouse = ?, children_living = ?, children_separate = ?,
+                SET home = ?, spouse = ?, children_living = ?, children_separate = ?, family_living = ?,
                     treated_illness = ?, under_treatment = ?, medical_facilities = ?,
                     most_relied_family = ?, trusted_neighbor = ?, consulted_friend = ?,
                     money_sources = ?, updated_at = CURRENT_TIMESTAMP
@@ -248,6 +248,7 @@ class Database:
                     profile_data.get("spouse"),
                     profile_data.get("children_living"),
                     profile_data.get("children_separate"),
+                    profile_data.get("family_living"),
                     profile_data.get("treated_illness"),
                     profile_data.get("under_treatment"),
                     profile_data.get("medical_facilities"),
@@ -262,10 +263,10 @@ class Database:
             # 新規作成
             cursor.execute(
                 """
-                INSERT INTO profiles (user_id, home, spouse, children_living, children_separate,
+                INSERT INTO profiles (user_id, home, spouse, children_living, children_separate, family_living,
                                     treated_illness, under_treatment, medical_facilities,
                                     most_relied_family, trusted_neighbor, consulted_friend, money_sources)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     user_id,
@@ -273,6 +274,7 @@ class Database:
                     profile_data.get("spouse"),
                     profile_data.get("children_living"),
                     profile_data.get("children_separate"),
+                    profile_data.get("family_living"),
                     profile_data.get("treated_illness"),
                     profile_data.get("under_treatment"),
                     profile_data.get("medical_facilities"),
@@ -915,6 +917,26 @@ class Database:
         conn.commit()
         conn.close()
         return cursor.lastrowid
+
+    def delete_user_goal(self, user_id, goal_id):
+        """指定された目標履歴を削除"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+
+        # 目標が存在し、かつそのユーザーのものであることを確認
+        cursor.execute("SELECT id FROM user_goals WHERE id = ? AND user_id = ?", (goal_id, user_id))
+        goal = cursor.fetchone()
+
+        if not goal:
+            conn.close()
+            return False
+
+        # 目標を削除
+        cursor.execute("DELETE FROM user_goals WHERE id = ? AND user_id = ?", (goal_id, user_id))
+
+        conn.commit()
+        conn.close()
+        return True
 
 
 # データベースインスタンス

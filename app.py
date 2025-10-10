@@ -184,6 +184,7 @@ def update_profile():
         "spouse": request.form.get("spouse"),
         "children_living": request.form.get("children_living"),
         "children_separate": request.form.get("children_separate"),
+        "family_living": request.form.get("family_living"),
         "treated_illness": request.form.get("Treated-illness"),
         "under_treatment": request.form.get("under-treatment"),
         "medical_facilities": request.form.get("receiving-treatment"),
@@ -470,6 +471,23 @@ def goals_history():
     user_data = db.get_user_by_id(user_id)
 
     return render_template("goals_history.html", goals_history=goals_history, user=user_data)
+
+
+@app.route("/goals/delete/<int:goal_id>", methods=["POST"])
+@login_required
+def delete_goal(goal_id):
+    """目標履歴を削除"""
+    user_id = session["user_id"]
+
+    # 目標を削除
+    success = db.delete_user_goal(user_id, goal_id)
+
+    if success:
+        flash("目標履歴を削除しました。")
+    else:
+        flash("目標履歴の削除に失敗しました。")
+
+    return redirect(url_for("goals_history"))
 
 
 # 日記関連のAPIルート

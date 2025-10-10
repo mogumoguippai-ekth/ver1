@@ -394,46 +394,22 @@
 
 </div>
 
-<div class="profile-actions">
-   <a href="{{ url_for('iwlm_table') }}" class="info-link">私の暮らし一覧を見る</a>
-   <form method="POST" action="{{ url_for('delete_iwlm') }}" style="display: inline;" onsubmit="return confirm('私の暮らし情報を削除しますか？この操作は取り消せません。')">
-      <button type="submit" class="delete-btn">削除</button>
-   </form>
+<div class="action-buttons">
+   <div class="button-group">
+      <a href="{{ url_for('iwlm_table') }}" class="info-link">私の暮らし一覧を見る</a>
+      <form method="POST" action="{{ url_for('delete_iwlm') }}" style="display: inline;" onsubmit="return confirm('私の暮らし情報を削除しますか？この操作は取り消せません。')">
+         <button type="submit" class="delete-btn">削除</button>
+      </form>
+   </div>
+   <div class="navigation-buttons">
+      <a href="{{ url_for('dashboard') }}" class="back-btn">HOMEに戻る</a>
+   </div>
 </div>
 
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
 <script>
-   function toggleOtherInput(groupName) {
-      const checkbox = document.querySelector(`input[name="${groupName}"][value="その他"]`);
-      const inputDiv = document.getElementById(`${groupName}OtherInput`);
-
-      if (checkbox && inputDiv) {
-         if (checkbox.checked) {
-            inputDiv.style.display = 'block';
-         } else {
-            inputDiv.style.display = 'none';
-            // チェックボックスが外された時は入力内容をクリア
-            const input = inputDiv.querySelector('input[type="text"]');
-            if (input) {
-               input.value = '';
-            }
-         }
-      }
-   }
-
    // ページ読み込み時に既存のデータがある場合は入力欄を表示
    document.addEventListener('DOMContentLoaded', function () {
-      const groups = ['keepDoing', 'futureActivities', 'residenceType', 'anxietyAndSadness', 'areasOfSupport', 'futureCarePlan'];
-
-      groups.forEach(groupName => {
-         const checkbox = document.querySelector(`input[name="${groupName}"][value="その他"]`);
-         const input = document.getElementById(`${groupName.replace(/([A-Z])/g, '_$1').toLowerCase()}_other`);
-
-         if (checkbox && input && input.value.trim() !== '') {
-            checkbox.checked = true;
-            toggleOtherInput(groupName);
-         }
-      });
-
       // チェックボックスの既存データを設定
       const checkboxData = {
          'keepDoing': '{{ iwlm[29] if iwlm and iwlm[29] else "" }}',
@@ -444,17 +420,7 @@
          'futureCarePlan': '{{ iwlm[39] if iwlm and iwlm[39] else "" }}'
       };
 
-      Object.keys(checkboxData).forEach(groupName => {
-         if (checkboxData[groupName]) {
-            const values = checkboxData[groupName].split(',');
-            values.forEach(value => {
-               const checkbox = document.querySelector(`input[name="${groupName}"][value="${value.trim()}"]`);
-               if (checkbox) {
-                  checkbox.checked = true;
-               }
-            });
-         }
-      });
+      initIwlmForm(checkboxData);
    });
 </script>
 {% endblock %}
