@@ -20,15 +20,15 @@
 
     <div class="table-container">
         <div class="table-header">
-            <div class="table-info" id="pdfHeaderInfo">
+            <div class="table-info" id="printHeaderInfo">
                 {% if user %}
                 <p><strong>ユーザー名:</strong> {{ user[5] if user and user[5] else user[7] if user and user[7] else user[1] if user else '未設定' }}</p>
                 <p><strong>作成日:</strong> {{ iwlm[41] if iwlm and iwlm[41] else '未設定' }}</p>
                 <p><strong>更新日:</strong> {{ iwlm[42] if iwlm and iwlm[42] else '未設定' }}</p>
                 {% endif %}
             </div>
-            <div class="pdf-export">
-                <button onclick="exportToPDF()" class="pdf-btn">PDF出力</button>
+            <div class="print-export">
+                <button onclick="printIwlm()" class="print-btn">印刷</button>
             </div>
         </div>
 
@@ -56,53 +56,53 @@
                     <td class="data-cell">{{ iwlm[5] if iwlm and iwlm[5] else '未設定' }}</td>
                 </tr>
                 <tr>
-                    <td class="label-cell">普段の間食</td>
+                    <td class="label-cell">間食について</td>
                     <td class="data-cell">{{ iwlm[6] if iwlm and iwlm[6] else '未設定' }}</td>
                 </tr>
                 <tr>
-                    <td class="label-cell">お酒やタバコ</td>
+                    <td class="label-cell">アルコールやたばこについて</td>
                     <td class="data-cell">{{ iwlm[7] if iwlm and iwlm[7] else '未設定' }}</td>
                 </tr>
                 <tr>
-                    <td class="label-cell">普段の起床時間</td>
+                    <td class="label-cell">起床時刻</td>
                     <td class="data-cell">{{ iwlm[8] if iwlm and iwlm[8] else '未設定' }}</td>
                 </tr>
                 <tr>
-                    <td class="label-cell">普段の就寝時間</td>
+                    <td class="label-cell">就寝時刻</td>
                     <td class="data-cell">{{ iwlm[9] if iwlm and iwlm[9] else '未設定' }}</td>
                 </tr>
                 <tr>
-                    <td class="label-cell">いつもやっている家事</td>
+                    <td class="label-cell">日頃の家事</td>
                     <td class="data-cell">{{ iwlm[10] if iwlm and iwlm[10] else '未設定' }}</td>
                 </tr>
                 <tr>
-                    <td class="label-cell">自由時間の過ごし方</td>
+                    <td class="label-cell">自由時間</td>
                     <td class="data-cell">{{ iwlm[11] if iwlm and iwlm[11] else '未設定' }}</td>
                 </tr>
                 <tr>
-                    <td class="label-cell">普段会ったり連絡する人</td>
+                    <td class="label-cell">人との関わり</td>
                     <td class="data-cell">{{ iwlm[12] if iwlm and iwlm[12] else '未設定' }}</td>
                 </tr>
                 <tr>
-                    <td class="label-cell">なじんでいるトイレ様式</td>
+                    <td class="label-cell">トイレスタイル</td>
                     <td class="data-cell">{{ iwlm[13] if iwlm and iwlm[13] else '未設定' }}</td>
                 </tr>
                 <tr>
-                    <td class="label-cell">なじんでいるお風呂習慣</td>
+                    <td class="label-cell">入浴習慣</td>
                     <td class="data-cell">{{ iwlm[14] if iwlm and iwlm[14] else '未設定' }}</td>
                 </tr>
                 <tr>
-                    <td class="label-cell">身だしなみの習慣</td>
+                    <td class="label-cell">身だしなみ</td>
                     <td class="data-cell">{{ iwlm[15] if iwlm and iwlm[15] else '未設定' }}</td>
                 </tr>
                 <tr>
-                    <td class="label-cell">散髪・美容院</td>
+                    <td class="label-cell">散髪や美容院</td>
                     <td class="data-cell">{{ iwlm[16] if iwlm and iwlm[16] else '未設定' }}</td>
                 </tr>
             </tbody>
         </table>
 
-        <table class="profile-table" id="iwlmPreferencesTable">
+        <table class="profile-table" id="iwlmHobbyTable">
             <thead>
                 <tr>
                     <th colspan="2">趣味と嗜好</th>
@@ -126,41 +126,41 @@
                     <td class="data-cell">{{ iwlm[20] if iwlm and iwlm[20] else '未設定' }}</td>
                 </tr>
                 <tr>
-                    <td class="label-cell">好きなTVやラジオの番組</td>
+                    <td class="label-cell">好きなテレビやラジオ</td>
                     <td class="data-cell">{{ iwlm[21] if iwlm and iwlm[21] else '未設定' }}</td>
                 </tr>
                 <tr>
-                    <td class="label-cell">趣味やレジャー</td>
+                    <td class="label-cell">余暇活動</td>
                     <td class="data-cell">{{ iwlm[22] if iwlm and iwlm[22] else '未設定' }}</td>
                 </tr>
                 <tr>
-                    <td class="label-cell">お気に入りの場所</td>
+                    <td class="label-cell">好きな場所</td>
                     <td class="data-cell">{{ iwlm[23] if iwlm and iwlm[23] else '未設定' }}</td>
                 </tr>
                 <tr>
-                    <td class="label-cell">仕事の状況</td>
+                    <td class="label-cell">仕事や活動</td>
                     <td class="data-cell">{{ iwlm[24] if iwlm and iwlm[24] else '未設定' }}</td>
                 </tr>
                 <tr>
-                    <td class="label-cell">興味・関心のあること</td>
+                    <td class="label-cell">興味のあること</td>
                     <td class="data-cell">{{ iwlm[25] if iwlm and iwlm[25] else '未設定' }}</td>
                 </tr>
                 <tr>
-                    <td class="label-cell">得意なこと苦手なこと</td>
+                    <td class="label-cell">自分の長所や短所</td>
                     <td class="data-cell">{{ iwlm[26] if iwlm and iwlm[26] else '未設定' }}</td>
                 </tr>
                 <tr>
-                    <td class="label-cell">性格や特徴</td>
+                    <td class="label-cell">自分の特徴</td>
                     <td class="data-cell">{{ iwlm[27] if iwlm and iwlm[27] else '未設定' }}</td>
                 </tr>
                 <tr>
-                    <td class="label-cell">その他の習慣など</td>
+                    <td class="label-cell">その他</td>
                     <td class="data-cell">{{ iwlm[28] if iwlm and iwlm[28] else '未設定' }}</td>
                 </tr>
             </tbody>
         </table>
 
-        <table class="profile-table" id="iwlmWishesTable">
+        <table class="profile-table" id="iwlmFeelingTable">
             <thead>
                 <tr>
                     <th colspan="2">私の気持ちと願い</th>
@@ -168,28 +168,52 @@
             </thead>
             <tbody>
                 <tr>
-                    <td class="label-cell">私が続けたいこと</td>
-                    <td class="data-cell">{{ iwlm[29] if iwlm and iwlm[29] else '未設定' }}{% if iwlm and iwlm[30] %}<br><strong>その他:</strong> {{ iwlm[30] }}{% endif %}</td>
+                    <td class="label-cell">続けたいこと</td>
+                    <td class="data-cell">{{ iwlm[29] if iwlm and iwlm[29] else '未設定' }}</td>
                 </tr>
                 <tr>
-                    <td class="label-cell">私がもっとやりたいこと</td>
-                    <td class="data-cell">{{ iwlm[31] if iwlm and iwlm[31] else '未設定' }}{% if iwlm and iwlm[32] %}<br><strong>その他:</strong> {{ iwlm[32] }}{% endif %}</td>
+                    <td class="label-cell">続けたいこと（その他）</td>
+                    <td class="data-cell">{{ iwlm[30] if iwlm and iwlm[30] else '未設定' }}</td>
                 </tr>
                 <tr>
-                    <td class="label-cell">私が暮らしたい場所</td>
-                    <td class="data-cell">{{ iwlm[33] if iwlm and iwlm[33] else '未設定' }}{% if iwlm and iwlm[34] %}<br><strong>その他:</strong> {{ iwlm[34] }}{% endif %}</td>
+                    <td class="label-cell">今後やってみたいこと</td>
+                    <td class="data-cell">{{ iwlm[31] if iwlm and iwlm[31] else '未設定' }}</td>
                 </tr>
                 <tr>
-                    <td class="label-cell">私の不安や悲しみ</td>
-                    <td class="data-cell">{{ iwlm[35] if iwlm and iwlm[35] else '未設定' }}{% if iwlm and iwlm[36] %}<br><strong>その他:</strong> {{ iwlm[36] }}{% endif %}</td>
+                    <td class="label-cell">今後やってみたいこと（その他）</td>
+                    <td class="data-cell">{{ iwlm[32] if iwlm and iwlm[32] else '未設定' }}</td>
                 </tr>
                 <tr>
-                    <td class="label-cell">今、手伝ってほしいこと</td>
-                    <td class="data-cell">{{ iwlm[37] if iwlm and iwlm[37] else '未設定' }}{% if iwlm and iwlm[38] %}<br><strong>その他:</strong> {{ iwlm[38] }}{% endif %}</td>
+                    <td class="label-cell">住まいのタイプ</td>
+                    <td class="data-cell">{{ iwlm[33] if iwlm and iwlm[33] else '未設定' }}</td>
                 </tr>
                 <tr>
-                    <td class="label-cell">生活支援や医療・介護が必要になったら</td>
-                    <td class="data-cell">{{ iwlm[39] if iwlm and iwlm[39] else '未設定' }}{% if iwlm and iwlm[40] %}<br><strong>その他:</strong> {{ iwlm[40] }}{% endif %}</td>
+                    <td class="label-cell">住まいのタイプ（その他）</td>
+                    <td class="data-cell">{{ iwlm[34] if iwlm and iwlm[34] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">不安や悲しみ</td>
+                    <td class="data-cell">{{ iwlm[35] if iwlm and iwlm[35] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">不安や悲しみ（その他）</td>
+                    <td class="data-cell">{{ iwlm[36] if iwlm and iwlm[36] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">サポートが必要な分野</td>
+                    <td class="data-cell">{{ iwlm[37] if iwlm and iwlm[37] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">サポートが必要な分野（その他）</td>
+                    <td class="data-cell">{{ iwlm[38] if iwlm and iwlm[38] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">将来のケアプラン</td>
+                    <td class="data-cell">{{ iwlm[39] if iwlm and iwlm[39] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">将来のケアプラン（その他）</td>
+                    <td class="data-cell">{{ iwlm[40] if iwlm and iwlm[40] else '未設定' }}</td>
                 </tr>
             </tbody>
         </table>
@@ -209,149 +233,273 @@
     </div>
 </div>
 
-<!-- PDF出力用のライブラリ -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<!-- 日本語フォント用のライブラリ -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
-
 <script>
-    async function exportToPDF() {
-        try {
-            // ボタンを無効化
-            const pdfBtn = document.querySelector('.pdf-btn');
-            pdfBtn.disabled = true;
-            pdfBtn.textContent = 'PDF生成中...';
-
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('p', 'mm', 'a4');
-
-            // A4サイズの設定
-            const pageWidth = 210;
-            const pageHeight = 297;
-            const margin = 20;
-            const availableHeight = pageHeight - (margin * 2);
-
-            // ヘッダー情報を取得
-            const headerInfo = document.querySelector('#pdfHeaderInfo');
-            const tableElement = document.querySelector('.table-container');
-
-            // 一時的にボタンを非表示にする
-            const actionButtons = document.querySelector('.action-buttons');
-            const originalDisplay = actionButtons.style.display;
-            actionButtons.style.display = 'none';
-
-            const canvas = await html2canvas(tableElement, {
-                scale: 2,
-                useCORS: true,
-                allowTaint: true,
-                backgroundColor: '#ffffff',
-                height: tableElement.scrollHeight,
-                width: tableElement.scrollWidth
-            });
-
-            // ボタンの表示を復元
-            actionButtons.style.display = originalDisplay;
-
-            const imgData = canvas.toDataURL('image/png');
-            const imgWidth = (pageWidth - (margin * 2)) * 0.75; // 75%のサイズ
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-            // 画像を複数ページに分割
-            let currentY = 0;
-            let pageCount = 1;
-
-            while (currentY < imgHeight) {
-                if (pageCount > 1) {
-                    doc.addPage();
+    function printIwlm() {
+        // 印刷用のスタイルを適用
+        const printStyles = `
+            <style>
+                @media print {
+                    .action-buttons, .print-export {
+                        display: none;
+                    }
+                    .profile-table-page {
+                        max-width: none;
+                        margin: 0;
+                        padding: 20px;
+                    }
+                    .table-container {
+                        box-shadow: none;
+                        border: 1px solid #ddd;
+                    }
+                    .profile-table {
+                        font-size: 12pt;
+                        line-height: 1.4;
+                        border-collapse: collapse;
+                        border: 1px solid #333;
+                        width: 100%;
+                        table-layout: fixed;
+                    }
+                    .profile-table th {
+                        border: 1px solid #333;
+                        background: #f5f5f5;
+                        padding: 8px;
+                        font-weight: bold;
+                        width: 30%;
+                        vertical-align: top;
+                    }
+                    .profile-table td {
+                        padding: 8px;
+                        border: 1px solid #333;
+                        width: 70%;
+                        vertical-align: top;
+                        word-wrap: break-word;
+                    }
+                    body {
+                        font-size: 12pt;
+                        line-height: 1.4;
+                    }
+                    .table-info {
+                        margin-bottom: 20px;
+                        padding: 10px;
+                        background: #f8f9fa;
+                        border-radius: 5px;
+                    }
                 }
+            </style>
+        `;
 
-                // 現在のページに収まる高さを計算
-                const remainingHeight = imgHeight - currentY;
-                const pageImgHeight = Math.min(remainingHeight, availableHeight);
-
-                // 画像の一部を切り出してPDFに追加
-                const sourceCanvas = document.createElement('canvas');
-                const sourceCtx = sourceCanvas.getContext('2d');
-
-                // 切り出し元の座標を計算
-                const sourceY = (currentY / imgHeight) * canvas.height;
-                const sourceHeight = (pageImgHeight / imgHeight) * canvas.height;
-
-                sourceCanvas.width = canvas.width;
-                sourceCanvas.height = sourceHeight;
-
-                sourceCtx.drawImage(
-                    canvas,
-                    0, sourceY, canvas.width, sourceHeight,
-                    0, 0, canvas.width, sourceHeight
-                );
-
-                const pageImgData = sourceCanvas.toDataURL('image/png');
-
-                // 画像のみをPDFに追加（75%のサイズ）
-                doc.addImage(
-                    pageImgData,
-                    'PNG',
-                    margin,
-                    margin,
-                    imgWidth,
-                    pageImgHeight
-                );
-
-                currentY += pageImgHeight;
-                pageCount++;
-            }
-
-            // ファイル名を生成
-            const userName = '{{ user[5] if user and user[5] else user[7] if user and user[7] else user[1] if user else "user" }}';
-            const updateDate = '{{ iwlm[42] if iwlm and iwlm[42] else "" }}';
-            let dateStr;
-
-            if (updateDate && updateDate !== '未設定') {
-                // 更新日から日付を抽出（YYYY-MM-DD形式を想定）
-                const dateParts = updateDate.split(' ')[0].split('-');
-                if (dateParts.length === 3) {
-                    dateStr = dateParts[0] + dateParts[1] + dateParts[2];
-                } else {
-                    // フォールバック：現在の日付
-                    const now = new Date();
-                    dateStr = now.getFullYear() +
-                        String(now.getMonth() + 1).padStart(2, '0') +
-                        String(now.getDate()).padStart(2, '0');
-                }
-            } else {
-                // フォールバック：現在の日付
-                const now = new Date();
-                dateStr = now.getFullYear() +
-                    String(now.getMonth() + 1).padStart(2, '0') +
-                    String(now.getDate()).padStart(2, '0');
-            }
-
-            const filename = userName + '_iwlmNow_' + dateStr + '.pdf';
-
-            // PDFをダウンロード
-            doc.save(filename);
-
-            // ボタンを再有効化
-            pdfBtn.disabled = false;
-            pdfBtn.textContent = 'PDF出力';
-
-        } catch (error) {
-            console.error('PDF生成エラー:', error);
-            alert('PDF生成中にエラーが発生しました。もう一度お試しください。');
-
-            // ボタンの表示を復元（エラー時）
-            const actionButtons = document.querySelector('.action-buttons');
-            if (actionButtons) {
-                actionButtons.style.display = '';
-            }
-
-            // ボタンを再有効化
-            const pdfBtn = document.querySelector('.pdf-btn');
-            pdfBtn.disabled = false;
-            pdfBtn.textContent = 'PDF出力';
-        }
+        // 印刷用ウィンドウを開く
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+            <html>
+                <head>
+                    <title>私の暮らし一覧</title>
+                    ${printStyles}
+                </head>
+                <body>
+                    <h1>私の暮らし一覧</h1>
+                    <div class="table-container">
+                        <div class="table-header">
+                            <div class="table-info">
+                                {% if user %}
+                                <p><strong>ユーザー名:</strong> {{ user[5] if user and user[5] else user[7] if user and user[7] else user[1] if user else '未設定' }}</p>
+                                <p><strong>作成日:</strong> {{ iwlm[41] if iwlm and iwlm[41] else '未設定' }}</p>
+                                <p><strong>更新日:</strong> {{ iwlm[42] if iwlm and iwlm[42] else '未設定' }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <table class="profile-table">
+                            <thead>
+                                <tr>
+                                    <th colspan="2">私らしい暮らし</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="label-cell">普段の食事の回数</td>
+                                    <td class="data-cell">{{ iwlm[2] if iwlm and iwlm[2] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">普段の朝ごはん</td>
+                                    <td class="data-cell">{{ iwlm[3] if iwlm and iwlm[3] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">普段の昼ごはん</td>
+                                    <td class="data-cell">{{ iwlm[4] if iwlm and iwlm[4] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">普段の夜ごはん</td>
+                                    <td class="data-cell">{{ iwlm[5] if iwlm and iwlm[5] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">間食について</td>
+                                    <td class="data-cell">{{ iwlm[6] if iwlm and iwlm[6] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">アルコールやたばこについて</td>
+                                    <td class="data-cell">{{ iwlm[7] if iwlm and iwlm[7] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">起床時刻</td>
+                                    <td class="data-cell">{{ iwlm[8] if iwlm and iwlm[8] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">就寝時刻</td>
+                                    <td class="data-cell">{{ iwlm[9] if iwlm and iwlm[9] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">日頃の家事</td>
+                                    <td class="data-cell">{{ iwlm[10] if iwlm and iwlm[10] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">自由時間</td>
+                                    <td class="data-cell">{{ iwlm[11] if iwlm and iwlm[11] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">人との関わり</td>
+                                    <td class="data-cell">{{ iwlm[12] if iwlm and iwlm[12] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">トイレスタイル</td>
+                                    <td class="data-cell">{{ iwlm[13] if iwlm and iwlm[13] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">入浴習慣</td>
+                                    <td class="data-cell">{{ iwlm[14] if iwlm and iwlm[14] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">身だしなみ</td>
+                                    <td class="data-cell">{{ iwlm[15] if iwlm and iwlm[15] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">散髪や美容院</td>
+                                    <td class="data-cell">{{ iwlm[16] if iwlm and iwlm[16] else '未設定' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <table class="profile-table">
+                            <thead>
+                                <tr>
+                                    <th colspan="2">趣味と嗜好</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="label-cell">好きな色</td>
+                                    <td class="data-cell">{{ iwlm[17] if iwlm and iwlm[17] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">好きな服装</td>
+                                    <td class="data-cell">{{ iwlm[18] if iwlm and iwlm[18] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">好きな履物</td>
+                                    <td class="data-cell">{{ iwlm[19] if iwlm and iwlm[19] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">好きな音楽</td>
+                                    <td class="data-cell">{{ iwlm[20] if iwlm and iwlm[20] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">好きなテレビやラジオ</td>
+                                    <td class="data-cell">{{ iwlm[21] if iwlm and iwlm[21] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">余暇活動</td>
+                                    <td class="data-cell">{{ iwlm[22] if iwlm and iwlm[22] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">好きな場所</td>
+                                    <td class="data-cell">{{ iwlm[23] if iwlm and iwlm[23] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">仕事や活動</td>
+                                    <td class="data-cell">{{ iwlm[24] if iwlm and iwlm[24] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">興味のあること</td>
+                                    <td class="data-cell">{{ iwlm[25] if iwlm and iwlm[25] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">自分の長所や短所</td>
+                                    <td class="data-cell">{{ iwlm[26] if iwlm and iwlm[26] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">自分の特徴</td>
+                                    <td class="data-cell">{{ iwlm[27] if iwlm and iwlm[27] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">その他</td>
+                                    <td class="data-cell">{{ iwlm[28] if iwlm and iwlm[28] else '未設定' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <table class="profile-table">
+                            <thead>
+                                <tr>
+                                    <th colspan="2">私の気持ちと願い</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="label-cell">続けたいこと</td>
+                                    <td class="data-cell">{{ iwlm[29] if iwlm and iwlm[29] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">続けたいこと（その他）</td>
+                                    <td class="data-cell">{{ iwlm[30] if iwlm and iwlm[30] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">今後やってみたいこと</td>
+                                    <td class="data-cell">{{ iwlm[31] if iwlm and iwlm[31] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">今後やってみたいこと（その他）</td>
+                                    <td class="data-cell">{{ iwlm[32] if iwlm and iwlm[32] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">住まいのタイプ</td>
+                                    <td class="data-cell">{{ iwlm[33] if iwlm and iwlm[33] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">住まいのタイプ（その他）</td>
+                                    <td class="data-cell">{{ iwlm[34] if iwlm and iwlm[34] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">不安や悲しみ</td>
+                                    <td class="data-cell">{{ iwlm[35] if iwlm and iwlm[35] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">不安や悲しみ（その他）</td>
+                                    <td class="data-cell">{{ iwlm[36] if iwlm and iwlm[36] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">サポートが必要な分野</td>
+                                    <td class="data-cell">{{ iwlm[37] if iwlm and iwlm[37] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">サポートが必要な分野（その他）</td>
+                                    <td class="data-cell">{{ iwlm[38] if iwlm and iwlm[38] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">将来のケアプラン</td>
+                                    <td class="data-cell">{{ iwlm[39] if iwlm and iwlm[39] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">将来のケアプラン（その他）</td>
+                                    <td class="data-cell">{{ iwlm[40] if iwlm and iwlm[40] else '未設定' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </body>
+            </html>
+        `);
+        printWindow.document.close();
+        printWindow.print();
     }
 </script>
 {% endblock %}

@@ -99,28 +99,54 @@
         // 印刷用のスタイルを適用
         const printStyles = `
         <style>
-            @media print {
-                .goals-actions, .goal-period, .goal-explanation, .analysis-section {
-                    display: none;
+                @media print {
+                    .goals-actions, .goal-period, .goal-explanation, .analysis-section {
+                        display: none;
+                    }
+                    .goals-page {
+                        max-width: none;
+                        margin: 0;
+                        padding: 20px;
+                    }
+                    .goal-section {
+                        margin-bottom: 30px;
+                        page-break-inside: avoid;
+                        border: 1px solid #333;
+                        padding: 15px;
+                        width: 100%;
+                    }
+                    .short-goal-item {
+                        margin-bottom: 20px;
+                        page-break-inside: avoid;
+                        border: 1px solid #333;
+                        padding: 10px;
+                        width: 100%;
+                    }
+                    .goal-text {
+                        border: 1px solid #333;
+                        padding: 10px;
+                        background: #f9f9f9;
+                        width: 100%;
+                        word-wrap: break-word;
+                    }
+                    .goal-title {
+                        border-bottom: 1px solid #333;
+                        padding-bottom: 5px;
+                        width: 100%;
+                    }
+                    .goal-description {
+                        width: 100%;
+                        word-wrap: break-word;
+                    }
+                    .goal-reason {
+                        width: 100%;
+                        word-wrap: break-word;
+                    }
+                    body {
+                        font-size: 12pt;
+                        line-height: 1.4;
+                    }
                 }
-                .goals-page {
-                    max-width: none;
-                    margin: 0;
-                    padding: 20px;
-                }
-                .goal-section {
-                    margin-bottom: 30px;
-                    page-break-inside: avoid;
-                }
-                .short-goal-item {
-                    margin-bottom: 20px;
-                    page-break-inside: avoid;
-                }
-                body {
-                    font-size: 12pt;
-                    line-height: 1.4;
-                }
-            }
         </style>
     `;
 

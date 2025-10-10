@@ -27,8 +27,8 @@
                 <p><strong>更新日:</strong> {{ user[14] if user[14] else '未設定' }}</p>
                 {% endif %}
             </div>
-            <div class="pdf-export">
-                <button onclick="exportToPDF()" class="pdf-btn">PDF出力</button>
+            <div class="print-export">
+                <button onclick="printProfile()" class="print-btn">印刷</button>
             </div>
         </div>
 
@@ -147,128 +147,187 @@
     </div>
 </div>
 
-<!-- PDF出力用のライブラリ -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<!-- 日本語フォント用のライブラリ -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
-
 <script>
-    async function exportToPDF() {
-        try {
-            // ボタンを無効化
-            const pdfBtn = document.querySelector('.pdf-btn');
-            pdfBtn.disabled = true;
-            pdfBtn.textContent = 'PDF生成中...';
-
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('p', 'mm', 'a4');
-
-            // A4サイズの設定
-            const pageWidth = 210;
-            const pageHeight = 297;
-            const margin = 20;
-            const availableHeight = pageHeight - (margin * 2);
-
-            // テーブルを画像としてキャプチャ（ボタンを非表示にして）
-            const tableElement = document.querySelector('.table-container');
-
-            // 一時的にボタンを非表示にする
-            const actionButtons = document.querySelector('.action-buttons');
-            const originalDisplay = actionButtons.style.display;
-            actionButtons.style.display = 'none';
-
-            const canvas = await html2canvas(tableElement, {
-                scale: 2,
-                useCORS: true,
-                allowTaint: true,
-                backgroundColor: '#ffffff',
-                height: tableElement.scrollHeight,
-                width: tableElement.scrollWidth
-            });
-
-            // ボタンの表示を復元
-            actionButtons.style.display = originalDisplay;
-
-            const imgData = canvas.toDataURL('image/png');
-            const imgWidth = pageWidth - (margin * 2);
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-            // 画像を複数ページに分割
-            let currentY = 0;
-            let pageCount = 1;
-
-            while (currentY < imgHeight) {
-                if (pageCount > 1) {
-                    doc.addPage();
+    function printProfile() {
+        // 印刷用のスタイルを適用
+        const printStyles = `
+            <style>
+                @media print {
+                    .action-buttons, .print-export {
+                        display: none;
+                    }
+                    .profile-table-page {
+                        max-width: none;
+                        margin: 0;
+                        padding: 20px;
+                    }
+                    .table-container {
+                        box-shadow: none;
+                        border: 1px solid #ddd;
+                    }
+                    .profile-table {
+                        font-size: 12pt;
+                        line-height: 1.4;
+                        border-collapse: collapse;
+                        border: 1px solid #333;
+                        width: 100%;
+                        table-layout: fixed;
+                    }
+                    .profile-table th {
+                        border: 1px solid #333;
+                        background: #f5f5f5;
+                        padding: 8px;
+                        font-weight: bold;
+                        width: 30%;
+                        vertical-align: top;
+                    }
+                    .profile-table td {
+                        padding: 8px;
+                        border: 1px solid #333;
+                        width: 70%;
+                        vertical-align: top;
+                        word-wrap: break-word;
+                    }
+                    body {
+                        font-size: 12pt;
+                        line-height: 1.4;
+                    }
+                    .table-info {
+                        margin-bottom: 20px;
+                        padding: 10px;
+                        background: #f8f9fa;
+                        border-radius: 5px;
+                    }
                 }
+            </style>
+        `;
 
-                // 現在のページに収まる高さを計算
-                const remainingHeight = imgHeight - currentY;
-                const pageImgHeight = Math.min(remainingHeight, availableHeight);
-
-                // 画像の一部を切り出してPDFに追加
-                const sourceCanvas = document.createElement('canvas');
-                const sourceCtx = sourceCanvas.getContext('2d');
-
-                // 切り出し元の座標を計算
-                const sourceY = (currentY / imgHeight) * canvas.height;
-                const sourceHeight = (pageImgHeight / imgHeight) * canvas.height;
-
-                sourceCanvas.width = canvas.width;
-                sourceCanvas.height = sourceHeight;
-
-                sourceCtx.drawImage(
-                    canvas,
-                    0, sourceY, canvas.width, sourceHeight,
-                    0, 0, canvas.width, sourceHeight
-                );
-
-                const pageImgData = sourceCanvas.toDataURL('image/png');
-
-                // PDFに画像を追加
-                doc.addImage(
-                    pageImgData,
-                    'PNG',
-                    margin,
-                    margin,
-                    imgWidth,
-                    pageImgHeight
-                );
-
-                currentY += pageImgHeight;
-                pageCount++;
-            }
-
-            // ファイル名を生成
-            const now = new Date();
-            const dateStr = now.getFullYear() +
-                String(now.getMonth() + 1).padStart(2, '0') +
-                String(now.getDate()).padStart(2, '0');
-            const filename = '{{ user[1] if user else "user" }}_iwlm_' + dateStr + '.pdf';
-
-            // PDFをダウンロード
-            doc.save(filename);
-
-            // ボタンを再有効化
-            pdfBtn.disabled = false;
-            pdfBtn.textContent = 'PDF出力';
-
-        } catch (error) {
-            console.error('PDF生成エラー:', error);
-            alert('PDF生成中にエラーが発生しました。もう一度お試しください。');
-
-            // ボタンの表示を復元（エラー時）
-            const actionButtons = document.querySelector('.action-buttons');
-            if (actionButtons) {
-                actionButtons.style.display = '';
-            }
-
-            // ボタンを再有効化
-            const pdfBtn = document.querySelector('.pdf-btn');
-            pdfBtn.disabled = false;
-            pdfBtn.textContent = 'PDF出力';
-        }
+        // 印刷用ウィンドウを開く
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+            <html>
+                <head>
+                    <title>私について一覧</title>
+                    ${printStyles}
+                </head>
+                <body>
+                    <h1>私について一覧</h1>
+                    <div class="table-container">
+                        <div class="table-header">
+                            <div class="table-info">
+                                {% if user %}
+                                <p><strong>ユーザーID:</strong> {{ user[1] }}</p>
+                                <p><strong>作成日:</strong> {{ user[13] if user[13] else '未設定' }}</p>
+                                <p><strong>更新日:</strong> {{ user[14] if user[14] else '未設定' }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <table class="profile-table">
+                            <thead>
+                                <tr>
+                                    <th colspan="2">私の基本情報</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="label-cell">ユーザーID</td>
+                                    <td class="data-cell">{{ user[1] if user else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">メールアドレス</td>
+                                    <td class="data-cell">{{ user[2] if user else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">氏名</td>
+                                    <td class="data-cell">{{ user[5] if user and user[5] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">フリガナ</td>
+                                    <td class="data-cell">{{ user[6] if user and user[6] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">ニックネーム</td>
+                                    <td class="data-cell">{{ user[7] if user and user[7] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">性別</td>
+                                    <td class="data-cell">{{ user[8] if user and user[8] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">生年月日</td>
+                                    <td class="data-cell">{{ user[9] if user and user[9] else '未設定' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <table class="profile-table">
+                            <thead>
+                                <tr>
+                                    <th colspan="2">私の詳細情報</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="label-cell">作成日</td>
+                                    <td class="data-cell">{{ profile[13] if profile and profile[13] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">更新日</td>
+                                    <td class="data-cell">{{ profile[14] if profile and profile[14] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">住まい</td>
+                                    <td class="data-cell">{{ profile[2] if profile and profile[2] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">配偶者について</td>
+                                    <td class="data-cell">{{ profile[3] if profile and profile[3] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">同居している子どもの性別と人数</td>
+                                    <td class="data-cell">{{ profile[4] if profile and profile[4] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">別居している子どもの性別と人数</td>
+                                    <td class="data-cell">{{ profile[5] if profile and profile[5] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">治療の終わった病気</td>
+                                    <td class="data-cell">{{ profile[6] if profile and profile[6] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">治療している病気</td>
+                                    <td class="data-cell">{{ profile[7] if profile and profile[7] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">かかっている医療機関</td>
+                                    <td class="data-cell">{{ profile[8] if profile and profile[8] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">一番頼りにしている家族</td>
+                                    <td class="data-cell">{{ profile[9] if profile and profile[9] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">頼りにしている隣人</td>
+                                    <td class="data-cell">{{ profile[10] if profile and profile[10] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">よく相談している友人</td>
+                                    <td class="data-cell">{{ profile[11] if profile and profile[11] else '未設定' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="label-cell">私の暮らしを支えるお金</td>
+                                    <td class="data-cell">{{ profile[12] if profile and profile[12] else '未設定' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </body>
+            </html>
+        `);
+        printWindow.document.close();
+        printWindow.print();
     }
 </script>
 {% endblock %}

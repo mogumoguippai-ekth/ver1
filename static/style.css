@@ -823,7 +823,7 @@ img {
     color: #666;
 }
 
-.pdf-btn {
+.print-btn {
     background: #dc3545;
     color: white;
     border: none;
@@ -833,7 +833,7 @@ img {
     font-size: 14px;
 }
 
-.pdf-btn:hover {
+.print-btn:hover {
     background: #c82333;
 }
 
