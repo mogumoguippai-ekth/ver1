@@ -133,6 +133,21 @@ class Database:
             """
         )
 
+        # user_goalsテーブル作成
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS user_goals (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id VARCHAR(50) NOT NULL,
+                long_term_goal TEXT NOT NULL,
+                short_term_goals TEXT NOT NULL,
+                goals_version INTEGER DEFAULT 1,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users (user_id)
+            )
+            """
+        )
+
         conn.commit()
         conn.close()
 
@@ -614,6 +629,93 @@ class Database:
                 }
 
         return base_short_goals
+
+    def save_user_goals(self, user_id, goals_data):
+        """ユーザーの目標を保存"""
+        import json
+
+        conn = self.get_connection()
+        cursor = conn.cursor()
+
+        # 目標データをJSON形式で保存
+        long_term_goal = goals_data["long_term_goal"]
+        short_term_goals = json.dumps(goals_data["short_term_goals"], ensure_ascii=False)
+
+        cursor.execute(
+            "INSERT INTO user_goals (user_id, long_term_goal, short_term_goals) VALUES (?, ?, ?)",
+            (user_id, long_term_goal, short_term_goals),
+        )
+
+        conn.commit()
+        conn.close()
+        return cursor.lastrowid
+
+    def get_user_goals(self, user_id, limit=10):
+        """ユーザーの目標履歴を取得"""
+        import json
+
+        conn = self.get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute(
+            "SELECT * FROM user_goals WHERE user_id = ? ORDER BY created_at DESC LIMIT ?", (user_id, limit)
+        )
+        goals_list = cursor.fetchall()
+
+        # JSON形式のデータをパース
+        parsed_goals = []
+        for goal in goals_list:
+            parsed_goal = list(goal)
+            parsed_goal[3] = json.loads(goal[3])  # short_term_goalsをパース
+            parsed_goals.append(parsed_goal)
+
+        conn.close()
+        return parsed_goals
+
+    def get_latest_user_goals(self, user_id):
+        """ユーザーの最新の目標を取得"""
+        import json
+
+        conn = self.get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute(
+            "SELECT * FROM user_goals WHERE user_id = ? ORDER BY created_at DESC LIMIT 1", (user_id,)
+        )
+        goal = cursor.fetchone()
+
+        if goal:
+            # JSON形式のデータをパース
+            parsed_goal = list(goal)
+            parsed_goal[3] = json.loads(goal[3])  # short_term_goalsをパース
+            conn.close()
+            return parsed_goal
+
+        conn.close()
+        return None
+
+    def should_update_goals(self, user_id):
+        """目標の更新が必要かどうかを判定（30日間隔）"""
+        import datetime
+
+        conn = self.get_connection()
+        cursor = conn.cursor()
+
+        # 最新の目標作成日を取得
+        cursor.execute(
+            "SELECT created_at FROM user_goals WHERE user_id = ? ORDER BY created_at DESC LIMIT 1", (user_id,)
+        )
+        result = cursor.fetchone()
+
+        conn.close()
+
+        if not result:
+            return True  # 目標が存在しない場合は作成
+
+        last_created = datetime.datetime.strptime(result[0], "%Y-%m-%d %H:%M:%S")
+        days_diff = (datetime.datetime.now() - last_created).days
+
+        return days_diff >= 30  # 30日以上経過している場合は更新
 
 
 # データベースインスタンス

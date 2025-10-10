@@ -368,13 +368,63 @@ def howsitgoing():
 @app.route("/goals")
 @login_required
 def goals():
-    # ユーザーの目標を分析して提案
-    goals_data = db.analyze_user_goals(session["user_id"])
+    user_id = session["user_id"]
+
+    # 最新の保存された目標を取得
+    latest_goals = db.get_latest_user_goals(user_id)
+
+    # 目標が存在しないか、30日以上経過している場合は新規生成
+    if not latest_goals or db.should_update_goals(user_id):
+        # 新しい目標を生成
+        goals_data = db.analyze_user_goals(user_id)
+        # 目標を保存
+        db.save_user_goals(user_id, goals_data)
+        is_new_goals = True
+    else:
+        # 保存された目標を使用
+        goals_data = {"long_term_goal": latest_goals[2], "short_term_goals": latest_goals[3]}
+        is_new_goals = False
 
     # ユーザー情報も取得（表示用）
-    user_data = db.get_user_by_id(session["user_id"])
+    user_data = db.get_user_by_id(user_id)
 
-    return render_template("goals.html", goals=goals_data, user=user_data)
+    return render_template(
+        "goals.html",
+        goals=goals_data,
+        user=user_data,
+        is_new_goals=is_new_goals,
+        goals_created_at=latest_goals[5] if latest_goals else None,
+    )
+
+
+@app.route("/goals/update", methods=["POST"])
+@login_required
+def update_goals():
+    """目標を手動で更新"""
+    user_id = session["user_id"]
+
+    # 新しい目標を生成
+    goals_data = db.analyze_user_goals(user_id)
+    # 目標を保存
+    db.save_user_goals(user_id, goals_data)
+
+    flash("目標を更新しました。")
+    return redirect(url_for("goals"))
+
+
+@app.route("/goals/history")
+@login_required
+def goals_history():
+    """目標履歴を表示"""
+    user_id = session["user_id"]
+
+    # 目標履歴を取得（最新10件）
+    goals_history = db.get_user_goals(user_id, 10)
+
+    # ユーザー情報も取得（表示用）
+    user_data = db.get_user_by_id(user_id)
+
+    return render_template("goals_history.html", goals_history=goals_history, user=user_data)
 
 
 # 日記関連のAPIルート

@@ -1577,7 +1577,10 @@ img {
 .print-btn,
 .profile-btn,
 .iwlm-btn,
-.back-btn {
+.back-btn,
+.update-btn,
+.history-btn,
+.current-goals-btn {
     padding: 12px 20px;
     border: none;
     border-radius: 6px;
@@ -1632,6 +1635,39 @@ img {
     transform: translateY(-2px);
 }
 
+.update-btn {
+    background: #fd7e14;
+    color: white;
+}
+
+.update-btn:hover {
+    background: #e55a00;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.history-btn {
+    background: #6f42c1;
+    color: white;
+}
+
+.history-btn:hover {
+    background: #5a2d91;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.current-goals-btn {
+    background: #20c997;
+    color: white;
+}
+
+.current-goals-btn:hover {
+    background: #1aa179;
+    color: white;
+    transform: translateY(-2px);
+}
+
 /* レスポンシブデザイン */
 @media (max-width: 768px) {
     .goals-page {
@@ -1675,8 +1711,105 @@ img {
     .print-btn,
     .profile-btn,
     .iwlm-btn,
-    .back-btn {
+    .back-btn,
+    .update-btn,
+    .history-btn,
+    .current-goals-btn {
         width: 200px;
         text-align: center;
     }
+}
+
+/* 目標履歴ページのスタイル */
+.goals-history-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.history-info {
+    background: #e3f2fd;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-left: 4px solid #2196f3;
+}
+
+.history-item {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+    border-left: 5px solid #6f42c1;
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.history-header h3 {
+    color: #6f42c1;
+    margin: 0;
+}
+
+.history-date {
+    color: #666;
+    font-size: 14px;
+}
+
+.history-content {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.goals-info-header {
+    background: linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-left: 4px solid #28a745;
+}
+
+.new-goals-badge {
+    margin-bottom: 10px;
+}
+
+.badge {
+    background: #28a745;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.goals-date-info {
+    margin-bottom: 10px;
+}
+
+.goals-update-info {
+    font-size: 14px;
+    color: #666;
+}
+
+.no-history {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+}
+
+.history-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #dee2e6;
 }

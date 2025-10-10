@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}目標履歴 - 私の望む暮らし{% endblock %}
+
+{% block page_title %}目標履歴{% endblock %}
+
+{% block nickname %}{{ session.get('nickname', 'ゲスト') }}{% endblock %}
+
+{% block content %}
+<div class="goals-history-page">
+    <h2>目標履歴</h2>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="alert alert-success">
+        {{ messages[0] }}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <div class="history-info">
+        <p>過去の目標提案の履歴を表示しています。目標の変化を確認できます。</p>
+    </div>
+
+    {% if goals_history %}
+    {% for goal in goals_history %}
+    <div class="history-item">
+        <div class="history-header">
+            <h3>目標提案 #{{ loop.index }}</h3>
+            <div class="history-date">
+                <strong>作成日:</strong> {{ goal[5] }}
+            </div>
+        </div>
+
+        <div class="history-content">
+            <div class="goal-section">
+                <h4>🎯 長期目標（3年後）</h4>
+                <div class="goal-text">{{ goal[2] }}</div>
+            </div>
+
+            <div class="short-goals-section">
+                <h4>📋 短期目標（1年以内）</h4>
+                {% for short_goal in goal[3] %}
+                <div class="short-goal-item">
+                    <div class="goal-number">{{ loop.index }}</div>
+                    <div class="goal-details">
+                        <h5 class="goal-title">{{ short_goal.title }}</h5>
+                        <div class="goal-description">{{ short_goal.description }}</div>
+                        <div class="goal-reason">
+                            <strong>理由：</strong>{{ short_goal.reason }}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="no-history">
+        <p>まだ目標履歴がありません。</p>
+        <p><a href="{{ url_for('goals') }}" class="link-btn">現在の目標を見る</a></p>
+    </div>
+    {% endif %}
+
+    <div class="history-actions">
+        <a href="{{ url_for('goals') }}" class="current-goals-btn">現在の目標に戻る</a>
+        <a href="{{ url_for('dashboard') }}" class="back-btn">HOMEに戻る</a>
+    </div>
+</div>
+{% endblock %}
