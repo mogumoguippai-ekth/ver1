@@ -1,21 +1,305 @@
 {% extends "base.html" %}
 
-{% block title %}ダイアリー - 私の望む暮らし{% endblock %}
+{% block title %}日記カレンダー - 私の望む暮らし{% endblock %}
 
-{% block page_title %}ダイアリー{% endblock %}
+{% block page_title %}日記カレンダー{% endblock %}
 
 {% block nickname %}{{ session.get('nickname', 'ゲスト') }}{% endblock %}
 
 {% block content %}
-<div class="diary-page">
-    <h2>ダイアリー</h2>
+<div class="diary-calendar-page">
+    <h2>日記カレンダー</h2>
 
-    <div class="diary-content">
-        <div class="content-card">
-            <h3>日記の記録</h3>
-            <p>日々の出来事や感想を記録しましょう。</p>
-            <a href="{{ url_for('diary_list') }}" class="content-link">ダイアリー一覧を見る</a>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="alert alert-success">
+        {{ messages[0] }}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <div class="calendar-container">
+        <div class="calendar-header">
+            <button onclick="changeMonth(-1)" class="month-nav-btn">← 前月</button>
+            <h3 id="current-month-year">{{ current_year }}年{{ current_month }}月</h3>
+            <button onclick="changeMonth(1)" class="month-nav-btn">次月 →</button>
+        </div>
+
+        <div class="calendar-grid">
+            <div class="calendar-weekdays">
+                <div class="weekday">日</div>
+                <div class="weekday">月</div>
+                <div class="weekday">火</div>
+                <div class="weekday">水</div>
+                <div class="weekday">木</div>
+                <div class="weekday">金</div>
+                <div class="weekday">土</div>
+            </div>
+            <div class="calendar-days" id="calendar-days">
+                <!-- JavaScriptで動的に生成 -->
+            </div>
         </div>
     </div>
+
+    <!-- 日記入力モーダル -->
+    <div id="diary-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-date-title">日記を入力</h3>
+                <span class="close" onclick="closeDiaryModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="diary-form" enctype="multipart/form-data">
+                    <input type="hidden" id="selected-date" name="date">
+
+                    <div class="form-group">
+                        <label for="diary-title">タイトル</label>
+                        <input type="text" id="diary-title" name="title" maxlength="50" placeholder="タイトルを入力してください">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="diary-content">日記本文（200文字以内）</label>
+                        <textarea id="diary-content" name="content" maxlength="200" rows="4" placeholder="今日の出来事や感想を入力してください"></textarea>
+                        <div class="char-count">
+                            <span id="char-count">0</span>/200文字
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="diary-photo">写真（1点のみ）</label>
+                        <input type="file" id="diary-photo" name="photo" accept="image/*" onchange="previewPhoto(this)">
+                        <div id="photo-preview" class="photo-preview"></div>
+                    </div>
+
+                    <div class="existing-photo" id="existing-photo" style="display: none;">
+                        <h4>現在の写真</h4>
+                        <img id="existing-photo-img" src="" alt="現在の写真">
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" onclick="saveDiary()" class="save-btn">保存</button>
+                        <button type="button" onclick="deleteDiary()" class="delete-btn" id="delete-btn" style="display: none;">削除</button>
+                        <button type="button" onclick="closeDiaryModal()" class="cancel-btn">キャンセル</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="calendar-actions">
+        <a href="{{ url_for('diary_list') }}" class="list-btn">日記一覧 を見る</a>
+        <a href="{{ url_for('dashboard') }}" class="back-btn">HOMEに戻る</a>
+    </div>
 </div>
+
+<script>
+    let currentYear = {{ current_year }};
+    let currentMonth = {{ current_month }};
+    let diaryDates = {{ diary_dates | tojson }};
+
+    // カレンダーを生成
+    function generateCalendar() {
+        const calendarDays = document.getElementById('calendar-days');
+        calendarDays.innerHTML = '';
+
+        const firstDay = new Date(currentYear, currentMonth - 1, 1).getDay();
+        const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
+
+        // 前月の日付（空白）
+        for (let i = 0; i < firstDay; i++) {
+            const emptyDay = document.createElement('div');
+            emptyDay.className = 'calendar-day empty';
+            calendarDays.appendChild(emptyDay);
+        }
+
+        // 今月の日付
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dayElement = document.createElement('div');
+            dayElement.className = 'calendar-day';
+            dayElement.textContent = day;
+
+            const dateStr = `${currentYear}-${currentMonth.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+            dayElement.onclick = () => openDiaryModal(dateStr);
+
+            // 日記がある日はマークを表示
+            if (diaryDates.includes(dateStr)) {
+                dayElement.classList.add('has-diary');
+                dayElement.innerHTML = `<span class="day-number">${day}</span><span class="diary-mark">●</span>`;
+            }
+
+            calendarDays.appendChild(dayElement);
+        }
+
+        document.getElementById('current-month-year').textContent = `${currentYear}年${currentMonth}月`;
+    }
+
+    // 月を変更
+    function changeMonth(direction) {
+        currentMonth += direction;
+        if (currentMonth > 12) {
+            currentMonth = 1;
+            currentYear++;
+        } else if (currentMonth < 1) {
+            currentMonth = 12;
+            currentYear--;
+        }
+
+        // 新しい月の日記データを取得
+        fetch(`/api/diary-dates/${currentYear}/${currentMonth}`)
+            .then(response => response.json())
+            .then(data => {
+                diaryDates = data.dates;
+                generateCalendar();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                generateCalendar();
+            });
+    }
+
+    // 日記モーダルを開く
+    function openDiaryModal(date) {
+        document.getElementById('selected-date').value = date;
+        document.getElementById('modal-date-title').textContent = `${date} の日記`;
+
+        // 既存の日記データを取得
+        fetch(`/api/diary/${date}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.diary) {
+                    // 既存の日記がある場合
+                    document.getElementById('diary-title').value = data.diary.title || '';
+                    document.getElementById('diary-content').value = data.diary.content || '';
+                    document.getElementById('char-count').textContent = (data.diary.content || '').length;
+
+                    if (data.diary.photo_path) {
+                        document.getElementById('existing-photo').style.display = 'block';
+                        document.getElementById('existing-photo-img').src = data.diary.photo_path;
+                    } else {
+                        document.getElementById('existing-photo').style.display = 'none';
+                    }
+
+                    document.getElementById('delete-btn').style.display = 'inline-block';
+                } else {
+                    // 新規作成の場合
+                    document.getElementById('diary-title').value = '';
+                    document.getElementById('diary-content').value = '';
+                    document.getElementById('char-count').textContent = '0';
+                    document.getElementById('existing-photo').style.display = 'none';
+                    document.getElementById('delete-btn').style.display = 'none';
+                    document.getElementById('photo-preview').innerHTML = '';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+
+        document.getElementById('diary-modal').style.display = 'block';
+    }
+
+    // 日記モーダルを閉じる
+    function closeDiaryModal() {
+        document.getElementById('diary-modal').style.display = 'none';
+        document.getElementById('diary-form').reset();
+        document.getElementById('photo-preview').innerHTML = '';
+    }
+
+    // 文字数カウント
+    document.getElementById('diary-content').addEventListener('input', function () {
+        const count = this.value.length;
+        document.getElementById('char-count').textContent = count;
+        if (count > 200) {
+            this.value = this.value.substring(0, 200);
+            document.getElementById('char-count').textContent = '200';
+        }
+    });
+
+    // 写真プレビュー
+    function previewPhoto(input) {
+        const preview = document.getElementById('photo-preview');
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                preview.innerHTML = `<img src="${e.target.result}" alt="プレビュー" style="max-width: 200px; max-height: 150px;">`;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // 日記を保存
+    function saveDiary() {
+        const formData = new FormData(document.getElementById('diary-form'));
+        const date = formData.get('date');
+
+        fetch('/save-diary', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('日記を保存しました。');
+                    closeDiaryModal();
+                    // カレンダーを更新
+                    if (!diaryDates.includes(date)) {
+                        diaryDates.push(date);
+                    }
+                    generateCalendar();
+                } else {
+                    alert('エラーが発生しました: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('エラーが発生しました。');
+            });
+    }
+
+    // 日記を削除
+    function deleteDiary() {
+        if (confirm('この日の日記を削除しますか？')) {
+            const date = document.getElementById('selected-date').value;
+
+            fetch('/delete-diary', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ date: date })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('日記を削除しました。');
+                        closeDiaryModal();
+                        // カレンダーから日付を削除
+                        const index = diaryDates.indexOf(date);
+                        if (index > -1) {
+                            diaryDates.splice(index, 1);
+                        }
+                        generateCalendar();
+                    } else {
+                        alert('エラーが発生しました: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('エラーが発生しました。');
+                });
+        }
+    }
+
+    // 初期化
+    document.addEventListener('DOMContentLoaded', function () {
+        generateCalendar();
+    });
+
+    // モーダル外をクリックで閉じる
+    window.onclick = function (event) {
+        const modal = document.getElementById('diary-modal');
+        if (event.target == modal) {
+            closeDiaryModal();
+        }
+    }
+</script>
 {% endblock %}

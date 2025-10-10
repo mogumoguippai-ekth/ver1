@@ -1,10 +1,49 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import (
+    Flask,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    session,
+    flash,
+    jsonify,
+    send_from_directory,
+)
 from config import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
+from werkzeug.utils import secure_filename
+import os
+from PIL import Image
+import json
+from datetime import datetime, date
 
 app = Flask(__name__)
 app.secret_key = "your-secret-key-here-change-in-production"  # セッション用の秘密鍵
+
+# ファイルアップロード設定
+UPLOAD_FOLDER = "static/uploads"
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024  # 16MB max file size
+
+
+def allowed_file(filename):
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def resize_image(image_path, output_path, max_width=1200, max_height=800):
+    """画像をリサイズ"""
+    with Image.open(image_path) as img:
+        img.thumbnail((max_width, max_height), Image.Resampling.LANCZOS)
+        img.save(output_path, optimize=True, quality=85)
+
+
+def create_thumbnail(image_path, output_path, size=(200, 150)):
+    """サムネイル画像を作成"""
+    with Image.open(image_path) as img:
+        img.thumbnail(size, Image.Resampling.LANCZOS)
+        img.save(output_path, optimize=True, quality=85)
 
 
 # ログイン必須デコレーター
@@ -190,13 +229,25 @@ def iwlm():
 @app.route("/diary_calendar")
 @login_required
 def diary_calendar():
-    return render_template("diary_calender.html")
+    # 現在の年月を取得
+    now = datetime.now()
+    current_year = now.year
+    current_month = now.month
+
+    # 今月の日記がある日付を取得
+    diary_dates = db.get_diary_dates_with_entries(session["user_id"], current_year, current_month)
+
+    return render_template(
+        "diary_calender.html", current_year=current_year, current_month=current_month, diary_dates=diary_dates
+    )
 
 
 @app.route("/diary_list")
 @login_required
 def diary_list():
-    return render_template("diary_list.html")
+    # 日記一覧を取得
+    diaries = db.get_diary_by_user_id(session["user_id"])
+    return render_template("diary_list.html", diaries=diaries)
 
 
 @app.route("/profile_table")
@@ -312,6 +363,101 @@ def iwlm_table():
 @login_required
 def howsitgoing():
     return render_template("howsitgoing.html")
+
+
+# 日記関連のAPIルート
+@app.route("/api/diary/<date>")
+@login_required
+def get_diary_by_date_api(date):
+    diary = db.get_diary_by_date(session["user_id"], date)
+    return jsonify({"diary": diary})
+
+
+@app.route("/api/diary-dates/<int:year>/<int:month>")
+@login_required
+def get_diary_dates_api(year, month):
+    dates = db.get_diary_dates_with_entries(session["user_id"], year, month)
+    return jsonify({"dates": dates})
+
+
+@app.route("/save-diary", methods=["POST"])
+@login_required
+def save_diary():
+    try:
+        user_id = session["user_id"]
+        diary_date = request.form.get("date")
+        title = request.form.get("title", "")
+        content = request.form.get("content", "")
+
+        # 文字数チェック
+        if len(content) > 200:
+            return jsonify({"success": False, "error": "日記は200文字以内で入力してください。"})
+
+        photo_path = None
+        thumbnail_path = None
+
+        # 写真アップロード処理
+        if "photo" in request.files:
+            file = request.files["photo"]
+            if file and file.filename and allowed_file(file.filename):
+                filename = secure_filename(f"{user_id}_{diary_date}_{file.filename}")
+
+                # 元画像保存
+                photo_dir = os.path.join(app.config["UPLOAD_FOLDER"], "diary_photos")
+                os.makedirs(photo_dir, exist_ok=True)
+                photo_path = os.path.join(photo_dir, filename)
+                file.save(photo_path)
+
+                # リサイズ
+                resize_image(photo_path, photo_path, 1200, 800)
+
+                # サムネイル作成
+                thumbnail_dir = os.path.join(app.config["UPLOAD_FOLDER"], "diary_thumbnails")
+                os.makedirs(thumbnail_dir, exist_ok=True)
+                thumbnail_filename = f"thumb_{filename}"
+                thumbnail_path = os.path.join(thumbnail_dir, thumbnail_filename)
+                create_thumbnail(photo_path, thumbnail_path)
+
+                # パスを相対パスに変換
+                photo_path = f"/static/uploads/diary_photos/{filename}"
+                thumbnail_path = f"/static/uploads/diary_thumbnails/{thumbnail_filename}"
+
+        # データベースに保存
+        db.create_or_update_diary(user_id, diary_date, title, content, photo_path, thumbnail_path)
+
+        return jsonify({"success": True})
+
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)})
+
+
+@app.route("/delete-diary", methods=["POST"])
+@login_required
+def delete_diary():
+    try:
+        user_id = session["user_id"]
+        data = request.get_json()
+        diary_date = data.get("date")
+
+        # 既存の写真ファイルを削除
+        diary = db.get_diary_by_date(user_id, diary_date)
+        if diary and diary[5]:  # photo_path
+            photo_path = diary[5].replace("/static/", "static/")
+            if os.path.exists(photo_path):
+                os.remove(photo_path)
+
+        if diary and diary[6]:  # thumbnail_path
+            thumbnail_path = diary[6].replace("/static/", "static/")
+            if os.path.exists(thumbnail_path):
+                os.remove(thumbnail_path)
+
+        # データベースから削除
+        db.delete_diary(user_id, diary_date)
+
+        return jsonify({"success": True})
+
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)})
 
 
 if __name__ == "__main__":

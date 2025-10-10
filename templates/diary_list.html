@@ -1,18 +1,93 @@
 {% extends "base.html" %}
 
-{% block title %}ダイアリー一覧 - 私の望む暮らし{% endblock %}
+{% block title %}日記一覧 - 私の望む暮らし{% endblock %}
 
-{% block page_title %}ダイアリー一覧{% endblock %}
+{% block page_title %}日記一覧{% endblock %}
 
 {% block nickname %}{{ session.get('nickname', 'ゲスト') }}{% endblock %}
 
 {% block content %}
 <div class="diary-list-page">
-    <h2>ダイアリー一覧</h2>
+    <h2>日記一覧</h2>
 
-    <div class="diary-list">
-        <p>過去の日記エントリを表示します。</p>
-        <!-- ここに日記の一覧が表示されます -->
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="alert alert-success">
+        {{ messages[0] }}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <div class="diary-list-container">
+        {% if diaries %}
+        {% for diary in diaries %}
+        <div class="diary-entry">
+            {% if diary[6] %}
+            <div class="diary-photo">
+                <img src="{{ diary[6] }}" alt="日記の写真" class="thumbnail" onclick="showFullImage('{{ diary[5] }}')">
+            </div>
+            {% endif %}
+
+            <div class="diary-content">
+                <div class="diary-header">
+                    <h3 class="diary-date">{{ diary[2] }}</h3>
+                    {% if diary[3] %}
+                    <h4 class="diary-title">{{ diary[3] }}</h4>
+                    {% endif %}
+                </div>
+
+                {% if diary[4] %}
+                <div class="diary-text">
+                    <p>{{ diary[4] }}</p>
+                </div>
+                {% endif %}
+
+                <div class="diary-footer">
+                    <small class="diary-meta">
+                        作成日: {{ diary[7] }} | 更新日: {{ diary[8] }}
+                    </small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="no-diaries">
+            <p>まだ日記がありません。</p>
+            <p><a href="{{ url_for('diary_calendar') }}" class="link-btn">カレンダーで日記を書く</a></p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="diary-actions">
+        <a href="{{ url_for('diary_calendar') }}" class="calendar-btn">カレンダーに戻る</a>
+        <a href="{{ url_for('dashboard') }}" class="back-btn">ダッシュボードに戻る</a>
     </div>
 </div>
+
+<!-- フルサイズ画像表示モーダル -->
+<div id="image-modal" class="modal" style="display: none;">
+    <div class="modal-content image-modal-content">
+        <span class="close" onclick="closeImageModal()">&times;</span>
+        <img id="full-image" src="" alt="フルサイズ画像">
+    </div>
+</div>
+
+<script>
+    function showFullImage(imagePath) {
+        document.getElementById('full-image').src = imagePath;
+        document.getElementById('image-modal').style.display = 'block';
+    }
+
+    function closeImageModal() {
+        document.getElementById('image-modal').style.display = 'none';
+    }
+
+    // モーダル外をクリックで閉じる
+    window.onclick = function (event) {
+        const modal = document.getElementById('image-modal');
+        if (event.target == modal) {
+            closeImageModal();
+        }
+    }
+</script>
 {% endblock %}

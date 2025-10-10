@@ -114,6 +114,25 @@ class Database:
         """
         )
 
+        # diaryテーブル作成
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS diary (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id VARCHAR(50) NOT NULL,
+                date DATE NOT NULL,
+                title VARCHAR(100),
+                content TEXT,
+                photo_path VARCHAR(255),
+                thumbnail_path VARCHAR(255),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users (user_id),
+                UNIQUE(user_id, date)
+            )
+            """
+        )
+
         conn.commit()
         conn.close()
 
@@ -389,6 +408,75 @@ class Database:
                 ),
             )
 
+        conn.commit()
+        conn.close()
+
+    def get_diary_by_user_id(self, user_id):
+        """ユーザーIDで日記一覧を取得"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM diary WHERE user_id = ? ORDER BY date DESC", (user_id,))
+        diaries = cursor.fetchall()
+        conn.close()
+        return diaries
+
+    def get_diary_by_date(self, user_id, date):
+        """指定日の日記を取得"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM diary WHERE user_id = ? AND date = ?", (user_id, date))
+        diary = cursor.fetchone()
+        conn.close()
+        return diary
+
+    def get_diary_dates_with_entries(self, user_id, year, month):
+        """指定月に日記がある日付のリストを取得"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT date FROM diary WHERE user_id = ? AND strftime('%Y', date) = ? AND strftime('%m', date) = ?",
+            (user_id, str(year), str(month).zfill(2)),
+        )
+        dates = [row[0] for row in cursor.fetchall()]
+        conn.close()
+        return dates
+
+    def create_or_update_diary(self, user_id, date, title, content, photo_path=None, thumbnail_path=None):
+        """日記を作成または更新"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+
+        # 既存の日記があるかチェック
+        cursor.execute("SELECT id FROM diary WHERE user_id = ? AND date = ?", (user_id, date))
+        existing_diary = cursor.fetchone()
+
+        if existing_diary:
+            # 更新
+            if photo_path and thumbnail_path:
+                cursor.execute(
+                    "UPDATE diary SET title = ?, content = ?, photo_path = ?, thumbnail_path = ?, updated_at = CURRENT_TIMESTAMP WHERE user_id = ? AND date = ?",
+                    (title, content, photo_path, thumbnail_path, user_id, date),
+                )
+            else:
+                cursor.execute(
+                    "UPDATE diary SET title = ?, content = ?, updated_at = CURRENT_TIMESTAMP WHERE user_id = ? AND date = ?",
+                    (title, content, user_id, date),
+                )
+        else:
+            # 新規作成
+            cursor.execute(
+                "INSERT INTO diary (user_id, date, title, content, photo_path, thumbnail_path) VALUES (?, ?, ?, ?, ?, ?)",
+                (user_id, date, title, content, photo_path, thumbnail_path),
+            )
+
+        conn.commit()
+        conn.close()
+
+    def delete_diary(self, user_id, date):
+        """指定日の日記を削除"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM diary WHERE user_id = ? AND date = ?", (user_id, date))
         conn.commit()
         conn.close()
 

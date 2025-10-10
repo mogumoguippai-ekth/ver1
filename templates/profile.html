@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
-{% block title %}プロフィール - 私の望む暮らし{% endblock %}
+{% block title %}私について-私の望む暮らし{% endblock %}
 
-{% block page_title %}プロフィール{% endblock %}
+{% block page_title %}私について{% endblock %}
 
 {% block nickname %}{{ session.get('nickname', 'ゲスト') }}{% endblock %}
 
@@ -21,7 +21,7 @@
     <!-- 情報フォーム -->
     <!-- 基本情報フォーム -->
     <form method="POST" action="{{ url_for('update_user') }}" class="registration-form">
-        <h3>基本情報</h3>
+        <h3>私の基本情報</h3>
         <!-- 氏名-->
         <div class="form-group">
             <label for="name">氏名</label>
@@ -59,13 +59,14 @@
 
         <!-- 基本情報のボタン -->
         <div class="form-actions">
-            <button type="submit" class="submit-btn">基本情報を更新する</button>
+            <button type="submit" class="submit-btn">基本情報を更新</button>
         </div>
     </form>
     <!-- 基本情報フォーム ここまで -->
 
     <!-- 詳細情報フォーム -->
     <form method="POST" action="{{ url_for('update_profile') }}" class="registration-form">
+        <h3>私の詳細情報</h3>
 
         <div class="family-section">
             <h3>今の暮らし</h3>
@@ -184,7 +185,7 @@
 
             <!-- 詳細情報のボタン -->
             <div class="form-actions">
-                <button type="submit" class="submit-btn">詳細情報を更新する</button>
+                <button type="submit" class="submit-btn">詳細情報を更新</button>
                 <button type="button" class="cancel-btn" onclick="window.location.href='{{ url_for('dashboard') }}'">キャンセル</button>
             </div>
     </form>
