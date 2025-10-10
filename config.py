@@ -62,6 +62,58 @@ class Database:
         """
         )
 
+        # IWLMテーブル作成
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS iwlm (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id VARCHAR(50) NOT NULL,
+                meal_frequency TEXT,
+                morning_meal_type TEXT,
+                lunch_meal_type TEXT,
+                dinner_meal_type TEXT,
+                snac TEXT,
+                habits_alc_smoke TEXT,
+                wakeup_time TEXT,
+                bedtime TEXT,
+                daily_chores TEXT,
+                free_times TEXT,
+                people_met TEXT,
+                toilet_style TEXT,
+                bathing_habits TEXT,
+                grooming_habits TEXT,
+                haircut_salon TEXT,
+                favorite_color TEXT,
+                favorite_clothing TEXT,
+                favorite_footwear TEXT,
+                favorite_music TEXT,
+                favorite_tv_radio TEXT,
+                leisure_activities TEXT,
+                favorite_place TEXT,
+                job_status TEXT,
+                interests TEXT,
+                strengths_and_weaknesses TEXT,
+                characteristics TEXT,
+                others TEXT,
+                keep_doing TEXT,
+                keep_doing_other TEXT,
+                future_activities TEXT,
+                future_activities_other TEXT,
+                residence_type TEXT,
+                residence_type_other TEXT,
+                anxiety_and_sadness TEXT,
+                anxiety_and_sadness_other TEXT,
+                areas_of_support TEXT,
+                areas_of_support_other TEXT,
+                future_care_plan TEXT,
+                future_care_plan_other TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users (user_id)
+            )
+        """
+        )
+
         conn.commit()
         conn.close()
 
@@ -168,8 +220,8 @@ class Database:
                     profile_data.get("trusted_neighbor"),
                     profile_data.get("consulted_friend"),
                     profile_data.get("money_sources"),
-                    user_id
-                )
+                    user_id,
+                ),
             )
         else:
             # 新規作成
@@ -192,8 +244,149 @@ class Database:
                     profile_data.get("most_relied_family"),
                     profile_data.get("trusted_neighbor"),
                     profile_data.get("consulted_friend"),
-                    profile_data.get("money_sources")
-                )
+                    profile_data.get("money_sources"),
+                ),
+            )
+
+        conn.commit()
+        conn.close()
+
+    def get_iwlm_by_user_id(self, user_id):
+        """ユーザーIDでIWLM情報を取得"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT * FROM iwlm WHERE user_id = ?", (user_id,))
+        iwlm = cursor.fetchone()
+        conn.close()
+        return iwlm
+
+    def create_or_update_iwlm(self, user_id, iwlm_data):
+        """IWLM情報を作成または更新"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+
+        # 既存のIWLMレコードがあるかチェック
+        cursor.execute("SELECT id FROM iwlm WHERE user_id = ?", (user_id,))
+        existing_iwlm = cursor.fetchone()
+
+        if existing_iwlm:
+            # 更新
+            cursor.execute(
+                """
+                UPDATE iwlm 
+                SET meal_frequency = ?, morning_meal_type = ?, lunch_meal_type = ?, dinner_meal_type = ?,
+                    snac = ?, habits_alc_smoke = ?, wakeup_time = ?, bedtime = ?, daily_chores = ?,
+                    free_times = ?, people_met = ?, toilet_style = ?, bathing_habits = ?,
+                    grooming_habits = ?, haircut_salon = ?, favorite_color = ?, favorite_clothing = ?,
+                    favorite_footwear = ?, favorite_music = ?, favorite_tv_radio = ?,
+                    leisure_activities = ?, favorite_place = ?, job_status = ?, interests = ?,
+                    strengths_and_weaknesses = ?, characteristics = ?, others = ?, keep_doing = ?,
+                    keep_doing_other = ?, future_activities = ?, future_activities_other = ?,
+                    residence_type = ?, residence_type_other = ?, anxiety_and_sadness = ?,
+                    anxiety_and_sadness_other = ?, areas_of_support = ?, areas_of_support_other = ?,
+                    future_care_plan = ?, future_care_plan_other = ?, updated_at = CURRENT_TIMESTAMP
+                WHERE user_id = ?
+                """,
+                (
+                    iwlm_data.get("meal_frequency"),
+                    iwlm_data.get("morning_meal_type"),
+                    iwlm_data.get("lunch_meal_type"),
+                    iwlm_data.get("dinner_meal_type"),
+                    iwlm_data.get("snac"),
+                    iwlm_data.get("habits_alc_smoke"),
+                    iwlm_data.get("wakeup_time"),
+                    iwlm_data.get("bedtime"),
+                    iwlm_data.get("daily_chores"),
+                    iwlm_data.get("free_times"),
+                    iwlm_data.get("people_met"),
+                    iwlm_data.get("toilet_style"),
+                    iwlm_data.get("bathing_habits"),
+                    iwlm_data.get("grooming_habits"),
+                    iwlm_data.get("haircut_salon"),
+                    iwlm_data.get("favorite_color"),
+                    iwlm_data.get("favorite_clothing"),
+                    iwlm_data.get("favorite_footwear"),
+                    iwlm_data.get("favorite_music"),
+                    iwlm_data.get("favorite_tv_radio"),
+                    iwlm_data.get("leisure_activities"),
+                    iwlm_data.get("favorite_place"),
+                    iwlm_data.get("job_status"),
+                    iwlm_data.get("interests"),
+                    iwlm_data.get("strengths_and_weaknesses"),
+                    iwlm_data.get("characteristics"),
+                    iwlm_data.get("others"),
+                    iwlm_data.get("keep_doing"),
+                    iwlm_data.get("keep_doing_other"),
+                    iwlm_data.get("future_activities"),
+                    iwlm_data.get("future_activities_other"),
+                    iwlm_data.get("residence_type"),
+                    iwlm_data.get("residence_type_other"),
+                    iwlm_data.get("anxiety_and_sadness"),
+                    iwlm_data.get("anxiety_and_sadness_other"),
+                    iwlm_data.get("areas_of_support"),
+                    iwlm_data.get("areas_of_support_other"),
+                    iwlm_data.get("future_care_plan"),
+                    iwlm_data.get("future_care_plan_other"),
+                    user_id,
+                ),
+            )
+        else:
+            # 新規作成
+            cursor.execute(
+                """
+                INSERT INTO iwlm (user_id, meal_frequency, morning_meal_type, lunch_meal_type, dinner_meal_type,
+                                snac, habits_alc_smoke, wakeup_time, bedtime, daily_chores, free_times, people_met,
+                                toilet_style, bathing_habits, grooming_habits, haircut_salon, favorite_color,
+                                favorite_clothing, favorite_footwear, favorite_music, favorite_tv_radio,
+                                leisure_activities, favorite_place, job_status, interests, strengths_and_weaknesses,
+                                characteristics, others, keep_doing, keep_doing_other, future_activities, future_activities_other,
+                                residence_type, residence_type_other, anxiety_and_sadness, anxiety_and_sadness_other,
+                                areas_of_support, areas_of_support_other, future_care_plan, future_care_plan_other)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    user_id,
+                    iwlm_data.get("meal_frequency"),
+                    iwlm_data.get("morning_meal_type"),
+                    iwlm_data.get("lunch_meal_type"),
+                    iwlm_data.get("dinner_meal_type"),
+                    iwlm_data.get("snac"),
+                    iwlm_data.get("habits_alc_smoke"),
+                    iwlm_data.get("wakeup_time"),
+                    iwlm_data.get("bedtime"),
+                    iwlm_data.get("daily_chores"),
+                    iwlm_data.get("free_times"),
+                    iwlm_data.get("people_met"),
+                    iwlm_data.get("toilet_style"),
+                    iwlm_data.get("bathing_habits"),
+                    iwlm_data.get("grooming_habits"),
+                    iwlm_data.get("haircut_salon"),
+                    iwlm_data.get("favorite_color"),
+                    iwlm_data.get("favorite_clothing"),
+                    iwlm_data.get("favorite_footwear"),
+                    iwlm_data.get("favorite_music"),
+                    iwlm_data.get("favorite_tv_radio"),
+                    iwlm_data.get("leisure_activities"),
+                    iwlm_data.get("favorite_place"),
+                    iwlm_data.get("job_status"),
+                    iwlm_data.get("interests"),
+                    iwlm_data.get("strengths_and_weaknesses"),
+                    iwlm_data.get("characteristics"),
+                    iwlm_data.get("others"),
+                    iwlm_data.get("keep_doing"),
+                    iwlm_data.get("keep_doing_other"),
+                    iwlm_data.get("future_activities"),
+                    iwlm_data.get("future_activities_other"),
+                    iwlm_data.get("residence_type"),
+                    iwlm_data.get("residence_type_other"),
+                    iwlm_data.get("anxiety_and_sadness"),
+                    iwlm_data.get("anxiety_and_sadness_other"),
+                    iwlm_data.get("areas_of_support"),
+                    iwlm_data.get("areas_of_support_other"),
+                    iwlm_data.get("future_care_plan"),
+                    iwlm_data.get("future_care_plan_other"),
+                ),
             )
 
         conn.commit()

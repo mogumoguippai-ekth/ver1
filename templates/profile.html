@@ -17,26 +17,26 @@
     </div>
     {% endif %}
     {% endwith %}
-    <!--  <h3>基本情報</h3> -->
+
     <!-- 情報フォーム -->
     <!-- 基本情報フォーム -->
     <form method="POST" action="{{ url_for('update_user') }}" class="registration-form">
-
+        <h3>基本情報</h3>
         <!-- 氏名-->
         <div class="form-group">
-            <label for="name">氏名</label><br>
+            <label for="name">氏名</label>
             <input type="text" id="name" name="name" value="{{ user[5] if user and user[5] else '' }}" placeholder="氏名を入力">
         </div>
 
         <!-- フリガナ -->
         <div class="form-group">
-            <label for="furigana">フリガナ</label><br>
+            <label for="furigana">フリガナ</label>
             <input type="text" id="furigana" name="furigana" value="{{ user[6] if user and user[6] else '' }}" placeholder="フリガナを入力">
         </div>
 
         <!-- ニックネーム -->
         <div class="form-group">
-            <label for="nickname">ニックネーム</label><br>
+            <label for="nickname">ニックネーム</label>
             <input type="text" id="nickname" name="nickname" value="{{ user[7] if user and user[7] else '' }}" placeholder="表示名を入力">
         </div>
 
@@ -193,6 +193,6 @@
 </div>
 
 <div class="profile-actions">
-    <a href="{{ url_for('profile_table') }}" class="info-link">プロフィール一覧を見る</a>
+    <a href="{{ url_for('profile_table') }}" class="info-link">私について 一覧を見る</a>
 </div>
 {% endblock %}

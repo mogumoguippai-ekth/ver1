@@ -7,15 +7,432 @@
 {% block nickname %}{{ session.get('nickname', 'ゲスト') }}{% endblock %}
 
 {% block content %}
-<div class="iwlm-page">
-    <h2>望む暮らしの設定</h2>
+<div class="user-registration">
+   <h2>私の暮らし</h2>
 
-    <div class="iwlm-content">
-        <div class="content-card">
-            <h3>理想の生活</h3>
-            <p>あなたの理想とする生活を設定・管理できます。</p>
-            <a href="{{ url_for('iwlm_table') }}" class="content-link">望む暮らし一覧を見る</a>
-        </div>
-    </div>
+   {% with messages = get_flashed_messages() %}
+   {% if messages %}
+   <div class="alert alert-success">
+      {{ messages[0] }}
+   </div>
+   {% endif %}
+   {% endwith %}
+
+   <!-- 詳細情報フォーム -->
+   <form method="POST" action="{{ url_for('update_iwlm') }}" class="registration-form">
+
+      <div class="family-section">
+         <h3>私らしい暮らし</h3>
+         <!-- 食事や嗜好品について -->
+         <div class="form-group">
+            <label for="mealFrequency">普段の食事の回数</label>
+            <input type="text" id="mealFrequency" name="mealFrequency" value="" placeholder="例: 1日3回">
+         </div>
+         <div class="form-group">
+            <label for="morning-mealType">普段の朝ごはん</label>
+            <input type="text" id="morning-mealType" name="morning-mealType" value="" placeholder="例1: パン 例2:焼き魚と味噌汁 例3: なし など">
+         </div>
+         <div class="form-group">
+            <label for="lunch-mealType">普段の昼ごはん</label>
+            <input type="text" id="lunch-mealType" name="lunch-mealType" value="" placeholder="例1: 洋食 例2:麺類 例3: なし など">
+         </div>
+         <div class="form-group">
+            <label for="dinner-mealType">普段の夜ごはん</label>
+            <input type="text" id="dinner-mealType" name="dinner-mealType" value="" placeholder="例1: 和食 例2:煮込み料理 例3: なし など">
+         </div>
+         <div class="form-group">
+            <label for="snac">普段の間食</label>
+            <input type="text" id="snac" name="snac" value="" placeholder="例1: 果物 例2:せんべい 例3: なし など">
+         </div>
+         <div class="form-group">
+            <label for="habitsAlcSmoke">お酒やタバコ</label>
+            <input type="text" id="habitsAlcSmokec" name="habitsAlcSmoke" value="" placeholder="例1: 週に4回、日本酒で晩酌。タバコは1日5本。 例2: なし など">
+         </div>
+
+         <!--日々の暮らし -->
+         <div class="form-group">
+            <label for="wakeupTime">普段の起床時間</label>
+            <input type="text" id="wakeupTime" name="wakeupTime" value="" placeholder="例: 6時起床">
+         </div>
+         <div class="form-group">
+            <label for="bedtime">普段の就寝時間</label>
+            <input type="text" id="bedtime" name="bedtime" value="" placeholder="例: 10時就寝">
+         </div>
+         <div class="form-group">
+            <label for="dailyChores">いつもやっている家事</label>
+            <input type="text" id="dailyChores" name="dailyChores" value="" placeholder="例: 炊事、洗濯、掃除、買い物 など">
+         </div>
+         <div class="form-group">
+            <label for="freeTime">自由時間の過ごし方</label>
+            <input type="text" id="freeTime" name="freeTimes" value="" placeholder="例: 散歩、TVを見る、読書 など">
+         </div>
+         <div class="form-group">
+            <label for="peopleMet">普段会ったり連絡する人</label>
+            <input type="text" id="peopleMet" name="peopleMet" value="" placeholder="例: サークルの友人、近所の人 など">
+         </div>
+
+
+         <!-- 生活習慣について -->
+         <div class="form-group">
+            <label for="toiletStyle">なじんでいるトイレ様式</label>
+            <input type="text" id="toiletStyle" name="toiletStyle" value="" placeholder="例1: 洋式  例2: こだわらない など">
+         </div>
+         <div class="form-group">
+            <label for="bathingHabits">なじんでいるお風呂習慣</label>
+            <input type="text" id="bathingHabits" name="bathingHabits" value="" placeholder="例1: 毎日入浴、ぬるめでゆっくり  例2: 普段はシャワー、月に2度は温泉 など">
+         </div>
+         <div class="form-group">
+            <label for="groomingHabits">身だしなみの習慣</label>
+            <input type="text" id="groomingHabits" name="groomingHabits" value="" placeholder="例: 毎食後に歯磨き、毎日化粧する など">
+         </div>
+         <div class="form-group">
+            <label for="haircutSalon">散髪・美容院</label>
+            <input type="text" id="haircutSalon" name="haircutSalon" value="" placeholder="例1: 10日に1度、散髪  例2: 美容院へ2ヶ月に1回 など">
+         </div>
+
+         <!-- 趣味と嗜好 -->
+         <div class="form-group">
+            <label for="favoriteColor">好きな色</label>
+            <input type="text" id="favoriteColor" name="favoriteColor" value="" placeholder="例1: 薄めのピンク 例2: 秋の夕暮れの色 など">
+         </div>
+         <div class="form-group">
+            <label for="favoriteClothing">好きな服装</label>
+            <input type="text" id="favoriteClothing" name="favoriteClothing" value="" placeholder="例1: 活動的な服装  例2: チュニックとパンツ など">
+         </div>
+         <div class="form-group">
+            <label for="favoriteFootwear">好きな履物</label>
+            <input type="text" id="favoriteFootwear" name="favoriteFootwear" value="" placeholder="例1: ウォーキングシューズ  例2: パンプス など">
+         </div>
+         <div class="form-group">
+            <label for="favoriteMusic">好きな音楽</label>
+            <input type="text" id="favoriteMusic" name="favoriteMusic" value="" placeholder="例1: 青春時代の歌謡曲  例2: J-POP など">
+         </div>
+         <div class="form-group">
+            <label for="favoriteTvRadio">好きなTVやラジオの番組</label>
+            <input type="text" id="favoriteTvRadio" name="favoriteTvRadio" value="" placeholder="例1: NHKの朝ドラ  例2: ラジオ深夜便 など">
+         </div>
+         <div class="form-group">
+            <label for="leisureActivities">趣味やレジャー</label>
+            <input type="text" id="leisureActivities" name="leisureActivities" value="" placeholder="例:釣り、編み物、ハイキング など">
+         </div>
+
+         <!-- 私についてその他 -->
+         <div class="form-group">
+            <label for="favoritePlace">お気に入りの場所</label>
+            <input type="text" id="favoritePlace" name="favoritePlace" value="" placeholder="例1: リビングのソファ 例2: ◯◯公園のベンチ など">
+         </div>
+         <div class="form-group">
+            <label for="jobStatus">仕事の状況</label>
+            <input type="text" id="jobStatus" name="jobStatus" value="" placeholder="例1: 過去は事務員、現在は無職 例2: 現在、スーパーでパート など">
+         </div>
+         <div class="form-group">
+            <label for="interests">興味・関心のあること</label>
+            <input type="text" id="interests" name="interests" value="" placeholder="例1: 大リーグの大谷の活躍 例2: 園芸と野菜作り など">
+         </div>
+         <div class="form-group">
+            <label for="strengthsAndWeaknesses">得意なこと苦手なこと</label>
+            <input type="text" id="strengthsAndWeaknesses" name="strengthsAndWeaknesses" value="" placeholder="例: 力仕事が得意、細かい作業が苦手 など">
+         </div>
+         <div class="form-group">
+            <label for="characteristics">性格や特徴</label>
+            <input type="text" id="characteristics" name="characteristics" value="" placeholder="例: 明るくておしゃべりが好き 物静かで根気強い など">
+         </div>
+         <div class="form-group">
+            <label for="characteristics">私の強み</label>
+            <input type="text" id="smyStrengths" name="characteristics" value="" placeholder="例: 誰とでも仲良くなれる など">
+         </div>
+         <div class="form-group">
+            <label for="others">その他の習慣など</label>
+            <input type="text" id="others" name="others" value="" placeholder="例: 健康のためなるべく歩く など">
+         </div>
+      </div>
+
+
+      <!-- 私の気持ちと願い -->
+      <div class="family-section">
+         <h3>私が続けたいこと(複数可)</h3>
+         <div class="form-group">
+            <div class="checkbox-row">
+               <div class="checkbox-item">
+                  <input type="checkbox" id="workAndChores" name="keepDoing" value="仕事や家事を続けたい">
+                  <label for="workAndChores">仕事や、家事を続けたい</label>
+               </div>
+               <div class="checkbox-item">
+                  <input type="checkbox" id="managePersonalAffairs" name="keepDoing" value="身の回りのことは自分でしたい">
+                  <label for="managePersonalAffairs">身の回りのことは自分でしたい</label>
+               </div>
+               <div class="checkbox-item">
+                  <input type="checkbox" id="leisureActivities" name="keepDoing" value="趣味や楽しみ事を続けたい">
+                  <label for="leisureActivities">趣味や楽しみ事を続けたい</label>
+               </div>
+               <div class="checkbox-item">
+                  <input type="checkbox" id="otherKeepDoing" name="keepDoing" value="その他" onchange="toggleOtherInput('keepDoing')">
+                  <label for="otherKeepDoing">その他</label>
+               </div>
+            </div>
+            <div id="keepDoingOtherInput" class="other-input" style="display: none;">
+               <label for="keep_doing_other">その他の内容:</label>
+               <input type="text" id="keep_doing_other" name="keep_doing_other" value="{{ iwlm[30] if iwlm and iwlm[30] else '' }}" placeholder="具体的な内容を入力してください">
+            </div>
+         </div>
+
+         <h3>私がもっとやりたいこと(複数可)</h3>
+         <div class="form-group">
+            <div class="checkbox-row">
+               <div class="checkbox-item">
+                  <input type="checkbox" id="newHobbies" name="futureActivities" value="新しい趣味や楽しみ事">
+                  <label for="newHobbies">新しい趣味や楽しみ事</label>
+               </div>
+               <div class="checkbox-item">
+                  <input type="checkbox" id="meetingFriends" name="futureActivities" value="友人と会う">
+                  <label for="meetingFriends">友人と会う</label>
+               </div>
+               <div class="checkbox-item">
+                  <input type="checkbox" id="meetNewPeople" name="futureActivities" value="新たな人との出会い">
+                  <label for="meetNewPeople">新たな人との出会い</label>
+               </div>
+               <div class="checkbox-item">
+                  <input type="checkbox" id="healthAndFitness" name="futureActivities" value="健康増進や体力づくり">
+                  <label for="healthAndFitness">健康増進や体力づくり</label>
+               </div>
+            </div>
+            <div class="checkbox-row">
+               <div class="checkbox-item">
+                  <input type="checkbox" id="fashion" name="futureActivities" value="おしゃれ">
+                  <label for="fashion">おしゃれ</label>
+               </div>
+               <div class="checkbox-item">
+                  <input type="checkbox" id="opportunitiesForOutings" name="futureActivities" value="外出の機会">
+                  <label for="opportunitiesForOutings">外出の機会</label>
+               </div>
+               <div class="checkbox-item">
+                  <input type="checkbox" id="volunteerExperience" name="futureActivities" value="ボランティア">
+                  <label for="volunteerExperience">ボランティア</label>
+               </div>
+               <div class="checkbox-item">
+                  <input type="checkbox" id="otherActivities" name="futureActivities" value="その他" onchange="toggleOtherInput('futureActivities')">
+                  <label for="otherActivities">その他</label>
+               </div>
+            </div>
+            <div id="futureActivitiesOtherInput" class="other-input" style="display: none;">
+               <label for="future_activities_other">その他の内容:</label>
+               <input type="text" id="future_activities_other" name="future_activities_other" value="{{ iwlm[32] if iwlm and iwlm[32] else '' }}" placeholder="具体的な内容を入力してください">
+            </div>
+         </div>
+
+         <h3>私が暮らしたい場所(複数可)</h3>
+         <div class="form-group">
+            <div class="checkbox-row">
+               <div class="checkbox-item">
+                  <input type="checkbox" id="myHome" name="residenceType" value="住み慣れた我が家">
+                  <label for="myHome">住み慣れた我が家</label>
+               </div>
+               <div class="checkbox-item">
+                  <input type="checkbox" id="livingWithChildren" name="residenceType" value="子どもと一緒に暮らしたい">
+                  <label for="livingWithChildren">子どもと一緒に暮らしたい</label>
+               </div>
+               <div class="checkbox-item">
+                  <input type="checkbox" id="desireToDownsize" name="residenceType" value="小さな住まいに住み替え">
+                  <label for="desireToDownsize">小さな住まいに住み替え</label>
+               </div>
+               <div class="checkbox-item">
+                  <input type="checkbox" id="assistedLiving" name="residenceType" value="生活支援ある住まい">
+                  <label for="assistedLiving">見守りや生活支援ある住まい</label>
+               </div>
+            </div>
+            <div class="checkbox-row">
+               <div class="checkbox-item">
+                  <input type="checkbox" id="careServicesHousing" name="residenceType" value="介護のある住まいや施設">
+                  <label for="careServicesHousing">介護のある住まいや施設</label>
+               </div>
+               <div class="checkbox-item">
+                  <input type="checkbox" id="otherResidence" name="residenceType" value="その他" onchange="toggleOtherInput('residenceType')">
+                  <label for="otherResidence">その他</label>
+               </div>
+            </div>
+            <div id="residenceTypeOtherInput" class="other-input" style="display: none;">
+               <label for="residence_type_other">その他の内容:</label>
+               <input type="text" id="residence_type_other" name="residence_type_other" value="{{ iwlm[34] if iwlm and iwlm[34] else '' }}" placeholder="具体的な内容を入力してください">
+            </div>
+         </div>
+
+         <h3>私の不安や悲しみ(複数可)</h3>
+         <div class="form-group">
+            <div class="checkbox-row">
+               <div class="checkbox-item">
+                  <input type="checkbox" id="healthAndFitnessConcerns" name="anxietyAndSadness" value="健康や体力">
+                  <label for="healthAndFitnessConcerns">健康や体力</label>
+               </div>
+               <div class="checkbox-item">
+                  <input type="checkbox" id="illnessAndMedication" name="anxietyAndSadness" value="今、患っている病気や薬">
+                  <label for="illnessAndMedication">今、患っている病気や薬</label>
+               </div>
+               <div class="checkbox-item">
+                  <input type="checkbox" id="familyConcerns" name="anxietyAndSadness" value="家族についての心配">
+                  <label for="familyConcerns">家族についての心配</label>
+               </div>
+               <div class="checkbox-item">
+                  <input type="checkbox" id="independentLiving" name="anxietyAndSadness" value="生活の自立">
+                  <label for="independentLiving">生活の自立</label>
+               </div>
+            </div>
+            <div class="checkbox-row">
+               <div class="checkbox-item">
+                  <input type="checkbox" id="neighborRelations" name="anxietyAndSadness" value="近隣との関係">
+                  <label for="neighborRelations">近隣との関係</label>
+               </div>
+               <div class="checkbox-item">
+                  <input type="checkbox" id="personalFinance" name="anxietyAndSadness" value="経済的な心配">
+                  <label for="personalFinance">経済的な心配</label>
+               </div>
+               <div class="checkbox-item">
+                  <input type="checkbox" id="desireForSomeoneToTalkTo" name="anxietyAndSadness" value="相談相手がほしい">
+                  <label for="desireForSomeoneToTalkTo">相談相手がほしい</label>
+               </div>
+               <div class="checkbox-item">
+                  <input type="checkbox" id="isolation" name="anxietyAndSadness" value="寂しい、孤独">
+                  <label for="isolation">寂しい、孤独</label>
+               </div>
+            </div>
+            <div class="checkbox-row">
+               <div class="checkbox-item">
+                  <input type="checkbox" id="otherConcerns" name="anxietyAndSadness" value="その他" onchange="toggleOtherInput('anxietyAndSadness')">
+                  <label for="otherConcerns">その他</label>
+               </div>
+            </div>
+            <div id="anxietyAndSadnessOtherInput" class="other-input" style="display: none;">
+               <label for="anxiety_and_sadness_other">その他の内容:</label>
+               <input type="text" id="anxiety_and_sadness_other" name="anxiety_and_sadness_other" value="{{ iwlm[36] if iwlm and iwlm[36] else '' }}" placeholder="具体的な内容を入力してください">
+            </div>
+         </div>
+
+         <h3>今、手伝ってほしいこと(複数可)</h3>
+         <div class="form-group">
+            <div class="checkbox-row">
+               <div class="checkbox-item">
+                  <input type="checkbox" id="hchores" name="areasOfSupport" value="家事">
+                  <label for="hchores">家事</label>
+               </div>
+               <div class="checkbox-item">
+                  <input type="checkbox" id="shopping" name="areasOfSupport" value="買い物">
+                  <label for="shopping">買い物</label>
+               </div>
+               <div class="checkbox-item">
+                  <input type="checkbox" id="mobility" name="areasOfSupport" value="外出">
+                  <label for="mobility">外出</label>
+               </div>
+               <div class="checkbox-item">
+                  <input type="checkbox" id="healthCareManagement" name="areasOfSupport" value="通院や服薬管理">
+                  <label for="healthCareManagement">通院や服薬管理</label>
+               </div>
+            </div>
+            <div class="checkbox-row">
+               <div class="checkbox-item">
+                  <input type="checkbox" id="personalActivities" name="areasOfSupport" value="身の回りのこと">
+                  <label for="personalActivities">身の回りのこと</label>
+               </div>
+               <div class="checkbox-item">
+                  <input type="checkbox" id="otherAreasOfSupport" name="areasOfSupport" value="その他" onchange="toggleOtherInput('areasOfSupport')">
+                  <label for="otherAreasOfSupport">その他</label>
+               </div>
+            </div>
+            <div id="areasOfSupportOtherInput" class="other-input" style="display: none;">
+               <label for="areas_of_support_other">その他の内容:</label>
+               <input type="text" id="areas_of_support_other" name="areas_of_support_other" value="{{ iwlm[38] if iwlm and iwlm[38] else '' }}" placeholder="具体的な内容を入力してください">
+            </div>
+         </div>
+
+         <h3>生活支援や、医療、介護が必要になったら(複数可)</h3>
+         <div class="form-group">
+            <div class="checkbox-row">
+               <div class="checkbox-item">
+                  <input type="checkbox" id="asIndependentAsPossible" name="futureCarePlan" value="身の回りのことは見守ってもらいながらできるだけ自分でやりたい">
+                  <label for="asIndependentAsPossible">身の回りのことは見守ってもらいながらできるだけ自分でやりたい</label>
+               </div>
+               <div class="checkbox-item">
+                  <input type="checkbox" id="supportNeeded" name="futureCarePlan" value="できないことは家族や周りの人に手伝ってほしい">
+                  <label for="supportNeeded">できないことは家族や周りの人に手伝ってほしい</label>
+               </div>
+            </div>
+            <div class="checkbox-row">
+               <div class="checkbox-item">
+                  <input type="checkbox" id="desireForHomeCare" name="futureCarePlan" value="できるだけ自宅で医療や介護サービスを利用して暮らしたい">
+                  <label for="desireForHomeCare">できるだけ自宅で医療や介護サービスを利用して暮らしたい</label>
+               </div>
+               <div class="checkbox-item">
+                  <input type="checkbox" id="stayAtHomeUntilEnd" name="futureCarePlan" value="最後まで自宅で医療や介護サービスを利用して暮らしたい">
+                  <label for="stayAtHomeUntilEnd">最後まで自宅で医療や介護サービスを利用して暮らしたい</label>
+               </div>
+            </div>
+            <div class="checkbox-row">
+               <div class="checkbox-item">
+                  <input type="checkbox" id="hospitalizationPreference" name="futureCarePlan" value="必要な時は入院したい">
+                  <label for="hospitalizationPreference">必要な時は入院したい</label>
+               </div>
+               <div class="checkbox-item">
+                  <input type="checkbox" id="desireForCareFacility" name="futureCarePlan" value="介護が必要になったら施設で暮らしたい">
+                  <label for="desireForCareFacility">介護が必要になったら施設で暮らしたい</label>
+               </div>
+               <div class="checkbox-item">
+                  <input type="checkbox" id="otherCarePlan" name="futureCarePlan" value="その他" onchange="toggleOtherInput('futureCarePlan')">
+                  <label for="otherCarePlan">その他</label>
+               </div>
+            </div>
+            <div id="futureCarePlanOtherInput" class="other-input" style="display: none;">
+               <label for="future_care_plan_other">その他の内容:</label>
+               <input type="text" id="future_care_plan_other" name="future_care_plan_other" value="{{ iwlm[40] if iwlm and iwlm[40] else '' }}" placeholder="具体的な内容を入力してください">
+            </div>
+         </div>
+
+         <!-- 私の暮らしのボタン -->
+         <div class="form-actions">
+            <button type="submit" class="submit-btn">私の暮らしを更新する</button>
+            <button type="button" class="cancel-btn" onclick="window.location.href='{{ url_for('dashboard') }}'">キャンセル</button>
+         </div>
+   </form>
+   <!-- 私の暮らしフォーム ここまで -->
+
 </div>
+
+<div class="profile-actions">
+   <a href="{{ url_for('iwlm_table') }}" class="info-link">私の暮らし一覧を見る</a>
+   <form method="POST" action="{{ url_for('delete_iwlm') }}" style="display: inline;" onsubmit="return confirm('私の暮らし情報を削除しますか？この操作は取り消せません。')">
+      <button type="submit" class="delete-btn">削除</button>
+   </form>
+</div>
+
+<script>
+   function toggleOtherInput(groupName) {
+      const checkbox = document.querySelector(`input[name="${groupName}"][value="その他"]`);
+      const inputDiv = document.getElementById(`${groupName}OtherInput`);
+
+      if (checkbox && inputDiv) {
+         if (checkbox.checked) {
+            inputDiv.style.display = 'block';
+         } else {
+            inputDiv.style.display = 'none';
+            // チェックボックスが外された時は入力内容をクリア
+            const input = inputDiv.querySelector('input[type="text"]');
+            if (input) {
+               input.value = '';
+            }
+         }
+      }
+   }
+
+   // ページ読み込み時に既存のデータがある場合は入力欄を表示
+   document.addEventListener('DOMContentLoaded', function () {
+      const groups = ['keepDoing', 'futureActivities', 'residenceType', 'anxietyAndSadness', 'areasOfSupport', 'futureCarePlan'];
+
+      groups.forEach(groupName => {
+         const checkbox = document.querySelector(`input[name="${groupName}"][value="その他"]`);
+         const input = document.getElementById(`${groupName.replace(/[A-Z]/g, '_$&').toLowerCase()}_other`);
+
+         if (checkbox && input && input.value.trim() !== '') {
+            checkbox.checked = true;
+            toggleOtherInput(groupName);
+         }
+      });
+   });
+</script>
 {% endblock %}

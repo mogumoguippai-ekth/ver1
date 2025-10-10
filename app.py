@@ -132,6 +132,7 @@ def update_user():
     flash("基本情報を更新しました。")
     return redirect(url_for("profile"))
 
+
 @app.route("/update_profile", methods=["POST"])
 @login_required
 def update_profile():
@@ -150,7 +151,7 @@ def update_profile():
         "most_relied_family": request.form.get("most-relied-upon-family"),
         "trusted_neighbor": request.form.get("trusted-neighbor"),
         "consulted_friend": request.form.get("consulted-friend"),
-        "money_sources": ",".join(request.form.getlist("money"))  # チェックボックスは複数選択
+        "money_sources": ",".join(request.form.getlist("money")),  # チェックボックスは複数選択
     }
 
     # プロフィール情報を保存
@@ -173,14 +174,17 @@ def profile():
     user_data = db.get_user_by_id(session["user_id"])
     # プロフィール詳細情報を取得
     profile_data = db.get_profile_by_user_id(session["user_id"])
-    
+
     return render_template("profile.html", user=user_data, profile=profile_data)
 
 
 @app.route("/iwlm")
 @login_required
 def iwlm():
-    return render_template("iwlm.html")
+    # IWLM情報を取得
+    iwlm_data = db.get_iwlm_by_user_id(session["user_id"])
+
+    return render_template("iwlm.html", iwlm=iwlm_data)
 
 
 @app.route("/diary_calendar")
@@ -204,7 +208,100 @@ def iwlm_table():
 @app.route("/profile_table")
 @login_required
 def profile_table():
-    return render_template("profile_tabele.html")
+    # ユーザー基本情報を取得
+    user_data = db.get_user_by_id(session["user_id"])
+    # プロフィール詳細情報を取得
+    profile_data = db.get_profile_by_user_id(session["user_id"])
+
+    return render_template("profile_tabele.html", user=user_data, profile=profile_data)
+
+
+@app.route("/delete_profile", methods=["POST"])
+@login_required
+def delete_profile():
+    # プロフィール詳細情報を削除
+    user_id = session["user_id"]
+    conn = db.get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM profiles WHERE user_id = ?", (user_id,))
+    conn.commit()
+    conn.close()
+
+    flash("プロフィール詳細を削除しました。")
+    return redirect(url_for("dashboard"))
+
+
+@app.route("/update_iwlm", methods=["POST"])
+@login_required
+def update_iwlm():
+    # IWLM情報更新
+    user_id = session["user_id"]
+
+    # IWLM詳細情報
+    iwlm_data = {
+        "meal_frequency": request.form.get("mealFrequency"),
+        "morning_meal_type": request.form.get("morning-mealType"),
+        "lunch_meal_type": request.form.get("lunch-mealType"),
+        "dinner_meal_type": request.form.get("dinner-mealType"),
+        "snac": request.form.get("snac"),
+        "habits_alc_smoke": request.form.get("habitsAlcSmoke"),
+        "wakeup_time": request.form.get("wakeupTime"),
+        "bedtime": request.form.get("bedtime"),
+        "daily_chores": request.form.get("dailyChores"),
+        "free_times": request.form.get("freeTimes"),
+        "people_met": request.form.get("peopleMet"),
+        "toilet_style": request.form.get("toiletStyle"),
+        "bathing_habits": request.form.get("bathingHabits"),
+        "grooming_habits": request.form.get("groomingHabits"),
+        "haircut_salon": request.form.get("haircutSalon"),
+        "favorite_color": request.form.get("favoriteColor"),
+        "favorite_clothing": request.form.get("favoriteClothing"),
+        "favorite_footwear": request.form.get("favoriteFootwear"),
+        "favorite_music": request.form.get("favoriteMusic"),
+        "favorite_tv_radio": request.form.get("favoriteTvRadio"),
+        "leisure_activities": request.form.get("leisureActivities"),
+        "favorite_place": request.form.get("favoritePlace"),
+        "job_status": request.form.get("jobStatus"),
+        "interests": request.form.get("interests"),
+        "strengths_and_weaknesses": request.form.get("strengthsAndWeaknesses"),
+        "characteristics": request.form.get("characteristics"),
+        "others": request.form.get("others"),
+        "keep_doing": ",".join(request.form.getlist("keepDoing")),
+        "keep_doing_other": request.form.get("keep_doing_other"),
+        "future_activities": ",".join(request.form.getlist("futureActivities")),
+        "future_activities_other": request.form.get("future_activities_other"),
+        "residence_type": ",".join(request.form.getlist("residenceType")),
+        "residence_type_other": request.form.get("residence_type_other"),
+        "anxiety_and_sadness": ",".join(request.form.getlist("anxietyAndSadness")),
+        "anxiety_and_sadness_other": request.form.get("anxiety_and_sadness_other"),
+        "areas_of_support": ",".join(request.form.getlist("areasOfSupport")),
+        "areas_of_support_other": request.form.get("areas_of_support_other"),
+        "future_care_plan": ",".join(request.form.getlist("futureCarePlan")),
+        "future_care_plan_other": request.form.get("future_care_plan_other"),
+    }
+
+    # IWLM情報を保存
+    db.create_or_update_iwlm(user_id, iwlm_data)
+
+    flash("私の暮らし情報を更新しました。")
+    return redirect(url_for("iwlm"))
+
+
+@app.route("/delete_iwlm", methods=["POST"])
+@login_required
+def delete_iwlm():
+    # IWLM情報を削除
+    user_id = session["user_id"]
+    conn = db.get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("DELETE FROM iwlm WHERE user_id = ?", (user_id,))
+    conn.commit()
+    conn.close()
+
+    flash("私の暮らし情報を削除しました。")
+    return redirect(url_for("dashboard"))
 
 
 @app.route("/howsitgoing")
