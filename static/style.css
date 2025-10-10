@@ -968,6 +968,34 @@ img {
     border-left: 4px solid #007bff;
 }
 
+/* PDF出力用ヘッダー情報のスタイル */
+#pdfHeaderInfo {
+    background-color: #f8f9fa;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #dee2e6;
+}
+
+#pdfHeaderInfo p {
+    margin: 2px 0;
+    font-size: 14px;
+    color: #495057;
+}
+
+@media print {
+    #pdfHeaderInfo {
+        background-color: transparent !important;
+        border: none !important;
+        padding: 5px !important;
+    }
+
+    #pdfHeaderInfo p {
+        font-size: 12px !important;
+        margin: 1px 0 !important;
+    }
+}
+
 .other-input label {
     display: block;
     font-weight: bold;

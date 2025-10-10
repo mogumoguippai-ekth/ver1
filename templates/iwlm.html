@@ -26,37 +26,37 @@
          <!-- 食事や嗜好品について -->
          <div class="form-group">
             <label for="mealFrequency">普段の食事の回数</label>
-            <input type="text" id="mealFrequency" name="mealFrequency" value="" placeholder="例: 1日3回">
+            <input type="text" id="mealFrequency" name="mealFrequency" value="{{ iwlm[2] if iwlm and iwlm[2] else '' }}" placeholder="例: 1日3回">
          </div>
          <div class="form-group">
             <label for="morning-mealType">普段の朝ごはん</label>
-            <input type="text" id="morning-mealType" name="morning-mealType" value="" placeholder="例1: パン 例2:焼き魚と味噌汁 例3: なし など">
+            <input type="text" id="morning-mealType" name="morning-mealType" value="{{ iwlm[3] if iwlm and iwlm[3] else '' }}" placeholder="例1: パン 例2:焼き魚と味噌汁 例3: なし など">
          </div>
          <div class="form-group">
             <label for="lunch-mealType">普段の昼ごはん</label>
-            <input type="text" id="lunch-mealType" name="lunch-mealType" value="" placeholder="例1: 洋食 例2:麺類 例3: なし など">
+            <input type="text" id="lunch-mealType" name="lunch-mealType" value="{{ iwlm[4] if iwlm and iwlm[4] else '' }}" placeholder="例1: 洋食 例2:麺類 例3: なし など">
          </div>
          <div class="form-group">
             <label for="dinner-mealType">普段の夜ごはん</label>
-            <input type="text" id="dinner-mealType" name="dinner-mealType" value="" placeholder="例1: 和食 例2:煮込み料理 例3: なし など">
+            <input type="text" id="dinner-mealType" name="dinner-mealType" value="{{ iwlm[5] if iwlm and iwlm[5] else '' }}" placeholder="例1: 和食 例2:煮込み料理 例3: なし など">
          </div>
          <div class="form-group">
             <label for="snac">普段の間食</label>
-            <input type="text" id="snac" name="snac" value="" placeholder="例1: 果物 例2:せんべい 例3: なし など">
+            <input type="text" id="snac" name="snac" value="{{ iwlm[6] if iwlm and iwlm[6] else '' }}" placeholder="例1: 果物 例2:せんべい 例3: なし など">
          </div>
          <div class="form-group">
             <label for="habitsAlcSmoke">お酒やタバコ</label>
-            <input type="text" id="habitsAlcSmokec" name="habitsAlcSmoke" value="" placeholder="例1: 週に4回、日本酒で晩酌。タバコは1日5本。 例2: なし など">
+            <input type="text" id="habitsAlcSmoke" name="habitsAlcSmoke" value="{{ iwlm[7] if iwlm and iwlm[7] else '' }}" placeholder="例1: 週に4回、日本酒で晩酌。タバコは1日5本。 例2: なし など">
          </div>
 
          <!--日々の暮らし -->
          <div class="form-group">
             <label for="wakeupTime">普段の起床時間</label>
-            <input type="text" id="wakeupTime" name="wakeupTime" value="" placeholder="例: 6時起床">
+            <input type="text" id="wakeupTime" name="wakeupTime" value="{{ iwlm[8] if iwlm and iwlm[8] else '' }}" placeholder="例: 6時起床">
          </div>
          <div class="form-group">
             <label for="bedtime">普段の就寝時間</label>
-            <input type="text" id="bedtime" name="bedtime" value="" placeholder="例: 10時就寝">
+            <input type="text" id="bedtime" name="bedtime" value="{{ iwlm[9] if iwlm and iwlm[9] else '' }}" placeholder="例: 10時就寝">
          </div>
          <div class="form-group">
             <label for="dailyChores">いつもやっている家事</label>
@@ -431,6 +431,28 @@
          if (checkbox && input && input.value.trim() !== '') {
             checkbox.checked = true;
             toggleOtherInput(groupName);
+         }
+      });
+
+      // チェックボックスの既存データを設定
+      const checkboxData = {
+         'keepDoing': '{{ iwlm[29] if iwlm and iwlm[29] else "" }}',
+         'futureActivities': '{{ iwlm[31] if iwlm and iwlm[31] else "" }}',
+         'residenceType': '{{ iwlm[33] if iwlm and iwlm[33] else "" }}',
+         'anxietyAndSadness': '{{ iwlm[35] if iwlm and iwlm[35] else "" }}',
+         'areasOfSupport': '{{ iwlm[37] if iwlm and iwlm[37] else "" }}',
+         'futureCarePlan': '{{ iwlm[39] if iwlm and iwlm[39] else "" }}'
+      };
+
+      Object.keys(checkboxData).forEach(groupName => {
+         if (checkboxData[groupName]) {
+            const values = checkboxData[groupName].split(',');
+            values.forEach(value => {
+               const checkbox = document.querySelector(`input[name="${groupName}"][value="${value.trim()}"]`);
+               if (checkbox) {
+                  checkbox.checked = true;
+               }
+            });
          }
       });
    });

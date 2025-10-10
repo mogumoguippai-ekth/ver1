@@ -199,12 +199,6 @@ def diary_list():
     return render_template("diary_list.html")
 
 
-@app.route("/iwlm_table")
-@login_required
-def iwlm_table():
-    return render_template("iwlm_table.html")
-
-
 @app.route("/profile_table")
 @login_required
 def profile_table():
@@ -213,7 +207,7 @@ def profile_table():
     # プロフィール詳細情報を取得
     profile_data = db.get_profile_by_user_id(session["user_id"])
 
-    return render_template("profile_tabele.html", user=user_data, profile=profile_data)
+    return render_template("profile_table.html", user=user_data, profile=profile_data)
 
 
 @app.route("/delete_profile", methods=["POST"])
@@ -285,7 +279,7 @@ def update_iwlm():
     db.create_or_update_iwlm(user_id, iwlm_data)
 
     flash("私の暮らし情報を更新しました。")
-    return redirect(url_for("iwlm"))
+    return redirect(url_for("iwlm_table"))
 
 
 @app.route("/delete_iwlm", methods=["POST"])
@@ -302,6 +296,16 @@ def delete_iwlm():
 
     flash("私の暮らし情報を削除しました。")
     return redirect(url_for("dashboard"))
+
+
+@app.route("/iwlm_table")
+@login_required
+def iwlm_table():
+    # IWLM情報を取得
+    user_data = db.get_user_by_id(session["user_id"])
+    iwlm_data = db.get_iwlm_by_user_id(session["user_id"])
+
+    return render_template("iwlm_table.html", user=user_data, iwlm=iwlm_data)
 
 
 @app.route("/howsitgoing")
