@@ -227,15 +227,29 @@
     // データ変更時の確認機能
     {% if data_changed %}
     window.addEventListener('load', function () {
-        if (confirm('プロフィールまたは暮らしの情報が更新されました。\n目標を更新しますか？')) {
-            // 目標更新フォームを送信
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '{{ url_for("update_goals") }}';
-            document.body.appendChild(form);
-            form.submit();
+        // セッションストレージで確認済みかチェック
+        const alertShown = sessionStorage.getItem('goalsUpdateAlertShown');
+
+        if (!alertShown) {
+            if (confirm('プロフィールまたは暮らしの情報が更新されました。\n目標を更新しますか？')) {
+                // 確認済みフラグを設定
+                sessionStorage.setItem('goalsUpdateAlertShown', 'true');
+
+                // 目標更新フォームを送信
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '{{ url_for("update_goals") }}';
+                document.body.appendChild(form);
+                form.submit();
+            } else {
+                // キャンセルした場合も確認済みフラグを設定
+                sessionStorage.setItem('goalsUpdateAlertShown', 'true');
+            }
         }
     });
+    {% else %}
+    // データ変更がない場合は確認済みフラグをクリア
+    sessionStorage.removeItem('goalsUpdateAlertShown');
     {% endif %}
 </script>
 {% endblock %}

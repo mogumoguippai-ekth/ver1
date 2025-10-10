@@ -1,5 +1,6 @@
 import sqlite3
 import os
+import datetime
 
 
 class Database:
@@ -789,6 +790,122 @@ class Database:
         if latest_goal and latest_goal[0] == long_term_goal and latest_goal[1] == short_term_goals:
             conn.close()
             return None  # 重複のため保存しない
+
+        cursor.execute(
+            "INSERT INTO user_goals (user_id, long_term_goal, short_term_goals) VALUES (?, ?, ?)",
+            (user_id, long_term_goal, short_term_goals),
+        )
+
+        conn.commit()
+        conn.close()
+        return cursor.lastrowid
+
+    def generate_ai_goals(self, user_id):
+        """AIを使用して目標を生成する"""
+        try:
+            from ai_goal_service import create_goal_service
+
+            # ユーザー情報を取得
+            user = self.get_user_by_id(user_id)
+            if not user:
+                return None
+
+            # プロフィール情報を取得
+            profile = self.get_user_profile(user_id)
+
+            # IWLM情報を取得
+            iwlm = self.get_user_iwlm(user_id)
+
+            # ユーザーデータを辞書形式に変換
+            user_data = {
+                "user_id": user[1],
+                "name": user[5],
+                "nickname": user[7],
+                "gender": user[3],
+                "birth_date": user[4],
+            }
+
+            # プロフィールデータを辞書形式に変換
+            profile_data = None
+            if profile:
+                profile_data = {
+                    "address": profile[2],
+                    "family_members": profile[3],
+                    "spouse_info": profile[4],
+                    "family_feelings": profile[5],
+                    "friend_relationships": profile[6],
+                    "reliable_people": profile[7],
+                    "strengths_weaknesses": profile[8],
+                    "personality": profile[9],
+                    "interests": profile[10],
+                    "others": profile[11],
+                }
+
+            # IWLMデータを辞書形式に変換
+            iwlm_data = None
+            if iwlm:
+                iwlm_data = {
+                    "meal_frequency": iwlm[2],
+                    "morning_meal_type": iwlm[3],
+                    "lunch_meal_type": iwlm[4],
+                    "dinner_meal_type": iwlm[5],
+                    "snac": iwlm[6],
+                    "habits_alc_smoke": iwlm[7],
+                    "wakeup_time": iwlm[8],
+                    "bedtime": iwlm[9],
+                    "daily_chores": iwlm[10],
+                    "free_times": iwlm[11],
+                    "people_met": iwlm[12],
+                    "toilet_style": iwlm[13],
+                    "bathing_habits": iwlm[14],
+                    "grooming_habits": iwlm[15],
+                    "haircut_salon": iwlm[16],
+                    "favorite_color": iwlm[17],
+                    "favorite_clothing": iwlm[18],
+                    "favorite_footwear": iwlm[19],
+                    "favorite_music": iwlm[20],
+                    "favorite_tv_radio": iwlm[21],
+                    "leisure_activities": iwlm[22],
+                    "favorite_place": iwlm[23],
+                    "job_status": iwlm[24],
+                    "interests": iwlm[25],
+                    "strengths_and_weaknesses": iwlm[26],
+                    "characteristics": iwlm[27],
+                    "others": iwlm[28],
+                    "keep_doing": iwlm[29],
+                    "keep_doing_other": iwlm[30],
+                    "future_activities": iwlm[31],
+                    "future_activities_other": iwlm[32],
+                    "residence_type": iwlm[33],
+                    "residence_type_other": iwlm[34],
+                    "anxiety_and_sadness": iwlm[35],
+                    "anxiety_and_sadness_other": iwlm[36],
+                    "areas_of_support": iwlm[37],
+                    "areas_of_support_other": iwlm[38],
+                    "future_care_plan": iwlm[39],
+                    "future_care_plan_other": iwlm[40],
+                }
+
+            # AIサービスを使用して目標を生成
+            ai_service = create_goal_service()
+            goals_data = ai_service.generate_goals(user_data, profile_data, iwlm_data)
+
+            return goals_data
+
+        except Exception as e:
+            print(f"AI目標生成中にエラーが発生しました: {e}")
+            return None
+
+    def save_user_goals_forced(self, user_id, goals_data):
+        """ユーザーの目標を強制保存（重複チェックなし）"""
+        import json
+
+        conn = self.get_connection()
+        cursor = conn.cursor()
+
+        # 目標データをJSON形式で保存
+        long_term_goal = goals_data["long_term_goal"]
+        short_term_goals = json.dumps(goals_data["short_term_goals"], ensure_ascii=False)
 
         cursor.execute(
             "INSERT INTO user_goals (user_id, long_term_goal, short_term_goals) VALUES (?, ?, ?)",

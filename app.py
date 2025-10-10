@@ -370,20 +370,28 @@ def howsitgoing():
 def goals():
     user_id = session["user_id"]
 
+    # 更新後のリダイレクトかどうかチェック
+    updated = request.args.get("updated", False)
+
     # 最新の保存された目標を取得
     latest_goals = db.get_latest_user_goals(user_id)
 
-    # データ変更の確認が必要かチェック
-    data_changed = db.has_data_changed(user_id)
+    # データ変更の確認が必要かチェック（更新後はFalseにする）
+    data_changed = False if updated else db.has_data_changed(user_id)
     needs_update = db.should_update_goals(user_id)
 
     # 目標が存在しないか、90日以上経過している場合は新規生成
     if not latest_goals or needs_update:
-        # 新しい目標を生成
+        # 従来の固定ロジックで目標を生成
         goals_data = db.analyze_user_goals(user_id)
-        # 目標を保存（重複チェック付き）
-        saved_id = db.save_user_goals(user_id, goals_data)
-        is_new_goals = saved_id is not None
+
+        # データ変更があった場合は強制保存、そうでなければ重複チェック付き保存
+        if data_changed:
+            saved_id = db.save_user_goals_forced(user_id, goals_data)
+            is_new_goals = True
+        else:
+            saved_id = db.save_user_goals(user_id, goals_data)
+            is_new_goals = saved_id is not None
     else:
         # 保存された目標を使用
         goals_data = {"long_term_goal": latest_goals[2], "short_term_goals": latest_goals[3]}
@@ -408,17 +416,27 @@ def update_goals():
     """目標を手動で更新"""
     user_id = session["user_id"]
 
-    # 新しい目標を生成
+    # データ変更があったかチェック
+    data_changed = db.has_data_changed(user_id)
+
+    # 従来の固定ロジックで目標を生成
     goals_data = db.analyze_user_goals(user_id)
-    # 目標を保存（重複チェック付き）
-    saved_id = db.save_user_goals(user_id, goals_data)
 
-    if saved_id is not None:
+    # データ変更があった場合は強制保存、そうでなければ重複チェック付き保存
+    if data_changed:
+        saved_id = db.save_user_goals_forced(user_id, goals_data)
         flash("目標を更新しました。")
+        return redirect(url_for("goals", updated=True))
     else:
-        flash("目標に変更がありませんでした。")
+        # 通常の保存（重複チェック付き）
+        saved_id = db.save_user_goals(user_id, goals_data)
 
-    return redirect(url_for("goals"))
+        if saved_id is not None:
+            flash("目標を更新しました。")
+            return redirect(url_for("goals", updated=True))
+        else:
+            flash("目標に変更がありませんでした。")
+            return redirect(url_for("goals"))
 
 
 @app.route("/goals/check-update", methods=["POST"])
