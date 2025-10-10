@@ -60,90 +60,90 @@
          </div>
          <div class="form-group">
             <label for="dailyChores">いつもやっている家事</label>
-            <input type="text" id="dailyChores" name="dailyChores" value="" placeholder="例: 炊事、洗濯、掃除、買い物 など">
+            <input type="text" id="dailyChores" name="dailyChores" value="{{ iwlm[10] if iwlm and iwlm[10] else '' }}" placeholder="例: 炊事、洗濯、掃除、買い物 など">
          </div>
          <div class="form-group">
             <label for="freeTime">自由時間の過ごし方</label>
-            <input type="text" id="freeTime" name="freeTimes" value="" placeholder="例: 散歩、TVを見る、読書 など">
+            <input type="text" id="freeTime" name="freeTimes" value="{{ iwlm[11] if iwlm and iwlm[11] else '' }}" placeholder="例: 散歩、TVを見る、読書 など">
          </div>
          <div class="form-group">
             <label for="peopleMet">普段会ったり連絡する人</label>
-            <input type="text" id="peopleMet" name="peopleMet" value="" placeholder="例: サークルの友人、近所の人 など">
+            <input type="text" id="peopleMet" name="peopleMet" value="{{ iwlm[12] if iwlm and iwlm[12] else '' }}" placeholder="例: サークルの友人、近所の人 など">
          </div>
 
 
          <!-- 生活習慣について -->
          <div class="form-group">
             <label for="toiletStyle">なじんでいるトイレ様式</label>
-            <input type="text" id="toiletStyle" name="toiletStyle" value="" placeholder="例1: 洋式  例2: こだわらない など">
+            <input type="text" id="toiletStyle" name="toiletStyle" value="{{ iwlm[13] if iwlm and iwlm[13] else '' }}" placeholder="例1: 洋式  例2: こだわらない など">
          </div>
          <div class="form-group">
             <label for="bathingHabits">なじんでいるお風呂習慣</label>
-            <input type="text" id="bathingHabits" name="bathingHabits" value="" placeholder="例1: 毎日入浴、ぬるめでゆっくり  例2: 普段はシャワー、月に2度は温泉 など">
+            <input type="text" id="bathingHabits" name="bathingHabits" value="{{ iwlm[14] if iwlm and iwlm[14] else '' }}" placeholder="例1: 毎日入浴、ぬるめでゆっくり  例2: 普段はシャワー、月に2度は温泉 など">
          </div>
          <div class="form-group">
             <label for="groomingHabits">身だしなみの習慣</label>
-            <input type="text" id="groomingHabits" name="groomingHabits" value="" placeholder="例: 毎食後に歯磨き、毎日化粧する など">
+            <input type="text" id="groomingHabits" name="groomingHabits" value="{{ iwlm[15] if iwlm and iwlm[15] else '' }}" placeholder="例: 毎食後に歯磨き、毎日化粧する など">
          </div>
          <div class="form-group">
             <label for="haircutSalon">散髪・美容院</label>
-            <input type="text" id="haircutSalon" name="haircutSalon" value="" placeholder="例1: 10日に1度、散髪  例2: 美容院へ2ヶ月に1回 など">
+            <input type="text" id="haircutSalon" name="haircutSalon" value="{{ iwlm[16] if iwlm and iwlm[16] else '' }}" placeholder="例1: 10日に1度、散髪  例2: 美容院へ2ヶ月に1回 など">
          </div>
 
          <!-- 趣味と嗜好 -->
          <div class="form-group">
             <label for="favoriteColor">好きな色</label>
-            <input type="text" id="favoriteColor" name="favoriteColor" value="" placeholder="例1: 薄めのピンク 例2: 秋の夕暮れの色 など">
+            <input type="text" id="favoriteColor" name="favoriteColor" value="{{ iwlm[17] if iwlm and iwlm[17] else '' }}" placeholder="例1: 薄めのピンク 例2: 秋の夕暮れの色 など">
          </div>
          <div class="form-group">
             <label for="favoriteClothing">好きな服装</label>
-            <input type="text" id="favoriteClothing" name="favoriteClothing" value="" placeholder="例1: 活動的な服装  例2: チュニックとパンツ など">
+            <input type="text" id="favoriteClothing" name="favoriteClothing" value="{{ iwlm[18] if iwlm and iwlm[18] else '' }}" placeholder="例1: 活動的な服装  例2: チュニックとパンツ など">
          </div>
          <div class="form-group">
             <label for="favoriteFootwear">好きな履物</label>
-            <input type="text" id="favoriteFootwear" name="favoriteFootwear" value="" placeholder="例1: ウォーキングシューズ  例2: パンプス など">
+            <input type="text" id="favoriteFootwear" name="favoriteFootwear" value="{{ iwlm[19] if iwlm and iwlm[19] else '' }}" placeholder="例1: ウォーキングシューズ  例2: パンプス など">
          </div>
          <div class="form-group">
             <label for="favoriteMusic">好きな音楽</label>
-            <input type="text" id="favoriteMusic" name="favoriteMusic" value="" placeholder="例1: 青春時代の歌謡曲  例2: J-POP など">
+            <input type="text" id="favoriteMusic" name="favoriteMusic" value="{{ iwlm[20] if iwlm and iwlm[20] else '' }}" placeholder="例1: 青春時代の歌謡曲  例2: J-POP など">
          </div>
          <div class="form-group">
             <label for="favoriteTvRadio">好きなTVやラジオの番組</label>
-            <input type="text" id="favoriteTvRadio" name="favoriteTvRadio" value="" placeholder="例1: NHKの朝ドラ  例2: ラジオ深夜便 など">
+            <input type="text" id="favoriteTvRadio" name="favoriteTvRadio" value="{{ iwlm[21] if iwlm and iwlm[21] else '' }}" placeholder="例1: NHKの朝ドラ  例2: ラジオ深夜便 など">
          </div>
          <div class="form-group">
             <label for="leisureActivities">趣味やレジャー</label>
-            <input type="text" id="leisureActivities" name="leisureActivities" value="" placeholder="例:釣り、編み物、ハイキング など">
+            <input type="text" id="leisureActivities" name="leisureActivities" value="{{ iwlm[22] if iwlm and iwlm[22] else '' }}" placeholder="例:釣り、編み物、ハイキング など">
          </div>
 
          <!-- 私についてその他 -->
          <div class="form-group">
             <label for="favoritePlace">お気に入りの場所</label>
-            <input type="text" id="favoritePlace" name="favoritePlace" value="" placeholder="例1: リビングのソファ 例2: ◯◯公園のベンチ など">
+            <input type="text" id="favoritePlace" name="favoritePlace" value="{{ iwlm[23] if iwlm and iwlm[23] else '' }}" placeholder="例1: リビングのソファ 例2: ◯◯公園のベンチ など">
          </div>
          <div class="form-group">
             <label for="jobStatus">仕事の状況</label>
-            <input type="text" id="jobStatus" name="jobStatus" value="" placeholder="例1: 過去は事務員、現在は無職 例2: 現在、スーパーでパート など">
+            <input type="text" id="jobStatus" name="jobStatus" value="{{ iwlm[24] if iwlm and iwlm[24] else '' }}" placeholder="例1: 過去は事務員、現在は無職 例2: 現在、スーパーでパート など">
          </div>
          <div class="form-group">
             <label for="interests">興味・関心のあること</label>
-            <input type="text" id="interests" name="interests" value="" placeholder="例1: 大リーグの大谷の活躍 例2: 園芸と野菜作り など">
+            <input type="text" id="interests" name="interests" value="{{ iwlm[25] if iwlm and iwlm[25] else '' }}" placeholder="例1: 大リーグの大谷の活躍 例2: 園芸と野菜作り など">
          </div>
          <div class="form-group">
             <label for="strengthsAndWeaknesses">得意なこと苦手なこと</label>
-            <input type="text" id="strengthsAndWeaknesses" name="strengthsAndWeaknesses" value="" placeholder="例: 力仕事が得意、細かい作業が苦手 など">
+            <input type="text" id="strengthsAndWeaknesses" name="strengthsAndWeaknesses" value="{{ iwlm[26] if iwlm and iwlm[26] else '' }}" placeholder="例: 力仕事が得意、細かい作業が苦手 など">
          </div>
          <div class="form-group">
             <label for="characteristics">性格や特徴</label>
-            <input type="text" id="characteristics" name="characteristics" value="" placeholder="例: 明るくておしゃべりが好き 物静かで根気強い など">
+            <input type="text" id="characteristics" name="characteristics" value="{{ iwlm[27] if iwlm and iwlm[27] else '' }}" placeholder="例: 明るくておしゃべりが好き 物静かで根気強い など">
          </div>
          <div class="form-group">
-            <label for="characteristics">私の強み</label>
-            <input type="text" id="smyStrengths" name="characteristics" value="" placeholder="例: 誰とでも仲良くなれる など">
+            <label for="smyStrengths">私の強み</label>
+            <input type="text" id="smyStrengths" name="characteristics" value="{{ iwlm[27] if iwlm and iwlm[27] else '' }}" placeholder="例: 誰とでも仲良くなれる など">
          </div>
          <div class="form-group">
             <label for="others">その他の習慣など</label>
-            <input type="text" id="others" name="others" value="" placeholder="例: 健康のためなるべく歩く など">
+            <input type="text" id="others" name="others" value="{{ iwlm[28] if iwlm and iwlm[28] else '' }}" placeholder="例: 健康のためなるべく歩く など">
          </div>
       </div>
 
@@ -426,7 +426,7 @@
 
       groups.forEach(groupName => {
          const checkbox = document.querySelector(`input[name="${groupName}"][value="その他"]`);
-         const input = document.getElementById(`${groupName.replace(/[A-Z]/g, '_$&').toLowerCase()}_other`);
+         const input = document.getElementById(`${groupName.replace(/([A-Z])/g, '_$1').toLowerCase()}_other`);
 
          if (checkbox && input && input.value.trim() !== '') {
             checkbox.checked = true;

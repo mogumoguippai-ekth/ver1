@@ -1,11 +1,17 @@
+/* ========================================
+   基本レイアウト・共通スタイル
+   ======================================== */
+
+/* 全ページ共通のボディスタイル */
 body {
-    background-color: #FFF;
+    background-color: #FFEBF6;
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
     min-height: 100vh;
 }
 
+/* トップページ（index.html）専用のボディスタイル */
 .index-body {
     background-color: #FFD5EC;
     margin: 0;
@@ -14,11 +20,13 @@ body {
     min-height: 100vh;
 }
 
+/* メインコンテナ（全ページ共通） */
 .main-container {
     display: flex;
     height: 100vh;
 }
 
+/* メインコンテンツエリア（全ページ共通） */
 .main-content {
     flex: 1;
     display: flex;
@@ -28,10 +36,12 @@ body {
     padding: 20px;
 }
 
+/* 見出し要素（全ページ共通） */
 h1 {
     display: none;
 }
 
+/* トップページのキャッチコピー（index.html） */
 .catchcopy {
     font-size: 20px;
     font-weight: bold;
@@ -42,13 +52,18 @@ h1 {
     line-height: 1.4;
 }
 
+/* 画像要素（全ページ共通） */
 img {
     max-width: 100%;
     height: auto;
     max-height: 60vh;
 }
 
-/* ログインエリア */
+/* ========================================
+   ログイン・認証関連スタイル
+   ======================================== */
+
+/* ログインエリア（index.html） */
 .login-area {
     width: 400px;
     background-color: white;
@@ -59,13 +74,14 @@ img {
     justify-content: center;
 }
 
-/* タブコンテナ */
+/* タブコンテナ（index.html） */
 .tab-container {
     display: flex;
     margin-bottom: 30px;
     border-bottom: 1px solid #ddd;
 }
 
+/* タブボタン（index.html） */
 .tab-button {
     flex: 1;
     padding: 15px 20px;
@@ -78,25 +94,29 @@ img {
     transition: all 0.3s ease;
 }
 
+/* アクティブなタブボタン（index.html） */
 .tab-button.active {
     color: #333;
     border-bottom-color: #333;
     font-weight: bold;
 }
 
+/* タブボタンのホバー状態（index.html） */
 .tab-button:hover {
     color: #333;
 }
 
-/* タブコンテンツ */
+/* タブコンテンツ（index.html） */
 .tab-content {
     display: none;
 }
 
+/* アクティブなタブコンテンツ（index.html） */
 .tab-content.active {
     display: block;
 }
 
+/* タブコンテンツの見出し（index.html） */
 .tab-content h3 {
     margin: 0 0 25px 0;
     font-size: 24px;
@@ -104,12 +124,16 @@ img {
     text-align: center;
 }
 
-/* フォーム */
+/* ========================================
+   フォーム関連スタイル
+   ======================================== */
+
+/* フォームグループ（全ページ共通） */
 .form-group {
     margin-bottom: 20px;
 }
 
-/* ラジオボタングループ */
+/* ラジオボタングループ（index.html、user.html、profile.html） */
 .radio-group {
     margin-bottom: 25px;
     padding: 15px;
@@ -120,6 +144,7 @@ img {
     gap: 20px;
 }
 
+/* ラジオボタンラベル（index.html、user.html、profile.html） */
 .radio-label {
     display: flex;
     align-items: center;
@@ -128,17 +153,20 @@ img {
     flex: 1;
 }
 
+/* ラジオボタン入力（index.html、user.html、profile.html） */
 .radio-label input[type="radio"] {
     margin-right: 10px;
     width: auto;
     cursor: pointer;
 }
 
+/* ラジオボタンテキスト（index.html、user.html、profile.html） */
 .radio-text {
     color: #333;
     font-weight: normal;
 }
 
+/* フォームラベル（全ページ共通） */
 .form-group label {
     display: block;
     margin-bottom: 8px;
@@ -146,6 +174,7 @@ img {
     color: #333;
 }
 
+/* フォーム入力フィールド（全ページ共通） */
 .form-group input {
     width: 100%;
     padding: 12px;
@@ -156,12 +185,17 @@ img {
     transition: border-color 0.3s ease;
 }
 
+/* フォーム入力フィールドのフォーカス状態（全ページ共通） */
 .form-group input:focus {
     outline: none;
     border-color: #333;
 }
 
-/* ボタン */
+/* ========================================
+   ボタン関連スタイル
+   ======================================== */
+
+/* ログインボタン（index.html） */
 .login-button {
     width: 100%;
     padding: 15px;
@@ -175,10 +209,12 @@ img {
     transition: background-color 0.3s ease;
 }
 
+/* ログインボタンのホバー状態（index.html） */
 .login-button:hover {
     background-color: #e0457a;
 }
 
+/* 登録ボタン（index.html） */
 .register-button {
     width: 100%;
     padding: 15px;
@@ -192,11 +228,16 @@ img {
     transition: background-color 0.3s ease;
 }
 
+/* 登録ボタンのホバー状態（index.html） */
 .register-button:hover {
     background-color: #2980B9;
 }
 
-/* エラーメッセージ */
+/* ========================================
+   アラート・メッセージ関連スタイル
+   ======================================== */
+
+/* アラート基本スタイル（全ページ共通） */
 .alert {
     padding: 10px 15px;
     margin-bottom: 15px;
@@ -204,24 +245,31 @@ img {
     font-size: 14px;
 }
 
+/* エラーアラート（全ページ共通） */
 .alert-error {
     background-color: #f8d7da;
     color: #721c24;
     border: 1px solid #f5c6cb;
 }
 
+/* 成功アラート（全ページ共通） */
 .alert-success {
     background-color: #d4edda;
     color: #155724;
     border: 1px solid #c3e6cb;
 }
 
-/* ===== ヘッダー ===== */
+/* ========================================
+   ヘッダー・ナビゲーション関連スタイル
+   ======================================== */
+
+/* メインヘッダー（全ページ共通） */
 .main-header {
     background-color: #FFABCE;
     border-bottom: 1px solid #ddd;
 }
 
+/* ヘッダーコンテンツ（全ページ共通） */
 .header-content {
     display: flex;
     align-items: center;
@@ -231,20 +279,24 @@ img {
     margin: 0 auto;
 }
 
+/* ヘッダー左側（全ページ共通） */
 .header-left {
     flex: 0 0 auto;
 }
 
+/* ヘッダーロゴ（全ページ共通） */
 .header-logo {
     height: 40px;
     width: auto;
 }
 
+/* ヘッダー中央（全ページ共通） */
 .header-center {
     flex: 1;
     text-align: center;
 }
 
+/* ページタイトル（全ページ共通） */
 .page-title {
     font-size: 24px;
     font-weight: bold;
@@ -252,26 +304,31 @@ img {
     margin: 0;
 }
 
+/* ヘッダー右側（全ページ共通） */
 .header-right {
     flex: 0 0 auto;
 }
 
+/* ユーザー情報エリア（全ページ共通） */
 .user-info {
     display: flex;
     align-items: center;
     gap: 15px;
 }
 
+/* ユーザーリンク（全ページ共通） */
 .user-link {
     text-decoration: none;
     color: #333;
     font-weight: bold;
 }
 
+/* ユーザーリンクのホバー状態（全ページ共通） */
 .user-link:hover {
     color: #555;
 }
 
+/* ログアウトボタン（全ページ共通） */
 .logout-btn {
     display: inline-block;
     padding: 8px 16px;
@@ -284,36 +341,114 @@ img {
     text-decoration: none !important;
 }
 
+/* ログアウトボタンのホバー状態（全ページ共通） */
 .logout-btn:hover {
     background-color: #a0116b;
 }
 
-/* ナビゲーションタブ */
-.nav-tabs {
+/* ========================================
+   ONE BANKスタイルナビゲーション
+   ======================================== */
+
+/* メインナビゲーション（全ページ共通） */
+.main-nav {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e5e5e5;
+    padding: 0;
+}
+
+/* ナビゲーションリスト（全ページ共通） */
+.nav-list {
     display: flex;
-    background-color: #f8f9fa;
-    border-bottom: 1px solid #ddd;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-width: 1200px;
+    margin: 0 auto;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
 }
 
-.nav-tab {
-    flex: 1;
-    padding: 12px 20px;
-    text-align: center;
+/* ナビゲーションアイテム（全ページ共通） */
+.nav-item {
+    position: relative;
+    margin: 0;
+    padding: 0;
+}
+
+/* ナビゲーションリンク（全ページ共通） */
+.nav-link {
+    display: block;
+    padding: 15px 20px;
+    color: #333333;
     text-decoration: none;
-    color: #333;
-    border-right: 1px solid #ddd;
-    transition: background-color 0.3s ease;
+    font-size: 14px;
+    font-weight: 400;
+    transition: all 0.3s ease;
+    border-bottom: 3px solid transparent;
 }
 
-.nav-tab:last-child {
-    border-right: none;
+/* ナビゲーションリンクのホバー状態（全ページ共通） */
+.nav-link:hover {
+    color: #0066cc;
+    background-color: #f8f9fa;
+    border-bottom-color: #0066cc;
 }
 
-.nav-tab:hover {
-    background-color: #e9ecef;
+/* プルダウンメニュー（全ページ共通） */
+.dropdown {
+    position: relative;
 }
 
-/* ===== メインコンテンツ ===== */
+/* プルダウンメニューコンテンツ（全ページ共通） */
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    min-width: 160px;
+    z-index: 1000;
+    display: none;
+    padding: 8px 0;
+}
+
+/* プルダウンメニューのホバー表示（全ページ共通） */
+.nav-item.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+/* プルダウンアイテム（全ページ共通） */
+.dropdown-item {
+    display: block;
+    padding: 12px 20px;
+    color: #333333;
+    text-decoration: none;
+    font-size: 13px;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+/* プルダウンアイテムの最後の要素（全ページ共通） */
+.dropdown-item:last-child {
+    border-bottom: none;
+}
+
+/* プルダウンアイテムのホバー状態（全ページ共通） */
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+    color: #0066cc;
+    padding-left: 25px;
+}
+
+/* ========================================
+   メインコンテンツ・フッター関連スタイル
+   ======================================== */
+
+/* メインコンテンツエリア（全ページ共通） */
 .main-content {
     min-height: calc(100vh - 140px);
     /* ヘッダーとフッターの高さを除く */
@@ -322,7 +457,7 @@ img {
     margin: 0 auto;
 }
 
-/* ===== フッター ===== */
+/* メインフッター（全ページ共通） */
 .main-footer {
     background-color: #DDDDDD;
     height: 30px;
@@ -333,29 +468,34 @@ img {
     z-index: 1000;
 }
 
+/* フッターコンテンツ（全ページ共通） */
 .footer-content {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100%;
-    gap: 30px;
-    font-size: 12px;
+    gap: 25px;
+    font-size: 11px;
 }
 
+/* フッターセクション（全ページ共通） */
 .footer-section {
     position: relative;
 }
 
+/* フッターメインリンク（全ページ共通） */
 .footer-main-link {
     color: #333;
     text-decoration: none;
     font-weight: bold;
 }
 
+/* フッターメインリンクのホバー状態（全ページ共通） */
 .footer-main-link:hover {
     color: #555;
 }
 
+/* フッターサブリンク（全ページ共通） */
 .footer-sub-links {
     position: absolute;
     bottom: 100%;
@@ -369,23 +509,30 @@ img {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+/* フッターサブリンクのホバー表示（全ページ共通） */
 .footer-section:hover .footer-sub-links {
     display: block;
 }
 
+/* フッターサブリンクアイテム（全ページ共通） */
 .footer-sub-link {
     display: block;
-    padding: 5px 15px;
+    padding: 4px 12px;
     color: #333;
     text-decoration: none;
-    font-size: 11px;
+    font-size: 10px;
 }
 
+/* フッターサブリンクのホバー状態（全ページ共通） */
 .footer-sub-link:hover {
     background-color: #f8f9fa;
 }
 
-/* レスポンシブデザイン */
+/* ========================================
+   レスポンシブデザイン
+   ======================================== */
+
+/* タブレット・スマートフォン用レスポンシブ */
 @media (max-width: 768px) {
     .main-container {
         flex-direction: column;
@@ -395,6 +542,53 @@ img {
         width: 100%;
         box-shadow: none;
         border-top: 1px solid #ddd;
+    }
+
+    /* ナビゲーションのレスポンシブ対応 */
+    .nav-list {
+        flex-wrap: wrap;
+        height: auto;
+        padding: 10px 0;
+    }
+
+    .nav-item {
+        flex: 1 1 50%;
+        min-width: 120px;
+        margin: 2px 0;
+    }
+
+    .nav-link {
+        padding: 12px 15px;
+        font-size: 13px;
+        text-align: center;
+        border-bottom: none;
+    }
+
+    /* プルダウンメニューのレスポンシブ対応 */
+    .dropdown-menu {
+        position: static;
+        display: block;
+        background-color: #f8f9fa;
+        border: none;
+        box-shadow: none;
+        margin-top: 5px;
+        border-radius: 0;
+        padding: 0;
+    }
+
+    .nav-item.dropdown:hover .dropdown-menu {
+        display: block;
+    }
+
+    .dropdown-item {
+        padding: 8px 15px;
+        font-size: 12px;
+        border-bottom: 1px solid #ddd;
+        text-align: center;
+    }
+
+    .dropdown-item:hover {
+        padding-left: 15px;
     }
 
     .main-content {
@@ -424,7 +618,11 @@ img {
     }
 }
 
-/* ===== ユーザー登録フォーム ===== */
+/* ========================================
+   ユーザー登録フォーム関連スタイル
+   ======================================== */
+
+/* ユーザー登録フォームメインコンテナ（user.html、profile.html、iwlm.html） */
 .user-registration {
     max-width: 750px;
     /* 1.5倍に拡大 (500px → 750px) */
@@ -432,6 +630,7 @@ img {
     padding: 20px;
 }
 
+/* ユーザー登録フォームの見出し（user.html、profile.html、iwlm.html） */
 .user-registration h2 {
     text-align: center;
     color: #333;
@@ -440,6 +639,7 @@ img {
     font-weight: bold;
 }
 
+/* ユーザー登録フォームコンテナ（user.html、profile.html、iwlm.html） */
 .registration-form {
     background: white;
     padding: 25px;
@@ -447,11 +647,13 @@ img {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* ユーザー登録フォームのフォームグループ（user.html、profile.html、iwlm.html） */
 .user-registration .form-group {
     margin-bottom: 12px;
     /* 間隔を詰める (18px → 12px) */
 }
 
+/* ユーザー登録フォームのラベル（user.html、profile.html、iwlm.html） */
 .user-registration .form-group label {
     display: block;
     margin-bottom: 2px;
@@ -461,11 +663,13 @@ img {
     font-size: 14px;
 }
 
+/* 必須項目マーク（user.html、profile.html、iwlm.html） */
 .user-registration .form-group label .required {
     color: #e74c3c;
     margin-left: 3px;
 }
 
+/* ユーザー登録フォームの入力フィールド（user.html、profile.html、iwlm.html） */
 .user-registration .form-group input,
 .user-registration .form-group select {
     width: 100%;
@@ -477,6 +681,7 @@ img {
     transition: border-color 0.2s ease;
 }
 
+/* ユーザー登録フォームの入力フィールドのフォーカス状態（user.html、profile.html、iwlm.html） */
 .user-registration .form-group input:focus,
 .user-registration .form-group select:focus {
     outline: none;
@@ -484,6 +689,7 @@ img {
     box-shadow: 0 0 0 2px rgba(255, 81, 146, 0.1);
 }
 
+/* 家族セクション（user.html） */
 .family-section {
     margin-top: 20px;
     padding-top: 20px;
@@ -492,6 +698,7 @@ img {
     position: relative;
 }
 
+/* 家族セクションの区切り線（user.html） */
 .family-section::before {
     content: '';
     position: absolute;
@@ -502,6 +709,7 @@ img {
     background-color: #ddd;
 }
 
+/* 家族セクションの見出し（user.html） */
 .family-section h3 {
     color: #333;
     margin-bottom: 12px;
@@ -510,6 +718,7 @@ img {
     font-weight: 600;
 }
 
+/* フォームアクションエリア（user.html、profile.html、iwlm.html） */
 .form-actions {
     text-align: center;
     margin-top: 25px;
@@ -517,6 +726,7 @@ img {
     border-top: 1px solid #eee;
 }
 
+/* 送信ボタン（user.html、profile.html、iwlm.html） */
 .submit-btn {
     background-color: #FF5192;
     color: white;
@@ -530,10 +740,12 @@ img {
     transition: background-color 0.2s ease;
 }
 
+/* 送信ボタンのホバー状態（user.html、profile.html、iwlm.html） */
 .submit-btn:hover {
     background-color: #e0457a;
 }
 
+/* キャンセルボタン（user.html、profile.html、iwlm.html） */
 .cancel-btn {
     background-color: #6c757d;
     color: white;
@@ -546,21 +758,28 @@ img {
     transition: background-color 0.2s ease;
 }
 
+/* キャンセルボタンのホバー状態（user.html、profile.html、iwlm.html） */
 .cancel-btn:hover {
     background-color: #5a6268;
 }
 
-/* 訂正機能 */
+/* ========================================
+   訂正機能関連スタイル
+   ======================================== */
+
+/* 入力フィールドとボタンの組み合わせ（user.html） */
 .input-with-button {
     display: flex;
     gap: 10px;
     align-items: center;
 }
 
+/* 入力フィールドとボタン組み合わせの入力フィールド（user.html） */
 .input-with-button input {
     flex: 1;
 }
 
+/* 編集ボタン（user.html） */
 .edit-btn {
     padding: 8px 15px;
     background-color: #6c757d;
@@ -572,10 +791,12 @@ img {
     white-space: nowrap;
 }
 
+/* 編集ボタンのホバー状態（user.html） */
 .edit-btn:hover {
     background-color: #5a6268;
 }
 
+/* 編集セクション（user.html） */
 .edit-section {
     margin-top: 10px;
     padding: 10px;
@@ -583,6 +804,7 @@ img {
     border-radius: 4px;
 }
 
+/* 編集セクションのラベル（user.html） */
 .edit-section label {
     color: #495057;
     font-size: 13px;
@@ -614,19 +836,25 @@ img {
     }
 }
 
-/* ===== ダッシュボード ===== */
+/* ========================================
+   ダッシュボード関連スタイル
+   ======================================== */
+
+/* ダッシュボードメインコンテナ（dashboard.html） */
 .dashboard {
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
 }
 
+/* ダッシュボードの見出し（dashboard.html） */
 .dashboard h2 {
     text-align: center;
     color: #333;
     margin-bottom: 20px;
 }
 
+/* ダッシュボードカードグリッド（dashboard.html） */
 .dashboard-cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -634,6 +862,7 @@ img {
     margin-top: 30px;
 }
 
+/* ダッシュボードカード（dashboard.html） */
 .card {
     background: white;
     padding: 30px;
@@ -643,21 +872,25 @@ img {
     transition: transform 0.3s ease;
 }
 
+/* ダッシュボードカードのホバー状態（dashboard.html） */
 .card:hover {
     transform: translateY(-5px);
 }
 
+/* ダッシュボードカードの見出し（dashboard.html） */
 .card h3 {
     color: #333;
     margin-bottom: 15px;
 }
 
+/* ダッシュボードカードの説明文（dashboard.html） */
 .card p {
     color: #666;
     margin-bottom: 20px;
     line-height: 1.6;
 }
 
+/* ダッシュボードカードリンク（dashboard.html） */
 .card-link {
     display: inline-block;
     background-color: #FF5192;
@@ -669,11 +902,16 @@ img {
     transition: background-color 0.3s ease;
 }
 
+/* ダッシュボードカードリンクのホバー状態（dashboard.html） */
 .card-link:hover {
     background-color: #e0457a;
 }
 
-/* ===== 共通ページスタイル ===== */
+/* ========================================
+   共通ページスタイル
+   ======================================== */
+
+/* 各ページのメインコンテナ（profile.html、iwlm.html、diary_calender.html、diary_list.html、howsitgoing.html、iwlm_table.html、profile_table.html） */
 .profile-page,
 .iwlm-page,
 .diary-page,
@@ -686,6 +924,7 @@ img {
     padding: 20px;
 }
 
+/* 各ページの見出し（profile.html、iwlm.html、diary_calender.html、diary_list.html、howsitgoing.html、iwlm_table.html、profile_table.html） */
 .profile-page h2,
 .iwlm-page h2,
 .diary-page h2,
@@ -698,6 +937,7 @@ img {
     margin-bottom: 30px;
 }
 
+/* 情報カード・コンテンツカード（howsitgoing.html） */
 .info-card,
 .content-card {
     background: white;
@@ -707,12 +947,14 @@ img {
     text-align: center;
 }
 
+/* 情報カード・コンテンツカードの見出し（howsitgoing.html） */
 .info-card h3,
 .content-card h3 {
     color: #333;
     margin-bottom: 15px;
 }
 
+/* 情報カード・コンテンツカードの説明文（howsitgoing.html） */
 .info-card p,
 .content-card p {
     color: #666;
@@ -720,6 +962,7 @@ img {
     line-height: 1.6;
 }
 
+/* 情報カード・コンテンツカードリンク（howsitgoing.html） */
 .info-link,
 .content-link {
     display: inline-block;
@@ -732,6 +975,7 @@ img {
     transition: background-color 0.3s ease;
 }
 
+/* 情報カード・コンテンツカードリンクのホバー状態（howsitgoing.html） */
 .info-link:hover,
 .content-link:hover {
     background-color: #2980B9;
@@ -758,13 +1002,16 @@ img {
     }
 }
 
-/* プロフィールのチェックボックス */
-/* チェックボックスのグリッドレイアウト */
+/* ========================================
+   チェックボックス関連スタイル
+   ======================================== */
+
+/* チェックボックスのグリッドレイアウト（profile.html、iwlm.html） */
 .checkbox-grid {
     margin-top: 10px;
 }
 
-/* チェックボックスの行 */
+/* チェックボックスの行（profile.html、iwlm.html） */
 .checkbox-row {
     display: flex;
     gap: 20px;
@@ -772,13 +1019,14 @@ img {
     flex-wrap: wrap;
 }
 
-/* 個々のチェックボックスアイテム */
+/* 個々のチェックボックスアイテム（profile.html、iwlm.html） */
 .checkbox-item {
     display: flex;
     align-items: center;
     white-space: nowrap;
 }
 
+/* チェックボックス入力（profile.html、iwlm.html） */
 .checkbox-item input[type="checkbox"] {
     margin-right: 5px;
     width: 14px;
@@ -786,6 +1034,7 @@ img {
     cursor: pointer;
 }
 
+/* チェックボックスラベル（profile.html、iwlm.html） */
 .checkbox-item label {
     margin-right: 28px;
     font-size: 14px;
@@ -793,13 +1042,18 @@ img {
     white-space: nowrap;
 }
 
-/* プロフィール一覧テーブル */
+/* ========================================
+   プロフィールテーブル関連スタイル
+   ======================================== */
+
+/* プロフィール一覧テーブルページ（profile_table.html） */
 .profile-table-page {
     padding: 20px;
     max-width: 1200px;
     margin: 0 auto;
 }
 
+/* テーブルコンテナ（profile_table.html、iwlm_table.html） */
 .table-container {
     background: white;
     border-radius: 8px;
@@ -808,6 +1062,7 @@ img {
     margin-bottom: 20px;
 }
 
+/* テーブルヘッダー（profile_table.html、iwlm_table.html） */
 .table-header {
     display: flex;
     justify-content: space-between;
@@ -817,12 +1072,14 @@ img {
     border-bottom: 1px solid #dee2e6;
 }
 
+/* テーブル情報（profile_table.html、iwlm_table.html） */
 .table-info p {
     margin: 5px 0;
     font-size: 14px;
     color: #666;
 }
 
+/* 印刷ボタン（profile_table.html、iwlm_table.html、goals.html） */
 .print-btn {
     background: #dc3545;
     color: white;
@@ -833,16 +1090,19 @@ img {
     font-size: 14px;
 }
 
+/* 印刷ボタンのホバー状態（profile_table.html、iwlm_table.html、goals.html） */
 .print-btn:hover {
     background: #c82333;
 }
 
+/* プロフィールテーブル（profile_table.html） */
 .profile-table {
     width: 100%;
     border-collapse: collapse;
     font-size: 14px;
 }
 
+/* プロフィールテーブルのヘッダーセル（profile_table.html） */
 .profile-table th {
     background: #e9ecef;
     padding: 15px;
@@ -851,12 +1111,14 @@ img {
     border-bottom: 2px solid #dee2e6;
 }
 
+/* プロフィールテーブルのデータセル（profile_table.html） */
 .profile-table td {
     padding: 12px 15px;
     border-bottom: 1px solid #dee2e6;
     vertical-align: top;
 }
 
+/* ラベルセル（profile_table.html、iwlm_table.html） */
 .label-cell {
     background: #f8f9fa;
     font-weight: bold;
@@ -864,11 +1126,13 @@ img {
     color: #495057;
 }
 
+/* データセル（profile_table.html、iwlm_table.html） */
 .data-cell {
     width: 70%;
     word-wrap: break-word;
 }
 
+/* アクションボタンエリア（profile_table.html、iwlm_table.html） */
 .action-buttons {
     display: flex;
     justify-content: space-between;
@@ -876,11 +1140,13 @@ img {
     margin-top: 20px;
 }
 
+/* ボタングループ（profile_table.html、iwlm_table.html） */
 .button-group {
     display: flex;
     gap: 10px;
 }
 
+/* 編集・作成・削除・戻るボタン（profile_table.html、iwlm_table.html） */
 .edit-btn,
 .create-btn,
 .delete-btn,
@@ -895,41 +1161,53 @@ img {
     display: inline-block;
 }
 
+/* 編集ボタン（profile_table.html、iwlm_table.html） */
 .edit-btn {
     background: #007bff;
     color: white;
 }
 
+/* 編集ボタンのホバー状態（profile_table.html、iwlm_table.html） */
 .edit-btn:hover {
     background: #0056b3;
 }
 
+/* 作成ボタン（profile_table.html、iwlm_table.html） */
 .create-btn {
     background: #28a745;
     color: white;
 }
 
+/* 作成ボタンのホバー状態（profile_table.html、iwlm_table.html） */
 .create-btn:hover {
     background: #1e7e34;
 }
 
+/* 削除ボタン（profile_table.html、iwlm_table.html） */
 .delete-btn {
     background: #dc3545;
     color: white;
 }
 
+/* 削除ボタンのホバー状態（profile_table.html、iwlm_table.html） */
 .delete-btn:hover {
     background: #c82333;
 }
 
+/* 戻るボタン（profile_table.html、iwlm_table.html） */
 .back-btn {
     background: #6c757d;
     color: white;
 }
 
+/* 戻るボタンのホバー状態（profile_table.html、iwlm_table.html） */
 .back-btn:hover {
     background: #545b62;
 }
+
+/* ========================================
+   印刷用スタイル
+   ======================================== */
 
 /* A4サイズ対応（印刷時） */
 @media print {
@@ -959,7 +1237,11 @@ img {
     }
 }
 
-/* その他入力欄のスタイル */
+/* ========================================
+   「その他」入力フィールド関連スタイル
+   ======================================== */
+
+/* 「その他」入力フィールド（iwlm.html） */
 .other-input {
     margin-top: 10px;
     padding: 10px;
@@ -996,6 +1278,7 @@ img {
     }
 }
 
+/* 「その他」入力フィールドのラベル（iwlm.html） */
 .other-input label {
     display: block;
     font-weight: bold;
@@ -1003,6 +1286,7 @@ img {
     color: #495057;
 }
 
+/* 「その他」入力フィールドの入力欄（iwlm.html） */
 .other-input input[type="text"] {
     width: 100%;
     padding: 8px 12px;
@@ -1012,19 +1296,25 @@ img {
     box-sizing: border-box;
 }
 
+/* 「その他」入力フィールドのフォーカス状態（iwlm.html） */
 .other-input input[type="text"]:focus {
     outline: none;
     border-color: #007bff;
     box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
-/* 日記カレンダーのスタイル */
+/* ========================================
+   日記カレンダー関連スタイル
+   ======================================== */
+
+/* 日記カレンダーページ（diary_calender.html） */
 .diary-calendar-page {
     max-width: 1000px;
     margin: 0 auto;
     padding: 20px;
 }
 
+/* カレンダーコンテナ（diary_calender.html） */
 .calendar-container {
     background: white;
     border-radius: 10px;
@@ -1033,6 +1323,7 @@ img {
     margin-bottom: 20px;
 }
 
+/* カレンダーヘッダー（diary_calender.html） */
 .calendar-header {
     display: flex;
     justify-content: space-between;
@@ -1040,6 +1331,7 @@ img {
     margin-bottom: 20px;
 }
 
+/* 月ナビゲーションボタン（diary_calender.html） */
 .month-nav-btn {
     background: #007bff;
     color: white;
@@ -1050,28 +1342,33 @@ img {
     font-size: 14px;
 }
 
+/* 月ナビゲーションボタンのホバー状態（diary_calender.html） */
 .month-nav-btn:hover {
     background: #0056b3;
 }
 
+/* 現在の月年表示（diary_calender.html） */
 #current-month-year {
     font-size: 24px;
     font-weight: bold;
     margin: 0;
 }
 
+/* カレンダーグリッド（diary_calender.html） */
 .calendar-grid {
     border: 1px solid #ddd;
     border-radius: 8px;
     overflow: hidden;
 }
 
+/* カレンダー曜日ヘッダー（diary_calender.html） */
 .calendar-weekdays {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     background: #e9ecef;
 }
 
+/* 曜日セル（diary_calender.html） */
 .weekday {
     padding: 12px;
     text-align: center;
@@ -1079,15 +1376,18 @@ img {
     border-right: 1px solid #ddd;
 }
 
+/* 曜日セルの最後の要素（diary_calender.html） */
 .weekday:last-child {
     border-right: none;
 }
 
+/* カレンダー日付グリッド（diary_calender.html） */
 .calendar-days {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
 }
 
+/* カレンダーの日付セル（diary_calender.html） */
 .calendar-day {
     min-height: 40px;
     padding: 8px;
@@ -1101,19 +1401,23 @@ img {
     position: relative;
 }
 
+/* カレンダーの日付セルのホバー状態（diary_calender.html） */
 .calendar-day:hover {
     background-color: #f8f9fa;
 }
 
+/* 空の日付セル（diary_calender.html） */
 .calendar-day.empty {
     background-color: #f8f9fa;
     cursor: default;
 }
 
+/* 日記がある日付セル（diary_calender.html） */
 .calendar-day.has-diary {
     background-color: #e7f3ff;
 }
 
+/* 日記マーク（diary_calender.html） */
 .diary-mark {
     color: #007bff;
     font-size: 12px;
@@ -1122,11 +1426,16 @@ img {
     right: 2px;
 }
 
+/* 日付番号（diary_calender.html） */
 .day-number {
     font-weight: bold;
 }
 
-/* モーダルのスタイル */
+/* ========================================
+   モーダル関連スタイル
+   ======================================== */
+
+/* モーダル（diary_calender.html） */
 .modal {
     position: fixed;
     z-index: 1000;
@@ -1137,6 +1446,7 @@ img {
     background-color: rgba(0, 0, 0, 0.5);
 }
 
+/* モーダルコンテンツ（diary_calender.html） */
 .modal-content {
     background-color: white;
     margin: 5% auto;
@@ -1148,6 +1458,7 @@ img {
     overflow-y: auto;
 }
 
+/* モーダルヘッダー（diary_calender.html） */
 .modal-header {
     display: flex;
     justify-content: space-between;
@@ -1156,10 +1467,12 @@ img {
     border-bottom: 1px solid #ddd;
 }
 
+/* モーダルヘッダーの見出し（diary_calender.html） */
 .modal-header h3 {
     margin: 0;
 }
 
+/* モーダル閉じるボタン（diary_calender.html） */
 .close {
     color: #aaa;
     font-size: 28px;
@@ -1167,14 +1480,17 @@ img {
     cursor: pointer;
 }
 
+/* モーダル閉じるボタンのホバー状態（diary_calender.html） */
 .close:hover {
     color: #000;
 }
 
+/* モーダルボディ（diary_calender.html） */
 .modal-body {
     padding: 20px;
 }
 
+/* 文字数カウント（diary_calender.html） */
 .char-count {
     text-align: right;
     font-size: 12px;
@@ -1182,11 +1498,13 @@ img {
     margin-top: 5px;
 }
 
+/* 写真プレビュー画像（diary_calender.html） */
 .photo-preview img {
     margin-top: 10px;
     border-radius: 5px;
 }
 
+/* 既存写真表示（diary_calender.html） */
 .existing-photo {
     margin-top: 15px;
     padding: 10px;
@@ -1194,18 +1512,21 @@ img {
     border-radius: 5px;
 }
 
+/* 既存写真画像（diary_calender.html） */
 .existing-photo img {
     max-width: 200px;
     max-height: 150px;
     border-radius: 5px;
 }
 
+/* モーダルアクションエリア（diary_calender.html） */
 .modal-actions {
     display: flex;
     gap: 10px;
     margin-top: 20px;
 }
 
+/* モーダルアクションボタン（diary_calender.html） */
 .save-btn,
 .delete-btn,
 .cancel-btn {
@@ -1216,24 +1537,29 @@ img {
     font-size: 14px;
 }
 
+/* 保存ボタン（diary_calender.html） */
 .save-btn {
     background: #28a745;
     color: white;
 }
 
+/* 保存ボタンのホバー状態（diary_calender.html） */
 .save-btn:hover {
     background: #218838;
 }
 
+/* 削除ボタン（diary_calender.html） */
 .delete-btn {
     background: #dc3545;
     color: white;
 }
 
+/* 削除ボタンのホバー状態（diary_calender.html） */
 .delete-btn:hover {
     background: #c82333;
 }
 
+/* キャンセルボタン（diary_calender.html） */
 .cancel-btn {
     background: #6c757d;
     color: white;
@@ -1268,17 +1594,23 @@ img {
     color: white;
 }
 
-/* 日記一覧のスタイル */
+/* ========================================
+   日記リスト関連スタイル
+   ======================================== */
+
+/* 日記一覧ページ（diary_list.html） */
 .diary-list-page {
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
 }
 
+/* 日記リストコンテナ（diary_list.html） */
 .diary-list-container {
     margin-bottom: 30px;
 }
 
+/* 日記エントリー（diary_list.html） */
 .diary-entry {
     background: white;
     border-radius: 10px;
@@ -1289,45 +1621,53 @@ img {
     gap: 20px;
 }
 
+/* 日記ヘッダー（diary_list.html） */
 .diary-header {
     border-bottom: 1px solid #eee;
     padding-bottom: 10px;
     margin-bottom: 15px;
 }
 
+/* 日記日付（diary_list.html） */
 .diary-date {
     color: #007bff;
     font-size: 18px;
     margin: 0 0 5px 0;
 }
 
+/* 日記タイトル（diary_list.html） */
 .diary-title {
     color: #333;
     font-size: 16px;
     margin: 0;
 }
 
+/* 日記コンテンツ（diary_list.html） */
 .diary-content {
     flex: 1;
     margin-bottom: 15px;
 }
 
+/* 日記テキスト（diary_list.html） */
 .diary-text {
     margin-bottom: 15px;
 }
 
+/* 日記テキストの段落（diary_list.html） */
 .diary-text p {
     margin: 0;
     line-height: 1.6;
     color: #555;
 }
 
+/* 日記写真エリア（diary_list.html） */
 .diary-photo {
     flex-shrink: 0;
     width: 200px;
     text-align: center;
 }
 
+/* サムネイル画像（diary_list.html） */
 .thumbnail {
     width: 100%;
     max-width: 200px;
@@ -1338,44 +1678,55 @@ img {
     transition: transform 0.2s;
 }
 
+/* サムネイル画像のホバー状態（diary_list.html） */
 .thumbnail:hover {
     transform: scale(1.05);
 }
 
+/* 日記フッター（diary_list.html） */
 .diary-footer {
     border-top: 1px solid #eee;
     padding-top: 10px;
     flex-basis: 100%;
 }
 
+/* 日記メタ情報（diary_list.html） */
 .diary-meta {
     color: #666;
     font-size: 12px;
 }
 
+/* 日記なし表示（diary_list.html） */
 .no-diaries {
     text-align: center;
     padding: 40px;
     color: #666;
 }
 
+/* リンクボタン（diary_list.html） */
 .link-btn {
     color: #007bff;
     text-decoration: none;
     font-weight: bold;
 }
 
+/* リンクボタンのホバー状態（diary_list.html） */
 .link-btn:hover {
     text-decoration: underline;
 }
 
+/* 日記アクションエリア（diary_list.html） */
 .diary-actions {
     display: flex;
     gap: 15px;
     justify-content: center;
 }
 
-/* 画像モーダルのスタイル */
+/* ========================================
+   画像モーダル関連スタイル
+   ======================================== */
+
+/* 画像モーダルコンテンツ（diary_list.html） */
 .image-modal-content {
     max-width: 90%;
     max-height: 90%;
@@ -1388,13 +1739,18 @@ img {
     object-fit: contain;
 }
 
-/* 目標提案ページのスタイル */
+/* ========================================
+   目標提案関連スタイル
+   ======================================== */
+
+/* 目標提案ページ（goals.html） */
 .goals-page {
     max-width: 900px;
     margin: 0 auto;
     padding: 20px;
 }
 
+/* 目標コンテナ（goals.html） */
 .goals-container {
     background: white;
     border-radius: 15px;
@@ -1403,6 +1759,7 @@ img {
     margin-bottom: 20px;
 }
 
+/* 目標セクション（goals.html） */
 .goal-section {
     margin-bottom: 40px;
     padding: 25px;
@@ -1411,21 +1768,25 @@ img {
     border-left: 5px solid #007bff;
 }
 
+/* 長期目標セクション（goals.html） */
 .long-term-goal {
     background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
     border-left-color: #2196f3;
 }
 
+/* 短期目標セクション（goals.html） */
 .short-term-goals {
     background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
     border-left-color: #9c27b0;
 }
 
+/* 目標ヘッダー（goals.html） */
 .goal-header {
     margin-bottom: 20px;
     text-align: center;
 }
 
+/* 目標ヘッダーの見出し（goals.html） */
 .goal-header h3 {
     color: #2c3e50;
     font-size: 24px;
@@ -1433,12 +1794,14 @@ img {
     font-weight: bold;
 }
 
+/* 目標期間表示（goals.html） */
 .goal-period {
     color: #6c757d;
     font-size: 14px;
     font-style: italic;
 }
 
+/* 目標コンテンツ（goals.html） */
 .goal-content {
     background: white;
     padding: 20px;
@@ -1446,6 +1809,7 @@ img {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
+/* 目標テキスト（goals.html） */
 .goal-text {
     font-size: 18px;
     line-height: 1.6;
@@ -1457,18 +1821,21 @@ img {
     border-left: 4px solid #007bff;
 }
 
+/* 目標説明（goals.html） */
 .goal-explanation {
     font-size: 14px;
     color: #6c757d;
     line-height: 1.5;
 }
 
+/* 短期目標リスト（goals.html） */
 .short-goals-list {
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
 
+/* 短期目標アイテム（goals.html） */
 .short-goal-item {
     display: flex;
     gap: 20px;
@@ -1479,6 +1846,7 @@ img {
     border-left: 4px solid #9c27b0;
 }
 
+/* 目標番号（goals.html） */
 .goal-number {
     flex-shrink: 0;
     width: 40px;
@@ -1493,10 +1861,12 @@ img {
     font-size: 18px;
 }
 
+/* 目標詳細（goals.html） */
 .goal-details {
     flex: 1;
 }
 
+/* 目標タイトル（goals.html） */
 .goal-title {
     color: #2c3e50;
     font-size: 18px;
@@ -1504,6 +1874,7 @@ img {
     font-weight: bold;
 }
 
+/* 目標説明（goals.html） */
 .goal-description {
     font-size: 16px;
     line-height: 1.5;
@@ -1511,6 +1882,7 @@ img {
     margin-bottom: 15px;
 }
 
+/* 目標理由（goals.html） */
 .goal-reason {
     font-size: 14px;
     line-height: 1.4;
@@ -1521,16 +1893,19 @@ img {
     border-left: 3px solid #9c27b0;
 }
 
+/* 分析セクション（goals.html） */
 .analysis-section {
     background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
     border-left-color: #ff9800;
     margin-top: 30px;
 }
 
+/* 分析ヘッダーの見出し（goals.html） */
 .analysis-header h3 {
     color: #e65100;
 }
 
+/* 分析コンテンツ（goals.html） */
 .analysis-content {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1538,6 +1913,7 @@ img {
     margin-top: 20px;
 }
 
+/* 分析アイテム（goals.html） */
 .analysis-item {
     background: white;
     padding: 20px;
@@ -1545,6 +1921,7 @@ img {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
+/* 分析アイテムの見出し（goals.html） */
 .analysis-item h4 {
     color: #2c3e50;
     font-size: 16px;
@@ -1552,11 +1929,13 @@ img {
     font-weight: bold;
 }
 
+/* 分析アイテムのリスト（goals.html） */
 .analysis-item ul {
     margin: 0;
     padding-left: 20px;
 }
 
+/* 分析アイテムのリスト項目（goals.html） */
 .analysis-item li {
     font-size: 14px;
     line-height: 1.5;
@@ -1564,6 +1943,7 @@ img {
     margin-bottom: 8px;
 }
 
+/* 目標アクションエリア（goals.html） */
 .goals-actions {
     display: flex;
     gap: 15px;
@@ -1574,6 +1954,7 @@ img {
     border-top: 1px solid #dee2e6;
 }
 
+/* 目標アクションボタン（goals.html） */
 .print-btn,
 .profile-btn,
 .iwlm-btn,
@@ -1592,83 +1973,101 @@ img {
     transition: all 0.3s ease;
 }
 
+/* 印刷ボタン（goals.html） */
 .print-btn {
     background: #28a745;
     color: white;
 }
 
+/* 印刷ボタンのホバー状態（goals.html） */
 .print-btn:hover {
     background: #218838;
     transform: translateY(-2px);
 }
 
+/* プロフィールボタン（goals.html） */
 .profile-btn {
     background: #007bff;
     color: white;
 }
 
+/* プロフィールボタンのホバー状態（goals.html） */
 .profile-btn:hover {
     background: #0056b3;
     color: white;
     transform: translateY(-2px);
 }
 
+/* IWLMボタン（goals.html） */
 .iwlm-btn {
     background: #17a2b8;
     color: white;
 }
 
+/* IWLMボタンのホバー状態（goals.html） */
 .iwlm-btn:hover {
     background: #138496;
     color: white;
     transform: translateY(-2px);
 }
 
+/* 戻るボタン（goals.html） */
 .back-btn {
     background: #6c757d;
     color: white;
 }
 
+/* 戻るボタンのホバー状態（goals.html） */
 .back-btn:hover {
     background: #5a6268;
     color: white;
     transform: translateY(-2px);
 }
 
+/* 更新ボタン（goals.html） */
 .update-btn {
     background: #fd7e14;
     color: white;
 }
 
+/* 更新ボタンのホバー状態（goals.html） */
 .update-btn:hover {
     background: #e55a00;
     color: white;
     transform: translateY(-2px);
 }
 
+/* 履歴ボタン（goals.html） */
 .history-btn {
     background: #6f42c1;
     color: white;
 }
 
+/* 履歴ボタンのホバー状態（goals.html） */
 .history-btn:hover {
     background: #5a2d91;
     color: white;
     transform: translateY(-2px);
 }
 
+/* 現在の目標ボタン（goals.html） */
 .current-goals-btn {
     background: #20c997;
     color: white;
 }
 
+/* 現在の目標ボタンのホバー状態（goals.html） */
 .current-goals-btn:hover {
     background: #1aa179;
     color: white;
     transform: translateY(-2px);
 }
 
-/* レスポンシブデザイン */
+/* ========================================
+   目標関連レスポンシブデザイン
+   ======================================== */
+
+/* 目標関連のレスポンシブデザイン */
 @media (max-width: 768px) {
     .goals-page {
         padding: 10px;
@@ -1720,13 +2119,18 @@ img {
     }
 }
 
-/* 目標履歴ページのスタイル */
+/* ========================================
+   目標履歴ページ関連スタイル
+   ======================================== */
+
+/* 目標履歴ページ（goals_history.html） */
 .goals-history-page {
     max-width: 900px;
     margin: 0 auto;
     padding: 20px;
 }
 
+/* 履歴情報（goals_history.html） */
 .history-info {
     background: #e3f2fd;
     padding: 15px;
@@ -1735,6 +2139,7 @@ img {
     border-left: 4px solid #2196f3;
 }
 
+/* 履歴アイテム（goals_history.html） */
 .history-item {
     background: white;
     border-radius: 10px;
@@ -1744,6 +2149,7 @@ img {
     border-left: 5px solid #6f42c1;
 }
 
+/* 履歴ヘッダー（goals_history.html） */
 .history-header {
     display: flex;
     justify-content: space-between;
@@ -1753,22 +2159,26 @@ img {
     border-bottom: 1px solid #eee;
 }
 
+/* 履歴ヘッダーの見出し（goals_history.html） */
 .history-header h3 {
     color: #6f42c1;
     margin: 0;
 }
 
+/* 履歴日付（goals_history.html） */
 .history-date {
     color: #666;
     font-size: 14px;
 }
 
+/* 履歴コンテンツ（goals_history.html） */
 .history-content {
     background: #f8f9fa;
     padding: 15px;
     border-radius: 8px;
 }
 
+/* 目標情報ヘッダー（goals.html） */
 .goals-info-header {
     background: linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%);
     padding: 15px;
@@ -1777,10 +2187,12 @@ img {
     border-left: 4px solid #28a745;
 }
 
+/* 新規目標バッジ（goals.html） */
 .new-goals-badge {
     margin-bottom: 10px;
 }
 
+/* バッジ（goals.html） */
 .badge {
     background: #28a745;
     color: white;
@@ -1790,21 +2202,25 @@ img {
     font-weight: bold;
 }
 
+/* 目標日付情報（goals.html） */
 .goals-date-info {
     margin-bottom: 10px;
 }
 
+/* 目標更新情報（goals.html） */
 .goals-update-info {
     font-size: 14px;
     color: #666;
 }
 
+/* 履歴なし表示（goals_history.html） */
 .no-history {
     text-align: center;
     padding: 40px;
     color: #666;
 }
 
+/* 履歴アクションエリア（goals_history.html） */
 .history-actions {
     display: flex;
     gap: 15px;

@@ -432,7 +432,7 @@ def check_goals_update():
         return jsonify(
             {
                 "should_update": True,
-                "message": "プロフィールまたは暮らしの情報が更新されました。目標を更新しますか？",
+                "message": "私について または 私の暮らしの情報が更新されました。目標を更新しますか？",
             }
         )
     else:
