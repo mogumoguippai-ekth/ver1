@@ -8,7 +8,7 @@
 
 {% block content %}
 <div class="dashboard">
-<!--    <h2>ダッシュボード</h2> -->
+    <!--    <h2>ダッシュボード</h2> -->
     <p>ようこそ、{{ session.get('nickname', 'ゲスト') }}さん！</p>
 
     <div class="dashboard-cards">
@@ -28,6 +28,12 @@
             <h3>ダイアリー</h3>
             <p>日々の記録を残しましょう。</p>
             <a href="{{ url_for('diary_calendar') }}" class="card-link">ダイアリー を見る</a>
+        </div>
+
+        <div class="card">
+            <h3>目標提案</h3>
+            <p>あなたのデータを分析して、3年後の目標と短期目標を提案します。</p>
+            <a href="{{ url_for('goals') }}" class="card-link">目標提案 を見る</a>
         </div>
     </div>
 </div>

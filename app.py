@@ -365,6 +365,18 @@ def howsitgoing():
     return render_template("howsitgoing.html")
 
 
+@app.route("/goals")
+@login_required
+def goals():
+    # ユーザーの目標を分析して提案
+    goals_data = db.analyze_user_goals(session["user_id"])
+
+    # ユーザー情報も取得（表示用）
+    user_data = db.get_user_by_id(session["user_id"])
+
+    return render_template("goals.html", goals=goals_data, user=user_data)
+
+
 # 日記関連のAPIルート
 @app.route("/api/diary/<date>")
 @login_required

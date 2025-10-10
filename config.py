@@ -480,6 +480,141 @@ class Database:
         conn.commit()
         conn.close()
 
+    def analyze_user_goals(self, user_id):
+        """ユーザーのプロフィールとIWLMデータを分析して目標を提案"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+
+        # ユーザー情報を取得
+        cursor.execute("SELECT * FROM users WHERE user_id = ?", (user_id,))
+        user_data = cursor.fetchone()
+
+        # プロフィール情報を取得
+        cursor.execute("SELECT * FROM profiles WHERE user_id = ?", (user_id,))
+        profile_data = cursor.fetchone()
+
+        # IWLM情報を取得
+        cursor.execute("SELECT * FROM iwlm WHERE user_id = ?", (user_id,))
+        iwlm_data = cursor.fetchone()
+
+        conn.close()
+
+        # 分析結果に基づいて目標を生成
+        goals = self.generate_goals(user_data, profile_data, iwlm_data)
+        return goals
+
+    def generate_goals(self, user_data, profile_data, iwlm_data):
+        """データに基づいて個人化された目標を生成"""
+        long_term_goal = self.generate_long_term_goal(user_data, profile_data, iwlm_data)
+        short_term_goals = self.generate_short_term_goals(user_data, profile_data, iwlm_data)
+
+        return {"long_term_goal": long_term_goal, "short_term_goals": short_term_goals}
+
+    def generate_long_term_goal(self, user_data, profile_data, iwlm_data):
+        """長期目標（3年後）を生成"""
+        base_goals = [
+            "趣味と地域活動を通じて、充実した社会的なつながりを築き、心身ともに活力に満ちた毎日を送る",
+            "健康で安定した生活リズムを維持しながら、新しい挑戦と学習を通じて成長し続ける",
+            "家族や友人との関係を深め、地域社会に貢献しながら、自分らしい充実した人生を歩む",
+        ]
+
+        # 年齢に基づく調整
+        if user_data and user_data[9]:  # birth_date
+            from datetime import datetime, date
+
+            try:
+                birth_date = datetime.strptime(user_data[9], "%Y-%m-%d").date()
+                today = date.today()
+                age = (
+                    today.year
+                    - birth_date.year
+                    - ((today.month, today.day) < (birth_date.month, birth_date.day))
+                )
+
+                if age >= 60:
+                    base_goals[0] = "健康管理を最優先に、趣味と地域活動を通じて充実したセカンドライフを送る"
+                elif age < 30:
+                    base_goals[0] = (
+                        "キャリア形成と人間関係構築を両立させ、将来への基盤となる充実した生活を築く"
+                    )
+            except:
+                pass
+
+        # IWLMデータに基づく調整
+        if iwlm_data:
+            # 健康関連の関心が高い場合
+            if any(keyword in str(iwlm_data).lower() for keyword in ["運動", "健康", "体力", "ウォーキング"]):
+                base_goals[0] = "健康習慣を基盤として、趣味と地域活動を通じて充実した社会的なつながりを築く"
+
+            # 趣味や創作活動への関心が高い場合
+            if any(keyword in str(iwlm_data).lower() for keyword in ["趣味", "創作", "芸術", "音楽", "写真"]):
+                base_goals[0] = "創作活動と地域活動を通じて、自己表現と社会貢献を両立させた充実した生活を送る"
+
+        return base_goals[0]
+
+    def generate_short_term_goals(self, user_data, profile_data, iwlm_data):
+        """短期目標（1年以内）を3つ生成"""
+        goals = []
+
+        # 基本の短期目標
+        base_short_goals = [
+            {
+                "title": "新しい趣味の探求と実践",
+                "description": "1年以内に、地域のカルチャースクールやオンラインコミュニティを活用して、興味のある趣味を一つ見つけて、半年間継続する。",
+                "reason": "新しい趣味に挑戦することで、気分転換になり、同じ趣味を持つ人との新たな出会いにつながります。",
+            },
+            {
+                "title": "健康習慣の確立",
+                "description": "週に3日以上、30分間のウォーキングやストレッチを行う習慣を身につける。",
+                "reason": "適度な運動は、体力維持や気分向上に効果的であり、いきいきと過ごすための土台となります。",
+            },
+            {
+                "title": "地域コミュニティとの接点作り",
+                "description": "今後1年間で、地域のイベント（例：お祭り、マルシェ、ボランティア活動）に3回以上参加する。",
+                "reason": "地域活動に参加することで、地域社会への貢献を実感し、新たな交流の機会が生まれます。",
+            },
+        ]
+
+        # IWLMデータに基づく個人化
+        if iwlm_data:
+            # 食事関連のデータがある場合
+            if iwlm_data[2] or iwlm_data[3] or iwlm_data[4] or iwlm_data[5]:  # meal関連
+                base_short_goals[1] = {
+                    "title": "食生活の改善と健康習慣の確立",
+                    "description": "現在の食事パターンを活かしながら、週に3日以上、30分間の軽い運動習慣を身につける。",
+                    "reason": "適切な食事と運動の組み合わせにより、より効果的な健康維持が期待できます。",
+                }
+
+            # 趣味や嗜好のデータがある場合
+            if iwlm_data[16] or iwlm_data[17] or iwlm_data[18] or iwlm_data[19]:  # favorite関連
+                favorite_activities = []
+                if iwlm_data[16]:  # favorite_color
+                    favorite_activities.append("色彩")
+                if iwlm_data[17]:  # favorite_clothing
+                    favorite_activities.append("ファッション")
+                if iwlm_data[18]:  # favorite_footwear
+                    favorite_activities.append("装い")
+                if iwlm_data[19]:  # favorite_music
+                    favorite_activities.append("音楽")
+
+                if favorite_activities:
+                    activity_text = "・".join(favorite_activities)
+                    base_short_goals[0] = {
+                        "title": f"{activity_text}に関連した趣味の探求",
+                        "description": f"現在の好み（{activity_text}）を活かして、関連する新しい趣味や活動を見つけて半年間継続する。",
+                        "reason": "既存の興味を発展させることで、より深い楽しみと新しい出会いが期待できます。",
+                    }
+
+            # 生活リズムのデータがある場合
+            if iwlm_data[8] or iwlm_data[9]:  # wakeup_time, bedtime
+                base_short_goals[1] = {
+                    "title": "生活リズムの最適化と健康習慣の確立",
+                    "description": "現在の生活リズムを維持しながら、週に3日以上、30分間の軽い運動を組み込む。",
+                    "reason": "既存の生活パターンに運動を組み込むことで、無理なく健康習慣を確立できます。",
+                }
+
+        return base_short_goals
+
 
 # データベースインスタンス
 db = Database()

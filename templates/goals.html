@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block title %}目標提案 - 私の望む暮らし{% endblock %}
+
+{% block page_title %}目標提案{% endblock %}
+
+{% block nickname %}{{ session.get('nickname', 'ゲスト') }}{% endblock %}
+
+{% block content %}
+<div class="goals-page">
+    <h2>あなたの目標提案</h2>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="alert alert-success">
+        {{ messages[0] }}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <div class="goals-container">
+        <!-- 長期目標セクション -->
+        <div class="goal-section long-term-goal">
+            <div class="goal-header">
+                <h3>🎯 長期目標（3年後）</h3>
+                <div class="goal-period">3年後に向けた目標</div>
+            </div>
+            <div class="goal-content">
+                <div class="goal-text">
+                    {{ goals.long_term_goal }}
+                </div>
+                <div class="goal-explanation">
+                    <p>この目標は、あなたのプロフィール情報と「私の望む暮らし」の回答内容を分析して提案しています。3年後の充実した生活に向けて、具体的な行動計画を立てていきましょう。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 短期目標セクション -->
+        <div class="goal-section short-term-goals">
+            <div class="goal-header">
+                <h3>📋 短期目標（1年以内）</h3>
+                <div class="goal-period">長期目標達成のための具体的なステップ</div>
+            </div>
+
+            <div class="short-goals-list">
+                {% for goal in goals.short_term_goals %}
+                <div class="short-goal-item">
+                    <div class="goal-number">{{ loop.index }}</div>
+                    <div class="goal-details">
+                        <h4 class="goal-title">{{ goal.title }}</h4>
+                        <div class="goal-description">
+                            {{ goal.description }}
+                        </div>
+                        <div class="goal-reason">
+                            <strong>理由：</strong>{{ goal.reason }}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- 分析情報セクション -->
+        <div class="analysis-section">
+            <div class="analysis-header">
+                <h3>📊 分析に基づく提案理由</h3>
+            </div>
+            <div class="analysis-content">
+                <div class="analysis-item">
+                    <h4>プロフィール情報から</h4>
+                    <ul>
+                        <li>基本情報（年齢、性別、家族構成など）を考慮した目標設定</li>
+                        <li>生活環境や家族関係に配慮した提案</li>
+                    </ul>
+                </div>
+                <div class="analysis-item">
+                    <h4>「私の望む暮らし」から</h4>
+                    <ul>
+                        <li>食事パターンや生活リズムに基づく健康習慣の提案</li>
+                        <li>趣味や嗜好を活かした活動の提案</li>
+                        <li>将来への希望や不安を考慮した目標設定</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- アクションボタン -->
+        <div class="goals-actions">
+            <button onclick="printGoals()" class="print-btn">目標を印刷</button>
+            <a href="{{ url_for('profile_table') }}" class="profile-btn">私について を確認</a>
+            <a href="{{ url_for('iwlm_table') }}" class="iwlm-btn">私の暮らし を確認</a>
+            <a href="{{ url_for('dashboard') }}" class="back-btn">HOMEに戻る</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function printGoals() {
+        // 印刷用のスタイルを適用
+        const printStyles = `
+        <style>
+            @media print {
+                .goals-actions, .goal-period, .goal-explanation, .analysis-section {
+                    display: none;
+                }
+                .goals-page {
+                    max-width: none;
+                    margin: 0;
+                    padding: 20px;
+                }
+                .goal-section {
+                    margin-bottom: 30px;
+                    page-break-inside: avoid;
+                }
+                .short-goal-item {
+                    margin-bottom: 20px;
+                    page-break-inside: avoid;
+                }
+                body {
+                    font-size: 12pt;
+                    line-height: 1.4;
+                }
+            }
+        </style>
+    `;
+
+        // 印刷用ウィンドウを開く
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+        <html>
+            <head>
+                <title>私の目標提案</title>
+                ${printStyles}
+            </head>
+            <body>
+                <h1>私の目標提案</h1>
+                <div class="goals-container">
+                    <div class="goal-section long-term-goal">
+                        <div class="goal-header">
+                            <h3>🎯 長期目標（3年後）</h3>
+                        </div>
+                        <div class="goal-content">
+                            <div class="goal-text">
+                                {{ goals.long_term_goal }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="goal-section short-term-goals">
+                        <div class="goal-header">
+                            <h3>📋 短期目標（1年以内）</h3>
+                        </div>
+                        <div class="short-goals-list">
+                            {% for goal in goals.short_term_goals %}
+                            <div class="short-goal-item">
+                                <div class="goal-number">{{ loop.index }}</div>
+                                <div class="goal-details">
+                                    <h4 class="goal-title">{{ goal.title }}</h4>
+                                    <div class="goal-description">
+                                        {{ goal.description }}
+                                    </div>
+                                    <div class="goal-reason">
+                                        <strong>理由：</strong>{{ goal.reason }}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </body>
+        </html>
+    `);
+        printWindow.document.close();
+        printWindow.print();
+    }
+</script>
+{% endblock %}
