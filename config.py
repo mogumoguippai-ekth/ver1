@@ -695,7 +695,7 @@ class Database:
         return None
 
     def should_update_goals(self, user_id):
-        """目標の更新が必要かどうかを判定（30日間隔）"""
+        """目標の更新が必要かどうかを判定（90日間隔）"""
         import datetime
 
         conn = self.get_connection()
@@ -715,7 +715,89 @@ class Database:
         last_created = datetime.datetime.strptime(result[0], "%Y-%m-%d %H:%M:%S")
         days_diff = (datetime.datetime.now() - last_created).days
 
-        return days_diff >= 30  # 30日以上経過している場合は更新
+        return days_diff >= 90  # 90日以上経過している場合は更新
+
+    def has_data_changed(self, user_id):
+        """ユーザーデータに変更があるかどうかを判定"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+
+        # 最新の目標作成日を取得
+        cursor.execute(
+            "SELECT created_at FROM user_goals WHERE user_id = ? ORDER BY created_at DESC LIMIT 1", (user_id,)
+        )
+        goals_result = cursor.fetchone()
+
+        # ユーザー情報の最終更新日を取得
+        cursor.execute("SELECT updated_at FROM users WHERE user_id = ?", (user_id,))
+        user_result = cursor.fetchone()
+
+        # プロフィール情報の最終更新日を取得
+        cursor.execute("SELECT updated_at FROM profiles WHERE user_id = ?", (user_id,))
+        profile_result = cursor.fetchone()
+
+        # IWLM情報の最終更新日を取得
+        cursor.execute("SELECT updated_at FROM iwlm WHERE user_id = ?", (user_id,))
+        iwlm_result = cursor.fetchone()
+
+        conn.close()
+
+        if not goals_result:
+            return False  # 目標が存在しない場合は変更判定なし
+
+        goals_created = datetime.datetime.strptime(goals_result[0], "%Y-%m-%d %H:%M:%S")
+
+        # ユーザー情報の更新日をチェック
+        if user_result and user_result[0]:
+            user_updated = datetime.datetime.strptime(user_result[0], "%Y-%m-%d %H:%M:%S")
+            if user_updated > goals_created:
+                return True
+
+        # プロフィール情報の更新日をチェック
+        if profile_result and profile_result[0]:
+            profile_updated = datetime.datetime.strptime(profile_result[0], "%Y-%m-%d %H:%M:%S")
+            if profile_updated > goals_created:
+                return True
+
+        # IWLM情報の更新日をチェック
+        if iwlm_result and iwlm_result[0]:
+            iwlm_updated = datetime.datetime.strptime(iwlm_result[0], "%Y-%m-%d %H:%M:%S")
+            if iwlm_updated > goals_created:
+                return True
+
+        return False
+
+    def save_user_goals(self, user_id, goals_data):
+        """ユーザーの目標を保存（重複チェック付き）"""
+        import json
+
+        conn = self.get_connection()
+        cursor = conn.cursor()
+
+        # 目標データをJSON形式で保存
+        long_term_goal = goals_data["long_term_goal"]
+        short_term_goals = json.dumps(goals_data["short_term_goals"], ensure_ascii=False)
+
+        # 最新の目標と比較して重複チェック
+        cursor.execute(
+            "SELECT long_term_goal, short_term_goals FROM user_goals WHERE user_id = ? ORDER BY created_at DESC LIMIT 1",
+            (user_id,),
+        )
+        latest_goal = cursor.fetchone()
+
+        # 同じ内容の場合は保存しない
+        if latest_goal and latest_goal[0] == long_term_goal and latest_goal[1] == short_term_goals:
+            conn.close()
+            return None  # 重複のため保存しない
+
+        cursor.execute(
+            "INSERT INTO user_goals (user_id, long_term_goal, short_term_goals) VALUES (?, ?, ?)",
+            (user_id, long_term_goal, short_term_goals),
+        )
+
+        conn.commit()
+        conn.close()
+        return cursor.lastrowid
 
 
 # データベースインスタンス

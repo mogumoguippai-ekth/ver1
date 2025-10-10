@@ -33,7 +33,7 @@
         {% endif %}
 
         <div class="goals-update-info">
-            <p><em>目標は30日ごとに自動更新されます。手動で更新することも可能です。</em></p>
+            <p><em>目標は90日ごとに自動更新されます。手動で更新することも可能です。</em></p>
         </div>
     </div>
 
@@ -223,5 +223,19 @@
         printWindow.document.close();
         printWindow.print();
     }
+
+    // データ変更時の確認機能
+    {% if data_changed %}
+    window.addEventListener('load', function () {
+        if (confirm('プロフィールまたは暮らしの情報が更新されました。\n目標を更新しますか？')) {
+            // 目標更新フォームを送信
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '{{ url_for("update_goals") }}';
+            document.body.appendChild(form);
+            form.submit();
+        }
+    });
+    {% endif %}
 </script>
 {% endblock %}

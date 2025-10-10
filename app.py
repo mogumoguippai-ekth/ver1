@@ -373,13 +373,17 @@ def goals():
     # 最新の保存された目標を取得
     latest_goals = db.get_latest_user_goals(user_id)
 
-    # 目標が存在しないか、30日以上経過している場合は新規生成
-    if not latest_goals or db.should_update_goals(user_id):
+    # データ変更の確認が必要かチェック
+    data_changed = db.has_data_changed(user_id)
+    needs_update = db.should_update_goals(user_id)
+
+    # 目標が存在しないか、90日以上経過している場合は新規生成
+    if not latest_goals or needs_update:
         # 新しい目標を生成
         goals_data = db.analyze_user_goals(user_id)
-        # 目標を保存
-        db.save_user_goals(user_id, goals_data)
-        is_new_goals = True
+        # 目標を保存（重複チェック付き）
+        saved_id = db.save_user_goals(user_id, goals_data)
+        is_new_goals = saved_id is not None
     else:
         # 保存された目標を使用
         goals_data = {"long_term_goal": latest_goals[2], "short_term_goals": latest_goals[3]}
@@ -394,6 +398,7 @@ def goals():
         user=user_data,
         is_new_goals=is_new_goals,
         goals_created_at=latest_goals[5] if latest_goals else None,
+        data_changed=data_changed,
     )
 
 
@@ -405,11 +410,33 @@ def update_goals():
 
     # 新しい目標を生成
     goals_data = db.analyze_user_goals(user_id)
-    # 目標を保存
-    db.save_user_goals(user_id, goals_data)
+    # 目標を保存（重複チェック付き）
+    saved_id = db.save_user_goals(user_id, goals_data)
 
-    flash("目標を更新しました。")
+    if saved_id is not None:
+        flash("目標を更新しました。")
+    else:
+        flash("目標に変更がありませんでした。")
+
     return redirect(url_for("goals"))
+
+
+@app.route("/goals/check-update", methods=["POST"])
+@login_required
+def check_goals_update():
+    """データ変更時の目標更新確認"""
+    user_id = session["user_id"]
+
+    # データ変更があるかチェック
+    if db.has_data_changed(user_id):
+        return jsonify(
+            {
+                "should_update": True,
+                "message": "プロフィールまたは暮らしの情報が更新されました。目標を更新しますか？",
+            }
+        )
+    else:
+        return jsonify({"should_update": False, "message": "データに変更はありません。"})
 
 
 @app.route("/goals/history")
