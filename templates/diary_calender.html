@@ -78,7 +78,9 @@
 
                     <div class="modal-actions">
                         <button type="button" onclick="saveDiary()" class="save-btn">保存</button>
+                        {% if session.get('user_type') != 'family' %}
                         <button type="button" onclick="deleteDiary()" class="delete-btn" id="delete-btn" style="display: none;">削除</button>
+                        {% endif %}
                         <button type="button" onclick="closeDiaryModal()" class="cancel-btn">キャンセル</button>
                     </div>
                 </form>

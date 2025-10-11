@@ -344,7 +344,7 @@ def update_profile():
     # プロフィール情報を保存
     db.create_or_update_profile(user_id, profile_data)
 
-    flash("プロフィール詳細を更新しました。")
+    flash("私について 詳細を更新しました。")
     return redirect(url_for("profile"))
 
 
@@ -453,7 +453,7 @@ def delete_profile():
     conn.commit()
     conn.close()
 
-    flash("プロフィール詳細を削除しました。")
+    flash("私について 詳細を削除しました。")
     return redirect(url_for("dashboard"))
 
 
@@ -576,41 +576,63 @@ def goals():
 
     # 目標が存在しないか、90日以上経過している場合は新規生成
     if not latest_goals or needs_update:
-        # AIサービスを使用して目標を生成
-        try:
-            print("try")
-            # ユーザー情報を取得
-            user_data = db.get_user_by_id(user_id)
-            profile_data = db.get_profile_by_user_id(user_id)
-            iwlm_data = db.get_iwlm_by_user_id(user_id)
-
-            # print(f"user_data: {user_data}")
-            # print(type(user_data))
-            # print(f"profile_data: {profile_data}")
-            # print(type(profile_data))
-            # print(f"iwlm_data: {iwlm_data}")
-            # print(type(iwlm_data))
-            # print(f"user_id: {user_id}")
-            # print(type(user_id))
-
-            # AI目標生成サービスを使用
-            goals_data = ai_goal_service.generate_goals(
-                # user_data=user_data, profile_data=profile_data, iwlm_data=iwlm_data, user_id=user_id
-                user_data={"name": user_data[5]}
-            )
-
-        except Exception as e:
-            print(f"AI目標生成に失敗しました: {e}")
-            # フォールバック: 従来の固定ロジックで目標を生成
-            goals_data = db.analyze_user_goals(user_id)
-
-        # データ変更があった場合は強制保存、そうでなければ重複チェック付き保存
-        if data_changed:
-            saved_id = db.save_user_goals_forced(user_id, goals_data)
-            is_new_goals = True
+        # 家族ユーザーまたはデータ変更がない場合はAI動作を無効化
+        if session.get("user_type") == "family":
+            # 家族ユーザーの場合は既存の目標がない場合はフォールバックを使用
+            if not latest_goals:
+                goals_data = db.analyze_user_goals(user_id)
+                saved_id = db.save_user_goals_check(user_id, goals_data)
+                is_new_goals = saved_id is not None
+            else:
+                # 既存の目標を使用
+                goals_data = {"long_term_goal": latest_goals[2], "short_term_goals": latest_goals[3]}
+                is_new_goals = False
+        elif not data_changed:
+            # 本人ユーザーでデータ変更がない場合はAI動作を無効化
+            if not latest_goals:
+                goals_data = db.analyze_user_goals(user_id)
+                saved_id = db.save_user_goals_check(user_id, goals_data)
+                is_new_goals = saved_id is not None
+            else:
+                # 既存の目標を使用
+                goals_data = {"long_term_goal": latest_goals[2], "short_term_goals": latest_goals[3]}
+                is_new_goals = False
         else:
-            saved_id = db.save_user_goals_check(user_id, goals_data)
-            is_new_goals = saved_id is not None
+            # 本人ユーザーでデータ変更がある場合のみAIサービスを使用
+            try:
+                print("try")
+                # ユーザー情報を取得
+                user_data = db.get_user_by_id(user_id)
+                profile_data = db.get_profile_by_user_id(user_id)
+                iwlm_data = db.get_iwlm_by_user_id(user_id)
+
+                # print(f"user_data: {user_data}")
+                # print(type(user_data))
+                # print(f"profile_data: {profile_data}")
+                # print(type(profile_data))
+                # print(f"iwlm_data: {iwlm_data}")
+                # print(type(iwlm_data))
+                # print(f"user_id: {user_id}")
+                # print(type(user_id))
+
+                # AI目標生成サービスを使用
+                goals_data = ai_goal_service.generate_goals(
+                    # user_data=user_data, profile_data=profile_data, iwlm_data=iwlm_data, user_id=user_id
+                    user_data={"name": user_data[5]}
+                )
+
+            except Exception as e:
+                print(f"AI目標生成に失敗しました: {e}")
+                # フォールバック: 従来の固定ロジックで目標を生成
+                goals_data = db.analyze_user_goals(user_id)
+
+            # データ変更があった場合は強制保存、そうでなければ重複チェック付き保存
+            if data_changed:
+                saved_id = db.save_user_goals_forced(user_id, goals_data)
+                is_new_goals = True
+            else:
+                saved_id = db.save_user_goals_check(user_id, goals_data)
+                is_new_goals = saved_id is not None
     else:
         # 保存された目標を使用
         goals_data = {"long_term_goal": latest_goals[2], "short_term_goals": latest_goals[3]}

@@ -64,7 +64,7 @@
             <!-- 住まい -->
             <div class="form-group">
                 <label for="home">住まい</label>
-                <select id="home" name="home">
+                <select id="home" name="home" {% if session.get('user_type')=='family' %}disabled{% endif %}>
                     <option value="">選択してください</option>
                     <option value="一戸建(持家)" {% if profile and profile[2]=='一戸建(持家)' %}selected{% endif %}>一戸建(持家)</option>
                     <option value="一戸建(賃貸)" {% if profile and profile[2]=='一戸建(賃貸)' %}selected{% endif %}>一戸建(賃貸)</option>
@@ -79,22 +79,22 @@
             <h3 style="color: #000099;">家族情報</h3>
             <div class="form-group">
                 <label for="spouse">配偶者について</label>
-                <input type="text" id="spouse" name="spouse" value="{{ profile[3] if profile and profile[3] else '' }}" placeholder="夫、妻、未婚。離婚、死別はそのように記入">
+                <input type="text" id="spouse" name="spouse" value="{{ profile[3] if profile and profile[3] else '' }}" placeholder="夫、妻、未婚。離婚、死別はそのように記入" {% if session.get('user_type')=='family' %}disabled{% endif %}>
             </div>
 
             <div class="form-group">
                 <label for="children_living">同居している子どもの性別と人数</label>
-                <input type="text" id="children_living" name="children_living" value="{{ profile[4] if profile and profile[4] else '' }}" placeholder="同居 男1人、女2人">
+                <input type="text" id="children_living" name="children_living" value="{{ profile[4] if profile and profile[4] else '' }}" placeholder="同居 男1人、女2人" {% if session.get('user_type')=='family' %}disabled{% endif %}>
             </div>
 
             <div class="form-group">
                 <label for="children_separate">別居している子どもの性別と人数</label>
-                <input type="text" id="children_separate" name="children_separate" value="{{ profile[5] if profile and profile[5] else '' }}" placeholder="別居 男2人、女1人">
+                <input type="text" id="children_separate" name="children_separate" value="{{ profile[5] if profile and profile[5] else '' }}" placeholder="別居 男2人、女1人" {% if session.get('user_type')=='family' %}disabled{% endif %}>
             </div>
 
             <div class="form-group">
                 <label for="family_living">同居している親族</label>
-                <input type="text" id="family_living" name="family_living" value="{{ profile[15] if profile and profile[15] else '' }}" placeholder="例: 祖父母、夫両親">
+                <input type="text" id="family_living" name="family_living" value="{{ profile[15] if profile and profile[15] else '' }}" placeholder="例: 祖父母、夫両親" {% if session.get('user_type')=='family' %}disabled{% endif %}>
                 <!-- デバッグ情報 
                 <div style="font-size: 10px; color: #666; margin-top: 5px;">
                     デバッグ: profile[6] = "{{ profile[15] if profile else 'profile is None' }}"
@@ -107,17 +107,17 @@
             <h3 style="color: #000099;">健康情報</h3>
             <div class="form-group">
                 <label for="Treated-illness">治療の終わった病気</label>
-                <input type="text" id="Treated-illness" name="Treated-illness" value="{{ profile[6] if profile and profile[6] else '' }}" placeholder="治療の終わった病気">
+                <input type="text" id="Treated-illness" name="Treated-illness" value="{{ profile[6] if profile and profile[6] else '' }}" placeholder="治療の終わった病気" {% if session.get('user_type')=='family' %}disabled{% endif %}>
             </div>
 
             <div class="form-group">
                 <label for="under-treatment">治療している病気</label>
-                <input type="text" id="under-treatment" name="under-treatment" value="{{ profile[7] if profile and profile[7] else '' }}" placeholder="治療している病気">
+                <input type="text" id="under-treatment" name="under-treatment" value="{{ profile[7] if profile and profile[7] else '' }}" placeholder="治療している病気" {% if session.get('user_type')=='family' %}disabled{% endif %}>
             </div>
 
             <div class="form-group">
                 <label for="receiving-treatment">かかっている医療機関</label>
-                <input type="text" id="receiving-treatment" name="receiving-treatment" value="{{ profile[8] if profile and profile[8] else '' }}" placeholder="例: ◯◯病院、◯◯医院、◯◯調剤薬局">
+                <input type="text" id="receiving-treatment" name="receiving-treatment" value="{{ profile[8] if profile and profile[8] else '' }}" placeholder="例: ◯◯病院、◯◯医院、◯◯調剤薬局" {% if session.get('user_type')=='family' %}disabled{% endif %}>
             </div>
         </div>
 
@@ -126,17 +126,17 @@
             <h3 style="color: #000099;">頼りにしたり相談している人</h3>
             <div class="form-group">
                 <label for="most-relied-upon-family">一番頼りにしている家族</label>
-                <input type="text" id="most-relied-upon-family" name="most-relied-upon-family" value="{{ profile[9] if profile and profile[9] else '' }}" placeholder="例: 山田 太郎(長男)">
+                <input type="text" id="most-relied-upon-family" name="most-relied-upon-family" value="{{ profile[9] if profile and profile[9] else '' }}" placeholder="例: 山田 太郎(長男)" {% if session.get('user_type')=='family' %}disabled{% endif %}>
             </div>
 
             <div class="form-group">
                 <label for="trusted-neighbor">頼りにしている隣人</label>
-                <input type="text" id="trusted-neighbor" name="trusted-neighbor" value="{{ profile[10] if profile and profile[10] else '' }}" placeholder="例: 鈴木 花子">
+                <input type="text" id="trusted-neighbor" name="trusted-neighbor" value="{{ profile[10] if profile and profile[10] else '' }}" placeholder="例: 鈴木 花子" {% if session.get('user_type')=='family' %}disabled{% endif %}>
             </div>
 
             <div class="form-group">
                 <label for="consulted-friend">よく相談している友人</label>
-                <input type="text" id="consulted-friend" name="consulted-friend" value="{{ profile[11] if profile and profile[11] else '' }}" placeholder="例: 佐藤 次郎(サークルの友人)">
+                <input type="text" id="consulted-friend" name="consulted-friend" value="{{ profile[11] if profile and profile[11] else '' }}" placeholder="例: 佐藤 次郎(サークルの友人)" {% if session.get('user_type')=='family' %}disabled{% endif %}>
             </div>
         </div>
 
@@ -147,35 +147,35 @@
                 <div class="checkbox-grid">
                     <div class="checkbox-row">
                         <div class="checkbox-item">
-                            <input type="checkbox" id="salary" name="money" value="給料" {% if profile and profile[12] and '給料' in profile[12] %}checked{% endif %}>
+                            <input type="checkbox" id="salary" name="money" value="給料" {% if profile and profile[12] and '給料' in profile[12] %}checked{% endif %} {% if session.get('user_type')=='family' %}disabled{% endif %}>
                             <label for="salary">給料</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="self-employed" name="money" value="自営業" {% if profile and profile[12] and '自営業' in profile[12] %}checked{% endif %}>
+                            <input type="checkbox" id="self-employed" name="money" value="自営業" {% if profile and profile[12] and '自営業' in profile[12] %}checked{% endif %} {% if session.get('user_type')=='family' %}disabled{% endif %}>
                             <label for="self-employed">自営業</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="pension" name="money" value="年金" {% if profile and profile[12] and '年金' in profile[12] %}checked{% endif %}>
+                            <input type="checkbox" id="pension" name="money" value="年金" {% if profile and profile[12] and '年金' in profile[12] %}checked{% endif %} {% if session.get('user_type')=='family' %}disabled{% endif %}>
                             <label for="pension">年金</label>
                         </div>
                     </div>
                     <div class="checkbox-row">
                         <div class="checkbox-item">
-                            <input type="checkbox" id="savings" name="money" value="貯金" {% if profile and profile[12] and '貯金' in profile[12] %}checked{% endif %}>
+                            <input type="checkbox" id="savings" name="money" value="貯金" {% if profile and profile[12] and '貯金' in profile[12] %}checked{% endif %} {% if session.get('user_type')=='family' %}disabled{% endif %}>
                             <label for="savings">貯金</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="investment" name="money" value="投資" {% if profile and profile[12] and '投資' in profile[12] %}checked{% endif %}>
+                            <input type="checkbox" id="investment" name="money" value="投資" {% if profile and profile[12] and '投資' in profile[12] %}checked{% endif %} {% if session.get('user_type')=='family' %}disabled{% endif %}>
                             <label for="investment">投資</label>
                         </div>
                         <div class="checkbox-item">
-                            <input type="checkbox" id="remittance" name="money" value="仕送り" {% if profile and profile[12] and '仕送り' in profile[12] %}checked{% endif %}>
+                            <input type="checkbox" id="remittance" name="money" value="仕送り" {% if profile and profile[12] and '仕送り' in profile[12] %}checked{% endif %} {% if session.get('user_type')=='family' %}disabled{% endif %}>
                             <label for="remittance">仕送り</label>
                         </div>
                     </div>
                     <div class="checkbox-row">
                         <div class="checkbox-item">
-                            <input type="checkbox" id="other" name="money" value="その他" {% if profile and profile[12] and 'その他' in profile[12] %}checked{% endif %}>
+                            <input type="checkbox" id="other" name="money" value="その他" {% if profile and profile[12] and 'その他' in profile[12] %}checked{% endif %} {% if session.get('user_type')=='family' %}disabled{% endif %}>
                             <label for="other">その他</label>
                         </div>
                     </div>

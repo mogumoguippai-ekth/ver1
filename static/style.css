@@ -529,6 +529,25 @@ img {
     background-color: #f8f9fa;
 }
 
+/* フッター用プルダウンメニュー（全ページ共通） */
+.footer-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #ffffff;
+    border: 1px solid #e5e5e5;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    min-width: 180px;
+    z-index: 1000;
+}
+
+/* フッターセクションのホバー時にプルダウンメニューを表示 */
+.footer-section:hover .footer-dropdown {
+    display: block;
+}
+
 /* ========================================
    レスポンシブデザイン
    ======================================== */
@@ -2587,4 +2606,67 @@ img {
         font-size: 11px;
         padding: 6px 10px;
     }
+}
+
+/* ========================================
+   家族ユーザー用：閲覧専用表示スタイル
+   ======================================== */
+
+/* 閲覧専用フォームコンテナ */
+.view-only-form {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* 閲覧専用値の表示スタイル */
+.readonly-value {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 5px;
+    padding: 10px 12px;
+    margin-bottom: 15px;
+    color: #495057;
+    font-size: 14px;
+    min-height: 20px;
+    line-height: 1.4;
+}
+
+/* 未入力/未設定の表示スタイル */
+.readonly-value:empty::before {
+    content: "未入力";
+    color: #6c757d;
+    font-style: italic;
+}
+
+/* 閲覧専用フォーム内の家族情報セクション */
+.view-only-form .family-section {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid #CC3366;
+}
+
+/* 閲覧専用フォーム内のボタンスタイル */
+.view-only-form .form-actions {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.view-only-form .cancel-btn {
+    background-color: #6c757d;
+    color: white;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.view-only-form .cancel-btn:hover {
+    background-color: #5a6268;
 }

@@ -397,9 +397,11 @@
 <div class="action-buttons">
    <div class="button-group">
       <a href="{{ url_for('iwlm_table') }}" class="info-link">私の暮らし一覧を見る</a>
+      {% if session.get('user_type') != 'family' %}
       <form method="POST" action="{{ url_for('delete_iwlm') }}" style="display: inline;" onsubmit="return confirm('私の暮らし情報を削除しますか？この操作は取り消せません。')">
          <button type="submit" class="delete-btn">削除</button>
       </form>
+      {% endif %}
    </div>
    <div class="navigation-buttons">
       <a href="{{ url_for('dashboard') }}" class="back-btn">HOMEに戻る</a>
@@ -410,6 +412,19 @@
 <script>
    // ページ読み込み時に既存のデータがある場合は入力欄を表示
    document.addEventListener('DOMContentLoaded', function () {
+      // 家族ユーザーの場合は全ての入力項目を不活性化
+      {% if session.get('user_type') == 'family' %}
+      const inputs = document.querySelectorAll('input, select, textarea');
+      inputs.forEach(input => {
+         input.disabled = true;
+      });
+
+      const buttons = document.querySelectorAll('button[type="submit"]');
+      buttons.forEach(button => {
+         button.disabled = true;
+      });
+      {% endif %}
+
       // チェックボックスの既存データを設定
       const checkboxData = {
          'keepDoing': '{{ iwlm[29] if iwlm and iwlm[29] else "" }}',

@@ -18,7 +18,7 @@
     {% endif %}
     {% endwith %}
 
-    <!-- デバッグ情報（一時的） -->
+    <!-- デバッグ情報（一時的）
     <div style="background: #f0f0f0; padding: 10px; margin-bottom: 20px; border-radius: 5px; font-size: 12px;">
         <strong>デバッグ情報:</strong><br>
         ユーザータイプ: {{ session.get('user_type') }}<br>
@@ -26,8 +26,7 @@
         親ユーザーID: {{ session.get('parent_user_id') }}<br>
         family_living: {{ user[13] if user and user[13] else 'NULL' }}<br>
         updated_at: {{ user[15] if user and user[15] else 'NULL' }}
-    </div>
-
+    </div> -->
     <!-- 招待コード発行セクション（本人ユーザーのみ） -->
     {% if session.get('user_type') == 'self' %}
     <div class="invitation-section">
@@ -53,6 +52,7 @@
     </div>
     {% endif %}
 
+    {% if session.get('user_type') == 'self' %}
     <form method="POST" action="{{ url_for('update_user') }}" class="registration-form">
         <!-- ユーザーID (表示のみ) -->
         <div class="form-group">
@@ -146,6 +146,67 @@
             <button type="button" class="cancel-btn" onclick="window.location.href='{{ url_for('dashboard') }}'">キャンセル</button>
         </div>
     </form>
+    {% else %}
+    <!-- 家族ユーザー用：閲覧専用表示 -->
+    <div class="view-only-form">
+        <div class="form-group">
+            <label>ユーザーID</label><br>
+            <div class="readonly-value">{{ user[1] if user else '' }}</div>
+        </div>
+
+        <div class="form-group">
+            <label>メールアドレス</label><br>
+            <div class="readonly-value">{{ user[2] if user else '' }}</div>
+        </div>
+
+        <div class="form-group">
+            <label>氏名</label><br>
+            <div class="readonly-value">{{ user[5] if user and user[5] else '未入力' }}</div>
+        </div>
+
+        <div class="form-group">
+            <label>フリガナ</label><br>
+            <div class="readonly-value">{{ user[6] if user and user[6] else '未入力' }}</div>
+        </div>
+
+        <div class="form-group">
+            <label>ニックネーム</label><br>
+            <div class="readonly-value">{{ user[7] if user and user[7] else '未入力' }}</div>
+        </div>
+
+        <div class="form-group">
+            <label>性別</label><br>
+            <div class="readonly-value">{{ user[8] if user and user[8] else '未入力' }}</div>
+        </div>
+
+        <div class="form-group">
+            <label>生年月日</label><br>
+            <div class="readonly-value">{{ user[9] if user and user[9] else '未入力' }}</div>
+        </div>
+
+        <div class="family-section">
+            <h3 style="color: #CC3366;">家族情報</h3>
+            <div class="form-group">
+                <label>家族ID1</label><br>
+                <div class="readonly-value">{{ user[10] if user and user[10] else '未設定' }}</div>
+            </div>
+
+            <div class="form-group">
+                <label>家族ID2</label><br>
+                <div class="readonly-value">{{ user[11] if user and user[11] else '未設定' }}</div>
+            </div>
+
+            <div class="form-group">
+                <label>家族ID3</label><br>
+                <div class="readonly-value">{{ user[12] if user and user[12] else '未設定' }}</div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="button" class="cancel-btn" onclick="window.location.href='{{ url_for('dashboard') }}'">戻る</button>
+        </div>
+    </div>
+    {% endif %}
 </div>
 
 <script src="{{ url_for('static', filename='js/app.js') }}"></script>

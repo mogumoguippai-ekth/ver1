@@ -33,7 +33,11 @@
         {% endif %}
 
         <div class="goals-update-info">
+            {% if session.get('user_type') == 'family' %}
+            <p><em>家族ユーザーは目標の閲覧のみ可能です。目標の作成・更新は本人ユーザーが行います。</em></p>
+            {% else %}
             <p><em>目標は90日ごとに自動更新されます。手動で更新することも可能です。</em></p>
+            {% endif %}
         </div>
     </div>
 
@@ -106,9 +110,11 @@
         <!-- アクションボタン -->
         <div class="goals-actions">
             <button onclick="printGoals()" class="print-btn">目標を印刷</button>
+            {% if session.get('user_type') != 'family' %}
             <form method="POST" action="{{ url_for('update_goals') }}" style="display: inline;">
                 <button type="submit" class="update-btn" onclick="return confirm('目標を作成しますか？新しいデータに基づいて目標が再生成されます。')">目標を再作成</button>
             </form>
+            {% endif %}
             <a href="{{ url_for('goals_history') }}" class="history-btn">目標履歴を見る</a>
             <a href="{{ url_for('profile_table') }}" class="profile-btn">私について を確認</a>
             <a href="{{ url_for('iwlm_table') }}" class="iwlm-btn">私の暮らし を確認</a>
@@ -119,7 +125,9 @@
 
 <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 <script>
-    // データ変更時の確認機能を初期化
+    // データ変更時の確認機能を初期化（本人ユーザーのみ）
+    {% if session.get('user_type') != 'family' %}
     initDataChangeAlert({{ data_changed | tojson }}, '{{ url_for("update_goals") }}');
+    {% endif %}
 </script>
 {% endblock %}

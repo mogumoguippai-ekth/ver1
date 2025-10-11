@@ -70,8 +70,12 @@
                         <a href="{{ url_for('iwlm_table') }}" class="dropdown-item">私の暮らし 一覧</a>
                     </div>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item dropdown">
                     <a href="{{ url_for('goals') }}" class="nav-link">私の望む暮らし 目標提案</a>
+                    <div class="dropdown-menu">
+                        <a href="{{ url_for('goals') }}" class="dropdown-item">私の望む暮らし 目標提案</a>
+                        <a href="{{ url_for('goals_history') }}" class="dropdown-item">私の望む暮らし 目標履歴</a>
+                    </div>
                 </li>
             </ul>
         </nav>
@@ -120,6 +124,10 @@
             <!-- 目標提案 -->
             <div class="footer-section">
                 <a href="{{ url_for('goals') }}" class="footer-main-link">私の望む暮らし 目標提案</a>
+                <div class="footer-dropdown">
+                    <a href="{{ url_for('goals') }}" class="footer-sub-link">私の望む暮らし 目標提案</a>
+                    <a href="{{ url_for('goals_history') }}" class="footer-sub-link">私の望む暮らし 目標履歴</a>
+                </div>
             </div>
         </div>
     </footer>
