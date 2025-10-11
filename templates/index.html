@@ -69,6 +69,16 @@
                             <span class="radio-text">家族</span>
                         </label>
                     </div>
+
+                    <!-- 家族登録時の招待コード入力フィールド -->
+                    <div id="invitation-code-section" class="form-group" style="display: none;">
+                        <label for="invitation-code">招待コード <span class="required">*</span></label>
+                        <input type="text" id="invitation-code" name="invitation-code" placeholder="本人から受け取った8桁の数字を入力" maxlength="8">
+                        <div class="form-help">
+                            <p>家族登録には本人から発行された招待コードが必要です。</p>
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <!-- <label for="register-username">ユーザー名</label> -->
                         <label for="register-username">ユーザーID <span class="required">*</span></label>
@@ -88,41 +98,78 @@
         </div>
     </div>
 
-    <!-- 招待コード入力フロートウィンドウ -->
-    <div id="invitation-modal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>招待コード入力</h3>
-                <span class="close" onclick="closeInvitationModal()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <p>家族登録には招待コードが必要です。</p>
-                <p>本人から発行された8桁の招待コードを入力してください。</p>
-                <div class="form-group">
-                    <label for="invitation-code">招待コード <span class="required">*</span></label>
-                    <input type="text" id="invitation-code" name="invitation-code" placeholder="8桁の数字を入力" maxlength="8">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn-cancel" onclick="closeInvitationModal()">キャンセル</button>
-                <button type="button" class="btn-confirm" onclick="proceedWithFamilyRegistration()">確認</button>
-            </div>
-        </div>
-    </div>
 
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <style>
+        /* 招待コード入力セクションのスタイル */
+        #invitation-code-section {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        #invitation-code-section input {
+            border: 2px solid #007bff;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        #invitation-code-section input:focus {
+            border-color: #0056b3;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+        .form-help {
+            margin-top: 8px;
+        }
+
+        .form-help p {
+            font-size: 12px;
+            color: #6c757d;
+            margin: 0;
+            font-style: italic;
+        }
+    </style>
     <script>
         // 家族登録フロー制御
         document.addEventListener('DOMContentLoaded', function () {
             // URLパラメータをチェックしてタブを切り替え
             const urlParams = new URLSearchParams(window.location.search);
             const tab = urlParams.get('tab');
-            console.log('URL parameter tab:', tab);
+            const userType = urlParams.get('user_type');
+            console.log('URL parameter tab:', tab, 'user_type:', userType);
 
             if (tab === 'register') {
                 // 会員登録タブをアクティブにする
                 console.log('Switching to register tab');
                 switchTab('register');
+
+                // ユーザータイプを復元
+                if (userType === 'family') {
+                    const familyRadio = document.querySelector('input[name="user-type"][value="family"]');
+                    if (familyRadio) {
+                        familyRadio.checked = true;
+                        console.log('Restored family user type selection');
+
+                        // 家族選択状態を復元した場合、招待コード入力フィールドを表示
+                        const invitationCodeSection = document.getElementById('invitation-code-section');
+                        if (invitationCodeSection) {
+                            invitationCodeSection.style.display = 'block';
+                            console.log('Displayed invitation code section for family restoration');
+
+                            // 招待コード入力フィールドにフォーカス
+                            const invitationCodeInput = document.getElementById('invitation-code');
+                            if (invitationCodeInput) {
+                                invitationCodeInput.focus();
+                            }
+                        }
+                    }
+                }
 
                 // URLからパラメータを削除（ページリロード時にタブが残らないように）
                 const newUrl = window.location.pathname;
@@ -131,15 +178,22 @@
 
             const userTypeRadios = document.querySelectorAll('input[name="user-type"]');
             const registerForm = document.getElementById('register-form');
-            const invitationModal = document.getElementById('invitation-modal');
+            const invitationCodeSection = document.getElementById('invitation-code-section');
             const invitationCodeInput = document.getElementById('invitation-code');
 
             // ラジオボタンの変更を監視
             userTypeRadios.forEach(radio => {
                 radio.addEventListener('change', function () {
                     if (this.value === 'family') {
-                        // 家族が選択された場合、招待コード入力モーダルを表示
-                        invitationModal.style.display = 'block';
+                        // 家族が選択された場合、招待コード入力フィールドを表示
+                        console.log('Family selected');
+                        invitationCodeSection.style.display = 'block';
+                        invitationCodeInput.focus();
+                    } else {
+                        // 本人が選択された場合、招待コード入力フィールドを非表示
+                        console.log('Self selected');
+                        invitationCodeSection.style.display = 'none';
+                        invitationCodeInput.value = ''; // 入力内容をクリア
                     }
                 });
             });
@@ -149,65 +203,25 @@
                 const selectedUserType = document.querySelector('input[name="user-type"]:checked').value;
 
                 if (selectedUserType === 'family') {
-                    e.preventDefault();
                     // 家族登録の場合は招待コードが必要
                     const invitationCode = invitationCodeInput.value.trim();
                     if (!invitationCode) {
+                        e.preventDefault();
                         alert('招待コードを入力してください。');
+                        invitationCodeInput.focus();
                         return;
                     }
                     if (invitationCode.length !== 8 || !/^\d{8}$/.test(invitationCode)) {
+                        e.preventDefault();
                         alert('招待コードは8桁の数字で入力してください。');
+                        invitationCodeInput.focus();
                         return;
                     }
-
-                    // 招待コードをフォームに追加して送信
-                    const hiddenInput = document.createElement('input');
-                    hiddenInput.type = 'hidden';
-                    hiddenInput.name = 'invitation-code';
-                    hiddenInput.value = invitationCode;
-                    registerForm.appendChild(hiddenInput);
-
-                    // フォームを送信
-                    registerForm.submit();
+                    // 招待コードが有効な場合は通常のフォーム送信を続行
                 }
             });
         });
 
-        // モーダルを閉じる
-        function closeInvitationModal() {
-            document.getElementById('invitation-modal').style.display = 'none';
-            // 本人を選択し直す
-            document.querySelector('input[name="user-type"][value="self"]').checked = true;
-            document.getElementById('invitation-code').value = '';
-        }
-
-        // 家族登録を続行
-        function proceedWithFamilyRegistration() {
-            const invitationCode = document.getElementById('invitation-code').value.trim();
-            if (!invitationCode) {
-                alert('招待コードを入力してください。');
-                return;
-            }
-            if (invitationCode.length !== 8 || !/^\d{8}$/.test(invitationCode)) {
-                alert('招待コードは8桁の数字で入力してください。');
-                return;
-            }
-
-            // モーダルを閉じる
-            closeInvitationModal();
-
-            // フォーム送信をトリガー
-            document.getElementById('register-form').dispatchEvent(new Event('submit'));
-        }
-
-        // モーダル外クリックで閉じる
-        window.onclick = function (event) {
-            const modal = document.getElementById('invitation-modal');
-            if (event.target === modal) {
-                closeInvitationModal();
-            }
-        }
     </script>
 </body>
 

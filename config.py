@@ -1,11 +1,21 @@
 import sqlite3
 import datetime
-from ai_goal_service import AIGoalService
 
 
 class Database:
     def __init__(self, db_path="db.sqlite"):
         self.db_path = db_path
+
+    def _parse_datetime(self, datetime_str):
+        """マイクロ秒対応の日時解析ヘルパー関数"""
+        try:
+            if "." in datetime_str:
+                return datetime.datetime.strptime(datetime_str, "%Y-%m-%d %H:%M:%S.%f")
+            else:
+                return datetime.datetime.strptime(datetime_str, "%Y-%m-%d %H:%M:%S")
+        except ValueError:
+            # フォーマットが合わない場合は現在時刻を返す
+            return datetime.datetime.now()
 
     def get_connection(self):
         """データベース接続を取得"""
@@ -794,9 +804,9 @@ class Database:
         if not result:
             return True  # 目標が存在しない場合は作成
 
-        last_created = datetime.datetime.strptime(result[0], "%Y-%m-%d %H:%M:%S")
-        days_diff = (datetime.datetime.now() - last_created).days
-
+        # マイクロ秒対応の日時解析
+        last_created = self._parse_datetime(result[0])
+        # days_diff = (datetime.datetime.now() - last_created).days
         # return days_diff >= 90  # 90日以上経過している場合は更新
         return True
 
@@ -828,23 +838,24 @@ class Database:
         if not goals_result:
             return False  # 目標が存在しない場合は変更判定なし
 
-        goals_created = datetime.datetime.strptime(goals_result[0], "%Y-%m-%d %H:%M:%S")
+        # マイクロ秒対応の日時解析（目標作成日）
+        goals_created = self._parse_datetime(goals_result[0])
 
         # ユーザー情報の更新日をチェック
         if user_result and user_result[0]:
-            user_updated = datetime.datetime.strptime(user_result[0], "%Y-%m-%d %H:%M:%S")
+            user_updated = self._parse_datetime(user_result[0])
             if user_updated > goals_created:
                 return True
 
         # プロフィール情報の更新日をチェック
         if profile_result and profile_result[0]:
-            profile_updated = datetime.datetime.strptime(profile_result[0], "%Y-%m-%d %H:%M:%S")
+            profile_updated = self._parse_datetime(profile_result[0])
             if profile_updated > goals_created:
                 return True
 
         # IWLM情報の更新日をチェック
         if iwlm_result and iwlm_result[0]:
-            iwlm_updated = datetime.datetime.strptime(iwlm_result[0], "%Y-%m-%d %H:%M:%S")
+            iwlm_updated = self._parse_datetime(iwlm_result[0])
             if iwlm_updated > goals_created:
                 return True
 
@@ -1064,8 +1075,10 @@ class Database:
         user_id, expires_at = result
         current_time = datetime.datetime.now()
 
-        # 有効期限チェック
-        if current_time > datetime.datetime.strptime(expires_at, "%Y-%m-%d %H:%M:%S"):
+        # 有効期限チェック（マイクロ秒対応）
+        expires_datetime = self._parse_datetime(expires_at)
+
+        if current_time > expires_datetime:
             return False, None
 
         return True, user_id
