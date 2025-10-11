@@ -152,7 +152,7 @@
             <div class="history-actions">
                 <button type="button" class="print-btn" onclick="printGoal({{ loop.index }})">印刷</button>
                 {% if session.get('user_type') != 'family' %}
-                <form method="POST" action="{{ url_for('delete_goal', goal_id=goal[0]) }}" style="display: inline;" onsubmit="return confirm('この目標履歴を削除してもよろしいですか？');">
+                <form method="POST" action="{{ url_for('delete_goal', goal_id=goal[0]) }}" class="inline-form" onsubmit="return confirm('この目標履歴を削除してもよろしいですか？');">
                     <button type="submit" class="delete-btn">削除</button>
                 </form>
                 {% endif %}

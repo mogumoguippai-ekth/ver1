@@ -20,7 +20,7 @@
 
     <!-- 基本情報表示（読み取り専用） -->
     <div class="registration-form">
-        <h3 style="color: #CC3366;">私の基本情報</h3>
+        <h3 class="section-title">私の基本情報</h3>
         <p class="note-text">※基本情報を修正する場合は、右上のユーザー名をクリックして<br>編集画面から行ってください。</p>
 
         <!-- 氏名-->
@@ -57,10 +57,10 @@
 
     <!-- 詳細情報フォーム -->
     <form method="POST" action="{{ url_for('update_profile') }}" class="registration-form">
-        <h3 style="color: #CC3366;">私の詳細情報</h3>
+        <h3 class="section-title">私の詳細情報</h3>
 
         <div class="family-section">
-            <h3 style="color: #000099;">今の暮らし</h3>
+            <h3 class="subsection-title">今の暮らし</h3>
             <!-- 住まい -->
             <div class="form-group">
                 <label for="home">住まい</label>
@@ -76,7 +76,7 @@
 
         <!-- 家族情報 -->
         <div class="family-section">
-            <h3 style="color: #000099;">家族情報</h3>
+            <h3 class="subsection-title">家族情報</h3>
             <div class="form-group">
                 <label for="spouse">配偶者について</label>
                 <input type="text" id="spouse" name="spouse" value="{{ profile[3] if profile and profile[3] else '' }}" placeholder="夫、妻、未婚。離婚、死別はそのように記入" {% if session.get('user_type')=='family' %}disabled{% endif %}>
@@ -96,7 +96,7 @@
                 <label for="family_living">同居している親族</label>
                 <input type="text" id="family_living" name="family_living" value="{{ profile[15] if profile and profile[15] else '' }}" placeholder="例: 祖父母、夫両親" {% if session.get('user_type')=='family' %}disabled{% endif %}>
                 <!-- デバッグ情報 
-                <div style="font-size: 10px; color: #666; margin-top: 5px;">
+                <div class="help-text">
                     デバッグ: profile[6] = "{{ profile[15] if profile else 'profile is None' }}"
                 </div>-->
             </div>
@@ -104,7 +104,7 @@
 
         <!-- 健康情報 -->
         <div class="family-section">
-            <h3 style="color: #000099;">健康情報</h3>
+            <h3 class="subsection-title">健康情報</h3>
             <div class="form-group">
                 <label for="Treated-illness">治療の終わった病気</label>
                 <input type="text" id="Treated-illness" name="Treated-illness" value="{{ profile[6] if profile and profile[6] else '' }}" placeholder="治療の終わった病気" {% if session.get('user_type')=='family' %}disabled{% endif %}>
@@ -123,7 +123,7 @@
 
         <!-- 相談している人 -->
         <div class="family-section">
-            <h3 style="color: #000099;">頼りにしたり相談している人</h3>
+            <h3 class="subsection-title">頼りにしたり相談している人</h3>
             <div class="form-group">
                 <label for="most-relied-upon-family">一番頼りにしている家族</label>
                 <input type="text" id="most-relied-upon-family" name="most-relied-upon-family" value="{{ profile[9] if profile and profile[9] else '' }}" placeholder="例: 山田 太郎(長男)" {% if session.get('user_type')=='family' %}disabled{% endif %}>
@@ -142,7 +142,7 @@
 
         <!-- 経済的情報 -->
         <div class="family-section">
-            <h3 style="color: #000099;">私の暮らしを支えるお金（複数選択可）</h3>
+            <h3 class="subsection-title">私の暮らしを支えるお金（複数選択可）</h3>
             <div class="form-group">
                 <div class="checkbox-grid">
                     <div class="checkbox-row">

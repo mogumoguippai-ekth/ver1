@@ -19,7 +19,7 @@
     {% endwith %}
 
     <!-- デバッグ情報（一時的）
-    <div style="background: #f0f0f0; padding: 10px; margin-bottom: 20px; border-radius: 5px; font-size: 12px;">
+    <div class="invitation-info">
         <strong>デバッグ情報:</strong><br>
         ユーザータイプ: {{ session.get('user_type') }}<br>
         ユーザーID: {{ session.get('user_id') }}<br>
@@ -35,7 +35,7 @@
         <button type="button" id="generate-invitation-btn" class="invitation-btn">招待コードを発行</button>
 
         <!-- 招待コード表示エリア -->
-        <div id="invitation-code-display" class="invitation-code-display" style="display: none;">
+        <div id="invitation-code-display" class="invitation-code-display">
             <h4>招待コード</h4>
             <div class="code-container">
                 <span id="invitation-code-text" class="code-text"></span>
@@ -46,7 +46,7 @@
         </div>
     </div>
     {% else %}
-    <div class="alert alert-info" style="background: #d1ecf1; color: #0c5460; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+    <div class="alert alert-info">
         <strong>注意:</strong> 招待コード発行機能は本人ユーザーのみ利用できます。
         現在のユーザータイプ: {{ session.get('user_type', '未設定') }}
     </div>
@@ -67,7 +67,7 @@
                 <input type="email" id="email" value="{{ user[2] if user else '' }}" disabled class="disabled-input">
                 <button type="button" class="edit-btn" onclick="toggleEdit('email')">訂正</button>
             </div>
-            <div id="email-edit" class="edit-section" style="display: none;">
+            <div id="email-edit" class="edit-section">
                 <label for="new_email">訂正後</label>
                 <input type="email" id="new_email" name="new_email" placeholder="新しいメールアドレスを入力">
             </div>
@@ -80,7 +80,7 @@
                 <input type="password" id="password" value="********" disabled class="disabled-input">
                 <button type="button" class="edit-btn" onclick="toggleEdit('password')">訂正</button>
             </div>
-            <div id="password-edit" class="edit-section" style="display: none;">
+            <div id="password-edit" class="edit-section">
                 <label for="new_password">訂正後</label>
                 <input type="password" id="new_password" name="new_password" placeholder="新しいパスワードを入力">
             </div>
@@ -123,7 +123,7 @@
 
         <!-- 家族情報 -->
         <div class="family-section">
-            <h3 style="color: #CC3366;">家族情報</h3>
+            <h3 class="section-title">家族情報</h3>
             {% if family_users %}
             {% for i in range(3) %}
             <div class="form-group">
@@ -197,7 +197,7 @@
         </div>
 
         <div class="family-section">
-            <h3 style="color: #CC3366;">家族情報</h3>
+            <h3 class="section-title">家族情報</h3>
             {% if session.get('user_type') == 'family' %}
             <!-- 家族ユーザーの場合：自分の家族IDを表示 -->
             <div class="form-group">
@@ -239,115 +239,4 @@
     </div>
 
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
-    <script>
-        // 招待コード発行機能
-        document.addEventListener('DOMContentLoaded', function () {
-            const generateBtn = document.getElementById('generate-invitation-btn');
-            const codeDisplay = document.getElementById('invitation-code-display');
-            const codeText = document.getElementById('invitation-code-text');
-            const expiresAt = document.getElementById('expires-at');
-            const copyBtn = document.getElementById('copy-code-btn');
-
-            if (generateBtn) {
-                generateBtn.addEventListener('click', function () {
-                    // ボタンを無効化
-                    generateBtn.disabled = true;
-                    generateBtn.textContent = '発行中...';
-
-                    // 招待コードを生成
-                    fetch('/generate_invitation_code', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        }
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                // 招待コードを表示
-                                codeText.textContent = data.code;
-                                expiresAt.textContent = data.expires_at;
-                                codeDisplay.style.display = 'block';
-
-                                // ボタンを元に戻す
-                                generateBtn.disabled = false;
-                                generateBtn.textContent = '招待コードを発行';
-                            } else {
-                                alert('エラー: ' + data.error);
-                                generateBtn.disabled = false;
-                                generateBtn.textContent = '招待コードを発行';
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            alert('招待コードの発行に失敗しました。');
-                            generateBtn.disabled = false;
-                            generateBtn.textContent = '招待コードを発行';
-                        });
-                });
-            }
-
-            // コピーボタン機能
-            if (copyBtn) {
-                copyBtn.addEventListener('click', function () {
-                    const code = codeText.textContent;
-                    navigator.clipboard.writeText(code).then(function () {
-                        copyBtn.textContent = 'コピー完了!';
-                        setTimeout(function () {
-                            copyBtn.textContent = 'コピー';
-                        }, 2000);
-                    }).catch(function (err) {
-                        console.error('コピーに失敗しました: ', err);
-                        alert('コピーに失敗しました。手動でコピーしてください。');
-                    });
-                });
-            }
-        });
-
-        // 家族ユーザー削除機能
-        function deleteFamilyUser(familyUserId, familySlot) {
-            const displayName = familyUserId || `家族ID${familySlot}`;
-            console.log(`DEBUG: deleteFamilyUser called with familyUserId="${familyUserId}", familySlot=${familySlot}`);
-
-            if (confirm(`家族ユーザー「${displayName}」を削除しますか？\nこの操作は取り消せません。`)) {
-                const requestData = {};
-                if (familyUserId && familyUserId.trim() !== '') {
-                    requestData.family_user_id = familyUserId;
-                    console.log('DEBUG: Using family_user_id method');
-                } else {
-                    requestData.family_slot = familySlot;
-                    console.log('DEBUG: Using family_slot method');
-                }
-
-                console.log('DEBUG: Request data:', requestData);
-
-                console.log('DEBUG: Sending request to /delete_family_user');
-                fetch('/delete_family_user', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(requestData)
-                })
-                    .then(response => {
-                        console.log('DEBUG: Response received:', response.status);
-                        return response.json();
-                    })
-                    .then(data => {
-                        console.log('DEBUG: Response data:', data);
-                        if (data.success) {
-                            alert('家族ユーザーを削除しました。');
-                            // ページをリロードして更新された家族情報を表示
-                            window.location.reload();
-                        } else {
-                            alert('エラー: ' + data.error);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('DEBUG: Fetch error:', error);
-                        alert('家族ユーザーの削除に失敗しました。');
-                    });
-            }
-        }
-    </script>
     {% endblock %}

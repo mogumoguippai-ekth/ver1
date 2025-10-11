@@ -738,7 +738,280 @@ function initPageSpecific() {
   }
 }
 
+// ===== User Page Functions =====
+
+// 招待コード発行機能
+function initInvitationCodeGeneration() {
+  const generateBtn = document.getElementById('generate-invitation-btn');
+  const codeDisplay = document.getElementById('invitation-code-display');
+  const codeText = document.getElementById('invitation-code-text');
+  const expiresAt = document.getElementById('expires-at');
+  const copyBtn = document.getElementById('copy-code-btn');
+
+  if (generateBtn) {
+    generateBtn.addEventListener('click', function () {
+      // ボタンを無効化
+      generateBtn.disabled = true;
+      generateBtn.textContent = '発行中...';
+
+      // 招待コードを生成
+      fetch('/generate_invitation_code', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // 招待コードを表示
+            codeText.textContent = data.code;
+            expiresAt.textContent = data.expires_at;
+            codeDisplay.style.display = 'block';
+
+            // ボタンを元に戻す
+            generateBtn.disabled = false;
+            generateBtn.textContent = '招待コードを発行';
+          } else {
+            alert('エラー: ' + data.error);
+            generateBtn.disabled = false;
+            generateBtn.textContent = '招待コードを発行';
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('招待コードの発行に失敗しました。');
+          generateBtn.disabled = false;
+          generateBtn.textContent = '招待コードを発行';
+        });
+    });
+  }
+
+  // コピーボタン機能
+  if (copyBtn) {
+    copyBtn.addEventListener('click', function () {
+      const code = codeText.textContent;
+      navigator.clipboard.writeText(code).then(function () {
+        copyBtn.textContent = 'コピー完了!';
+        setTimeout(function () {
+          copyBtn.textContent = 'コピー';
+        }, 2000);
+      }).catch(function (err) {
+        console.error('コピーに失敗しました: ', err);
+        alert('コピーに失敗しました。手動でコピーしてください。');
+      });
+    });
+  }
+}
+
+// 家族ユーザー削除機能
+function deleteFamilyUser(familyUserId, familySlot) {
+  const displayName = familyUserId || `家族ID${familySlot}`;
+  console.log(`DEBUG: deleteFamilyUser called with familyUserId="${familyUserId}", familySlot=${familySlot}`);
+
+  if (confirm(`家族ユーザー「${displayName}」を削除しますか？\nこの操作は取り消せません。`)) {
+    const requestData = {};
+    if (familyUserId && familyUserId.trim() !== '') {
+      requestData.family_user_id = familyUserId;
+      console.log('DEBUG: Using family_user_id method');
+    } else {
+      requestData.family_slot = familySlot;
+      console.log('DEBUG: Using family_slot method');
+    }
+
+    console.log('DEBUG: Request data:', requestData);
+
+    console.log('DEBUG: Sending request to /delete_family_user');
+    fetch('/delete_family_user', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestData)
+    })
+      .then(response => {
+        console.log('DEBUG: Response received:', response.status);
+        return response.json();
+      })
+      .then(data => {
+        console.log('DEBUG: Response data:', data);
+        if (data.success) {
+          alert('家族ユーザーを削除しました。');
+          // ページをリロードして更新された家族情報を表示
+          window.location.reload();
+        } else {
+          alert('エラー: ' + data.error);
+        }
+      })
+      .catch(error => {
+        console.error('DEBUG: Fetch error:', error);
+        alert('家族ユーザーの削除に失敗しました。');
+      });
+  }
+}
+
+// グローバル関数として登録（HTMLから呼び出されるため）
+window.deleteFamilyUser = deleteFamilyUser;
+
+// ===== Base Page Functions =====
+
+// ツールチップのクリックで非表示にする機能
+function initTooltip() {
+  const tooltip = document.querySelector('.tooltip');
+  if (tooltip) {
+    tooltip.addEventListener('click', function () {
+      // ツールチップを非表示にする
+      this.style.display = 'none';
+
+      // セッションからフラグを削除するためにサーバーにリクエスト
+      fetch('/hide_tooltip', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }).catch(function (error) {
+        console.log('Tooltip hide request failed:', error);
+      });
+    });
+
+    // 5秒後に自動的に非表示にする
+    setTimeout(function () {
+      if (tooltip.style.display !== 'none') {
+        tooltip.style.display = 'none';
+      }
+    }, 5000);
+  }
+}
+
+// ===== Goals Page Functions =====
+
+// データ変更時の確認機能を初期化（本人ユーザーのみ）
+function initDataChangeAlert(dataChanged, updateUrl) {
+  // この関数は既に実装されている場合はそのまま使用
+  // 未実装の場合は空の実装
+  console.log('Data change alert initialized:', dataChanged, updateUrl);
+}
+
+// グローバル関数として登録
+window.initDataChangeAlert = initDataChangeAlert;
+
+// ===== IWLM Page Functions =====
+
+// 家族ユーザーの入力項目を無効化
+function disableInputsForFamilyUsers() {
+  const inputs = document.querySelectorAll('input, select, textarea');
+  inputs.forEach(input => {
+    input.disabled = true;
+  });
+
+  const buttons = document.querySelectorAll('button[type="submit"]');
+  buttons.forEach(button => {
+    button.disabled = true;
+  });
+}
+
+// ===== Goals History Page Functions =====
+
+// 目標履歴の印刷機能
+function printGoal(goalNumber) {
+  // 印刷対象の履歴を取得
+  const goalElement = document.getElementById('goal-' + goalNumber);
+  if (!goalElement) {
+    alert('印刷対象の履歴が見つかりません。');
+    return;
+  }
+
+  // 新しいウィンドウを作成
+  const printWindow = window.open('', '_blank', 'width=800,height=600');
+
+  // 印刷用HTMLを作成
+  const printContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>目標履歴 ${goalNumber}</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 20px; }
+                .goal-header { background: #f0f0f0; padding: 10px; margin-bottom: 20px; }
+                .goal-content { line-height: 1.6; }
+                .goal-footer { margin-top: 30px; font-size: 12px; color: #666; }
+                @media print {
+                    body { margin: 0; }
+                    .no-print { display: none; }
+                }
+            </style>
+        </head>
+        <body>
+            ${goalElement.outerHTML}
+            <div class="goal-footer">
+                <p>印刷日時: ${new Date().toLocaleString('ja-JP')}</p>
+            </div>
+        </body>
+        </html>
+    `;
+
+  printWindow.document.write(printContent);
+  printWindow.document.close();
+
+  // 印刷ダイアログを表示
+  printWindow.focus();
+  printWindow.print();
+
+  // 印刷完了後にウィンドウを閉じる
+  printWindow.onafterprint = function () {
+    printWindow.close();
+  };
+}
+
+// グローバル関数として登録
+window.printGoal = printGoal;
+
+// ===== Index Page Functions =====
+
+// 家族登録フロー制御
+function initFamilyRegistrationFlow() {
+  // URLパラメータをチェックしてタブを切り替え
+  const urlParams = new URLSearchParams(window.location.search);
+  const tab = urlParams.get('tab');
+  const userType = urlParams.get('user_type');
+  console.log('URL parameter tab:', tab, 'user_type:', userType);
+
+  if (tab === 'register') {
+    // 会員登録タブをアクティブにする
+    console.log('Switching to register tab');
+    switchTab('register');
+
+    // ユーザータイプを復元
+    if (userType) {
+      const userTypeSelect = document.getElementById('user_type');
+      if (userTypeSelect) {
+        userTypeSelect.value = userType;
+        toggleInvitationCodeSection();
+      }
+    }
+  }
+}
+
 // DOM読み込み完了時の初期化
 document.addEventListener('DOMContentLoaded', function () {
   initPageSpecific();
+
+  // ページ固有の初期化を実行
+  if (document.getElementById('generate-invitation-btn')) {
+    initInvitationCodeGeneration();
+  }
+
+  if (document.querySelector('.tooltip')) {
+    initTooltip();
+  }
+
+  if (document.querySelector('input[name="user_type"]')) {
+    initFamilyRegistrationFlow();
+  }
+
+  // 家族ユーザーの場合の入力無効化
+  if (window.userType === 'family') {
+    disableInputsForFamilyUsers();
+  }
 });

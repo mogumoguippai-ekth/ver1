@@ -142,7 +142,7 @@
             <a href="{{ url_for('profile') }}" class="edit-btn">訂正</a>
             <a href="{{ url_for('profile') }}" class="create-btn">新規作成</a>
             {% if session.get('user_type') != 'family' %}
-            <form method="POST" action="{{ url_for('delete_profile') }}" style="display: inline;" onsubmit="return confirm('私の詳細情報を削除しますか？この操作は取り消せません。')">
+            <form method="POST" action="{{ url_for('delete_profile') }}" class="inline-form" onsubmit="return confirm('私の詳細情報を削除しますか？この操作は取り消せません。')">
                 <button type="submit" class="delete-btn">削除</button>
             </form>
             {% endif %}

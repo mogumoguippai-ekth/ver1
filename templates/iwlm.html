@@ -22,7 +22,7 @@
    <form method="POST" action="{{ url_for('update_iwlm') }}" class="registration-form">
 
       <div class="family-section">
-         <h3 style="color: #CC3366;">私らしい暮らし</h3>
+         <h3 class="section-title">私らしい暮らし</h3>
          <!-- 食事や嗜好品について -->
          <div class="form-group">
             <label for="mealFrequency">普段の食事の回数</label>
@@ -150,7 +150,7 @@
 
       <!-- 私の気持ちと願い -->
       <div class="family-section">
-         <h3 style="color: #CC3366;">私が続けたいこと(複数可)</h3>
+         <h3 class="section-title">私が続けたいこと(複数可)</h3>
          <div class="form-group">
             <div class="checkbox-row">
                <div class="checkbox-item">
@@ -170,13 +170,13 @@
                   <label for="otherKeepDoing">その他</label>
                </div>
             </div>
-            <div id="keepDoingOtherInput" class="other-input" style="display: none;">
+            <div id="keepDoingOtherInput" class="other-input">
                <label for="keep_doing_other">その他の内容:</label>
                <input type="text" id="keep_doing_other" name="keep_doing_other" value="{{ iwlm[30] if iwlm and iwlm[30] else '' }}" placeholder="具体的な内容を入力してください">
             </div>
          </div>
 
-         <h3 style="color: #CC3366;">私がもっとやりたいこと(複数可)</h3>
+         <h3 class="section-title">私がもっとやりたいこと(複数可)</h3>
          <div class="form-group">
             <div class="checkbox-row">
                <div class="checkbox-item">
@@ -214,13 +214,13 @@
                   <label for="otherActivities">その他</label>
                </div>
             </div>
-            <div id="futureActivitiesOtherInput" class="other-input" style="display: none;">
+            <div id="futureActivitiesOtherInput" class="other-input">
                <label for="future_activities_other">その他の内容:</label>
                <input type="text" id="future_activities_other" name="future_activities_other" value="{{ iwlm[32] if iwlm and iwlm[32] else '' }}" placeholder="具体的な内容を入力してください">
             </div>
          </div>
 
-         <h3 style="color: #CC3366;">私が暮らしたい場所(複数可)</h3>
+         <h3 class="section-title">私が暮らしたい場所(複数可)</h3>
          <div class="form-group">
             <div class="checkbox-row">
                <div class="checkbox-item">
@@ -250,13 +250,13 @@
                   <label for="otherResidence">その他</label>
                </div>
             </div>
-            <div id="residenceTypeOtherInput" class="other-input" style="display: none;">
+            <div id="residenceTypeOtherInput" class="other-input">
                <label for="residence_type_other">その他の内容:</label>
                <input type="text" id="residence_type_other" name="residence_type_other" value="{{ iwlm[34] if iwlm and iwlm[34] else '' }}" placeholder="具体的な内容を入力してください">
             </div>
          </div>
 
-         <h3 style="color: #CC3366;">私の不安や悲しみ(複数可)</h3>
+         <h3 class="section-title">私の不安や悲しみ(複数可)</h3>
          <div class="form-group">
             <div class="checkbox-row">
                <div class="checkbox-item">
@@ -300,13 +300,13 @@
                   <label for="otherConcerns">その他</label>
                </div>
             </div>
-            <div id="anxietyAndSadnessOtherInput" class="other-input" style="display: none;">
+            <div id="anxietyAndSadnessOtherInput" class="other-input">
                <label for="anxiety_and_sadness_other">その他の内容:</label>
                <input type="text" id="anxiety_and_sadness_other" name="anxiety_and_sadness_other" value="{{ iwlm[36] if iwlm and iwlm[36] else '' }}" placeholder="具体的な内容を入力してください">
             </div>
          </div>
 
-         <h3 style="color: #CC3366;">今、手伝ってほしいこと(複数可)</h3>
+         <h3 class="section-title">今、手伝ってほしいこと(複数可)</h3>
          <div class="form-group">
             <div class="checkbox-row">
                <div class="checkbox-item">
@@ -336,13 +336,13 @@
                   <label for="otherAreasOfSupport">その他</label>
                </div>
             </div>
-            <div id="areasOfSupportOtherInput" class="other-input" style="display: none;">
+            <div id="areasOfSupportOtherInput" class="other-input">
                <label for="areas_of_support_other">その他の内容:</label>
                <input type="text" id="areas_of_support_other" name="areas_of_support_other" value="{{ iwlm[38] if iwlm and iwlm[38] else '' }}" placeholder="具体的な内容を入力してください">
             </div>
          </div>
 
-         <h3 style="color: #CC3366;">生活支援や、医療、介護が必要になったら(複数可)</h3>
+         <h3 class="section-title">生活支援や、医療、介護が必要になったら(複数可)</h3>
          <div class="form-group">
             <div class="checkbox-row">
                <div class="checkbox-item">
@@ -378,7 +378,7 @@
                   <label for="otherCarePlan">その他</label>
                </div>
             </div>
-            <div id="futureCarePlanOtherInput" class="other-input" style="display: none;">
+            <div id="futureCarePlanOtherInput" class="other-input">
                <label for="future_care_plan_other">その他の内容:</label>
                <input type="text" id="future_care_plan_other" name="future_care_plan_other" value="{{ iwlm[40] if iwlm and iwlm[40] else '' }}" placeholder="具体的な内容を入力してください">
             </div>
@@ -398,7 +398,7 @@
    <div class="button-group">
       <a href="{{ url_for('iwlm_table') }}" class="info-link">私の暮らし一覧を見る</a>
       {% if session.get('user_type') != 'family' %}
-      <form method="POST" action="{{ url_for('delete_iwlm') }}" style="display: inline;" onsubmit="return confirm('私の暮らし情報を削除しますか？この操作は取り消せません。')">
+      <form method="POST" action="{{ url_for('delete_iwlm') }}" class="inline-form" onsubmit="return confirm('私の暮らし情報を削除しますか？この操作は取り消せません。')">
          <button type="submit" class="delete-btn">削除</button>
       </form>
       {% endif %}
@@ -414,15 +414,7 @@
    document.addEventListener('DOMContentLoaded', function () {
       // 家族ユーザーの場合は全ての入力項目を不活性化
       {% if session.get('user_type') == 'family' %}
-      const inputs = document.querySelectorAll('input, select, textarea');
-      inputs.forEach(input => {
-         input.disabled = true;
-      });
-
-      const buttons = document.querySelectorAll('button[type="submit"]');
-      buttons.forEach(button => {
-         button.disabled = true;
-      });
+      disableInputsForFamilyUsers();
       {% endif %}
 
       // チェックボックスの既存データを設定

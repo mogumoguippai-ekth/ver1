@@ -111,7 +111,7 @@
         <div class="goals-actions">
             <button onclick="printGoals()" class="print-btn">目標を印刷</button>
             {% if session.get('user_type') != 'family' %}
-            <form method="POST" action="{{ url_for('update_goals') }}" style="display: inline;">
+            <form method="POST" action="{{ url_for('update_goals') }}" class="inline-form">
                 <button type="submit" class="update-btn" onclick="return confirm('目標を作成しますか？新しいデータに基づいて目標が再生成されます。')">目標を再作成</button>
             </form>
             {% endif %}

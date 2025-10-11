@@ -2788,3 +2788,79 @@ img {
     outline: none;
     box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.25);
 }
+
+/* ===== User Page Specific Styles ===== */
+
+/* 招待コード表示エリア */
+.invitation-code-display {
+    display: none;
+}
+
+.invitation-info {
+    background: #f0f0f0;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    font-size: 12px;
+}
+
+/* アラートメッセージ */
+.alert-info {
+    background: #d1ecf1;
+    color: #0c5460;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+/* 編集セクション */
+.edit-section {
+    display: none;
+}
+
+/* セクション見出し */
+.section-title {
+    color: #CC3366;
+}
+
+/* フォーム表示（インライン） */
+.inline-form {
+    display: inline;
+}
+
+/* モーダル表示制御 */
+.modal-hidden {
+    display: none;
+}
+
+/* 削除ボタン表示制御 */
+.delete-btn-hidden {
+    display: none;
+}
+
+/* 説明テキスト */
+.help-text {
+    font-size: 10px;
+    color: #666;
+    margin-top: 5px;
+}
+
+/* その他入力欄 */
+.other-input {
+    display: none;
+}
+
+/* ユーザーリンク */
+.user-link {
+    text-decoration: underline;
+}
+
+/* ログアウトボタン */
+.logout-btn {
+    text-decoration: none;
+}
+
+/* サブセクション見出し */
+.subsection-title {
+    color: #000099;
+}

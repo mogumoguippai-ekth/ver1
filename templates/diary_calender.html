@@ -42,7 +42,7 @@
     </div>
 
     <!-- 日記入力モーダル -->
-    <div id="diary-modal" class="modal" style="display: none;">
+    <div id="diary-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 id="modal-date-title">日記を入力</h3>
@@ -71,7 +71,7 @@
                         <div id="photo-preview" class="photo-preview"></div>
                     </div>
 
-                    <div class="existing-photo" id="existing-photo" style="display: none;">
+                    <div class="existing-photo" id="existing-photo">
                         <h4>現在の写真</h4>
                         <img id="existing-photo-img" src="" alt="現在の写真">
                         {% if session.get('user_type') != 'family' %}
@@ -82,7 +82,7 @@
                     <div class="modal-actions">
                         <button type="button" onclick="saveDiary()" class="save-btn">保存</button>
                         {% if session.get('user_type') != 'family' %}
-                        <button type="button" onclick="deleteDiary()" class="delete-btn" id="delete-btn" style="display: none;">削除</button>
+                        <button type="button" onclick="deleteDiary()" class="delete-btn" id="delete-btn">削除</button>
                         {% endif %}
                         <button type="button" onclick="closeDiaryModal()" class="cancel-btn">キャンセル</button>
                     </div>
