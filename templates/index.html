@@ -27,7 +27,7 @@
 
             <!-- ログインタブ -->
             <div id="login-tab" class="tab-content active">
-                <h3>ログイン</h3>
+                <!-- <h3>ログイン </h3>-->
                 {% with messages = get_flashed_messages() %}
                 {% if messages %}
                 <div class="alert alert-error">
@@ -50,8 +50,15 @@
 
             <!-- 会員登録タブ -->
             <div id="register-tab" class="tab-content">
-                <h3>会員登録</h3>
-                <form method="POST" action="{{ url_for('register') }}">
+                <!-- <h3>会員登録</h3> -->
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <div class="alert alert-error">
+                    {{ messages[0] }}
+                </div>
+                {% endif %}
+                {% endwith %}
+                <form method="POST" action="{{ url_for('register') }}" id="register-form">
                     <div class="radio-group">
                         <label class="radio-label">
                             <input type="radio" name="user-type" value="self" checked>
@@ -81,7 +88,127 @@
         </div>
     </div>
 
+    <!-- 招待コード入力フロートウィンドウ -->
+    <div id="invitation-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>招待コード入力</h3>
+                <span class="close" onclick="closeInvitationModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>家族登録には招待コードが必要です。</p>
+                <p>本人から発行された8桁の招待コードを入力してください。</p>
+                <div class="form-group">
+                    <label for="invitation-code">招待コード <span class="required">*</span></label>
+                    <input type="text" id="invitation-code" name="invitation-code" placeholder="8桁の数字を入力" maxlength="8">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeInvitationModal()">キャンセル</button>
+                <button type="button" class="btn-confirm" onclick="proceedWithFamilyRegistration()">確認</button>
+            </div>
+        </div>
+    </div>
+
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script>
+        // 家族登録フロー制御
+        document.addEventListener('DOMContentLoaded', function () {
+            // URLパラメータをチェックしてタブを切り替え
+            const urlParams = new URLSearchParams(window.location.search);
+            const tab = urlParams.get('tab');
+            console.log('URL parameter tab:', tab);
+
+            if (tab === 'register') {
+                // 会員登録タブをアクティブにする
+                console.log('Switching to register tab');
+                switchTab('register');
+
+                // URLからパラメータを削除（ページリロード時にタブが残らないように）
+                const newUrl = window.location.pathname;
+                window.history.replaceState({}, document.title, newUrl);
+            }
+
+            const userTypeRadios = document.querySelectorAll('input[name="user-type"]');
+            const registerForm = document.getElementById('register-form');
+            const invitationModal = document.getElementById('invitation-modal');
+            const invitationCodeInput = document.getElementById('invitation-code');
+
+            // ラジオボタンの変更を監視
+            userTypeRadios.forEach(radio => {
+                radio.addEventListener('change', function () {
+                    if (this.value === 'family') {
+                        // 家族が選択された場合、招待コード入力モーダルを表示
+                        invitationModal.style.display = 'block';
+                    }
+                });
+            });
+
+            // フォーム送信を制御
+            registerForm.addEventListener('submit', function (e) {
+                const selectedUserType = document.querySelector('input[name="user-type"]:checked').value;
+
+                if (selectedUserType === 'family') {
+                    e.preventDefault();
+                    // 家族登録の場合は招待コードが必要
+                    const invitationCode = invitationCodeInput.value.trim();
+                    if (!invitationCode) {
+                        alert('招待コードを入力してください。');
+                        return;
+                    }
+                    if (invitationCode.length !== 8 || !/^\d{8}$/.test(invitationCode)) {
+                        alert('招待コードは8桁の数字で入力してください。');
+                        return;
+                    }
+
+                    // 招待コードをフォームに追加して送信
+                    const hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.name = 'invitation-code';
+                    hiddenInput.value = invitationCode;
+                    registerForm.appendChild(hiddenInput);
+
+                    // フォームを送信
+                    registerForm.submit();
+                }
+            });
+        });
+
+        // モーダルを閉じる
+        function closeInvitationModal() {
+            document.getElementById('invitation-modal').style.display = 'none';
+            // 本人を選択し直す
+            document.querySelector('input[name="user-type"][value="self"]').checked = true;
+            document.getElementById('invitation-code').value = '';
+        }
+
+        // 家族登録を続行
+        function proceedWithFamilyRegistration() {
+            const invitationCode = document.getElementById('invitation-code').value.trim();
+            if (!invitationCode) {
+                alert('招待コードを入力してください。');
+                return;
+            }
+            if (invitationCode.length !== 8 || !/^\d{8}$/.test(invitationCode)) {
+                alert('招待コードは8桁の数字で入力してください。');
+                return;
+            }
+
+            // モーダルを閉じる
+            closeInvitationModal();
+
+            // フォーム送信をトリガー
+            document.getElementById('register-form').dispatchEvent(new Event('submit'));
+        }
+
+        // モーダル外クリックで閉じる
+        window.onclick = function (event) {
+            const modal = document.getElementById('invitation-modal');
+            if (event.target === modal) {
+                closeInvitationModal();
+            }
+        }
+    </script>
 </body>
 
 </html>

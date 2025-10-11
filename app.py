@@ -7,7 +7,6 @@ from flask import (
     session,
     flash,
     jsonify,
-    send_from_directory,
 )
 from config import db
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -15,8 +14,7 @@ from functools import wraps
 from werkzeug.utils import secure_filename
 import os
 from PIL import Image
-import json
-from datetime import datetime, date
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = "your-secret-key-here-change-in-production"  # セッション用の秘密鍵
@@ -57,6 +55,20 @@ def login_required(f):
     return decorated_function
 
 
+# 本人ユーザーのみアクセス可能デコレーター
+def self_user_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if "user_id" not in session:
+            return redirect(url_for("index"))
+        if session.get("user_type") != "self":
+            flash("この機能は本人ユーザーのみ利用できます。")
+            return redirect(url_for("dashboard"))
+        return f(*args, **kwargs)
+
+    return decorated_function
+
+
 @app.route("/")
 def index():
     # すでにログイン済みの場合はダッシュボードへ
@@ -71,22 +83,96 @@ def register():
     email = request.form.get("register-email")
     password = request.form.get("register-password")
     user_type = request.form.get("user-type", "self")
+    invitation_code = request.form.get("invitation-code")
 
-    # パスワードをハッシュ化
-    hashed_password = generate_password_hash(password)
+    # 家族登録の場合は招待コードが必要
+    if user_type == "family":
+        if not invitation_code:
+            flash("家族登録には招待コードが必要です。")
+            return redirect(url_for("index"))
 
-    user_data = {"user_id": user_id, "email": email, "password": hashed_password, "user_type": user_type}
+        # 招待コードの有効性をチェック
+        is_valid, parent_user_id = db.validate_invitation_code(invitation_code)
+        if not is_valid:
+            flash("無効な招待コードです。")
+            return redirect(url_for("index"))
 
-    try:
-        new_user_id = db.create_user(user_data)
-        # 登録後すぐにログイン
-        session["user_id"] = user_id
-        session["email"] = email
-        session["nickname"] = user_id  # 初期値としてuser_idをニックネームにする
-        return redirect(url_for("dashboard"))
-    except Exception as e:
-        flash(f"登録エラー: {str(e)}")
-        return redirect(url_for("index"))
+        # 家族ユーザーを作成
+        hashed_password = generate_password_hash(password)
+        family_data = {
+            "family_user_id": user_id,
+            "email": email,
+            "password": hashed_password,
+            "parent_user_id": parent_user_id,
+            "invitation_code": invitation_code,
+        }
+
+        try:
+            # 家族ユーザーを作成
+            db.create_family_user(family_data)
+
+            # 招待コードを使用済みにマーク
+            db.use_invitation_code(invitation_code)
+
+            # 親ユーザーの家族IDを更新
+            family_users = db.get_family_users_by_parent(parent_user_id)
+            family_ids = [None, None, None]
+            for i, family_user in enumerate(family_users[:3]):
+                family_ids[i] = family_user[0]  # family_usersテーブルのid
+
+            db.update_user_family_ids(parent_user_id, family_ids)
+
+            # 家族ユーザーとしてログイン
+            session["user_id"] = user_id
+            session["email"] = email
+            session["nickname"] = user_id
+            session["user_type"] = "family"
+            session["parent_user_id"] = parent_user_id
+
+            flash("家族会員として登録しました。")
+            return redirect(url_for("dashboard"))
+
+        except Exception as e:
+            error_message = str(e)
+            if "database is locked" in error_message:
+                flash("データベースが使用中です。しばらく待ってから再度お試しください。")
+            elif "UNIQUE constraint failed: family_users.family_user_id" in error_message:
+                flash("このユーザーIDは既に使用されています。別のユーザーIDを入力してください。")
+            elif "UNIQUE constraint failed: family_users.email" in error_message:
+                flash("このメールアドレスは既に使用されています。別のメールアドレスを入力してください。")
+            else:
+                flash(f"家族登録エラーが発生しました: {error_message}")
+            return redirect(url_for("index", tab="register"))
+
+    else:
+        # 本人登録の場合
+        hashed_password = generate_password_hash(password)
+        user_data = {"user_id": user_id, "email": email, "password": hashed_password, "user_type": user_type}
+
+        try:
+            db.create_user(user_data)
+            # 登録後すぐにログイン
+            session["user_id"] = user_id
+            session["email"] = email
+            session["nickname"] = user_id  # 初期値としてuser_idをニックネームにする
+            session["user_type"] = "self"
+            session["show_basic_info_tooltip"] = True  # 基本情報入力案内を表示
+            return redirect(url_for("dashboard"))
+        except Exception as e:
+            error_message = str(e)
+            if "database is locked" in error_message:
+                flash("データベースが使用中です。しばらく待ってから再度お試しください。")
+            elif "UNIQUE constraint failed: users.user_id" in error_message:
+                flash("このユーザーIDは既に使用されています。別のユーザーIDを入力してください。")
+            elif "UNIQUE constraint failed: users.email" in error_message:
+                flash("このメールアドレスは既に使用されています。別のメールアドレスを入力してください。")
+            elif "UNIQUE constraint failed: family_users.family_user_id" in error_message:
+                flash("このユーザーIDは既に使用されています。別のユーザーIDを入力してください。")
+            elif "UNIQUE constraint failed: family_users.email" in error_message:
+                flash("このメールアドレスは既に使用されています。別のメールアドレスを入力してください。")
+            else:
+                flash(f"登録エラーが発生しました: {error_message}")
+            return redirect(url_for("index", tab="register"))
 
 
 @app.route("/login", methods=["POST"])
@@ -94,17 +180,27 @@ def login():
     user_id = request.form.get("login-id")
     password = request.form.get("login-password")
 
-    # ユーザー認証
+    # まず本人ユーザーをチェック
     user = db.get_user_by_id(user_id)
-
     if user and check_password_hash(user[3], password):  # user[3]はpasswordカラム
         session["user_id"] = user[1]  # user_id
         session["email"] = user[2]  # email
         session["nickname"] = user[7] if user[7] else user[1]  # nickname or user_id
+        session["user_type"] = "self"
         return redirect(url_for("dashboard"))
-    else:
-        flash("ユーザーIDかパスワードが正しくありません。")
-        return redirect(url_for("index"))
+
+    # 家族ユーザーをチェック
+    family_user = db.get_family_user_by_id(user_id)
+    if family_user and check_password_hash(family_user[3], password):  # family_user[3]はpasswordカラム
+        session["user_id"] = family_user[1]  # family_user_id
+        session["email"] = family_user[2]  # email
+        session["nickname"] = family_user[1]  # family_user_id
+        session["user_type"] = "family"
+        session["parent_user_id"] = family_user[4]  # parent_user_id
+        return redirect(url_for("dashboard"))
+
+    flash("ユーザーIDかパスワードが正しくありません。")
+    return redirect(url_for("index"))
 
 
 @app.route("/logout")
@@ -117,12 +213,50 @@ def logout():
 @login_required
 def user():
     # ログインユーザーの情報を取得
-    user_data = db.get_user_by_id(session["user_id"])
+    if session.get("user_type") == "family":
+        # 家族ユーザーの場合は親ユーザーの情報を取得
+        user_data = db.get_user_by_id(session["parent_user_id"])
+    else:
+        # 本人ユーザーの場合は自分の情報を取得
+        user_data = db.get_user_by_id(session["user_id"])
     return render_template("user.html", user=user_data)
 
 
-@app.route("/update_user", methods=["POST"])
+@app.route("/hide_tooltip", methods=["POST"])
 @login_required
+def hide_tooltip():
+    """ツールチップを非表示にする"""
+    if "show_basic_info_tooltip" in session:
+        del session["show_basic_info_tooltip"]
+    return jsonify({"success": True})
+
+
+@app.route("/generate_invitation_code", methods=["POST"])
+@login_required
+def generate_invitation_code():
+    """招待コードを生成"""
+    user_id = session["user_id"]
+
+    # 本人ユーザーのみ招待コードを発行可能
+    if session.get("user_type") != "self":
+        return jsonify({"success": False, "error": "招待コードは本人ユーザーのみ発行できます。"})
+
+    # 家族登録可能数をチェック
+    next_slot = db.get_next_family_slot(user_id)
+    if next_slot is None:
+        return jsonify({"success": False, "error": "家族登録は3人までです。"})
+
+    try:
+        code, expires_at = db.generate_invitation_code(user_id)
+        return jsonify(
+            {"success": True, "code": code, "expires_at": expires_at.strftime("%Y-%m-%d %H:%M:%S")}
+        )
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)})
+
+
+@app.route("/update_user", methods=["POST"])
+@self_user_required
 def update_user():
     # プロフィール更新
     user_id = session["user_id"]
@@ -168,23 +302,30 @@ def update_user():
     if nickname:
         session["nickname"] = nickname
 
+    # 基本情報入力案内ツールチップを非表示にする
+    if "show_basic_info_tooltip" in session:
+        del session["show_basic_info_tooltip"]
+
     flash("基本情報を更新しました。")
     return redirect(url_for("profile"))
 
 
 @app.route("/update_profile", methods=["POST"])
-@login_required
+@self_user_required
 def update_profile():
     # プロフィール詳細情報更新
     user_id = session["user_id"]
 
     # プロフィール詳細情報
+    family_living_value = request.form.get("family_living")
+    print(f"DEBUG: family_living received: '{family_living_value}'")
+
     profile_data = {
         "home": request.form.get("home"),
         "spouse": request.form.get("spouse"),
         "children_living": request.form.get("children_living"),
         "children_separate": request.form.get("children_separate"),
-        "family_living": request.form.get("family_living"),
+        "family_living": family_living_value,
         "treated_illness": request.form.get("Treated-illness"),
         "under_treatment": request.form.get("under-treatment"),
         "medical_facilities": request.form.get("receiving-treatment"),
@@ -193,6 +334,8 @@ def update_profile():
         "consulted_friend": request.form.get("consulted-friend"),
         "money_sources": ",".join(request.form.getlist("money")),  # チェックボックスは複数選択
     }
+
+    print(f"DEBUG: profile_data['family_living']: '{profile_data['family_living']}'")
 
     # プロフィール情報を保存
     db.create_or_update_profile(user_id, profile_data)
@@ -211,9 +354,16 @@ def dashboard():
 @login_required
 def profile():
     # ユーザー基本情報を取得
-    user_data = db.get_user_by_id(session["user_id"])
-    # プロフィール詳細情報を取得
-    profile_data = db.get_profile_by_user_id(session["user_id"])
+    if session.get("user_type") == "family":
+        # 家族ユーザーの場合は親ユーザーの情報を取得
+        parent_user_id = session.get("parent_user_id")
+        user_data = db.get_user_by_id(parent_user_id)
+        profile_data = db.get_profile_by_user_id(parent_user_id)
+    else:
+        # 本人ユーザーの場合
+        user_data = db.get_user_by_id(session["user_id"])
+        profile_data = db.get_profile_by_user_id(session["user_id"])
+        # print(profile_data)
 
     return render_template("profile.html", user=user_data, profile=profile_data)
 
@@ -222,7 +372,13 @@ def profile():
 @login_required
 def iwlm():
     # IWLM情報を取得
-    iwlm_data = db.get_iwlm_by_user_id(session["user_id"])
+    if session.get("user_type") == "family":
+        # 家族ユーザーの場合は親ユーザーの情報を取得
+        parent_user_id = session.get("parent_user_id")
+        iwlm_data = db.get_iwlm_by_user_id(parent_user_id)
+    else:
+        # 本人ユーザーの場合
+        iwlm_data = db.get_iwlm_by_user_id(session["user_id"])
 
     return render_template("iwlm.html", iwlm=iwlm_data)
 
@@ -236,7 +392,13 @@ def diary_calendar():
     current_month = now.month
 
     # 今月の日記がある日付を取得
-    diary_dates = db.get_diary_dates_with_entries(session["user_id"], current_year, current_month)
+    if session.get("user_type") == "family":
+        # 家族ユーザーの場合は親ユーザーの情報を取得
+        parent_user_id = session.get("parent_user_id")
+        diary_dates = db.get_diary_dates_with_entries(parent_user_id, current_year, current_month)
+    else:
+        # 本人ユーザーの場合
+        diary_dates = db.get_diary_dates_with_entries(session["user_id"], current_year, current_month)
 
     return render_template(
         "diary_calender.html", current_year=current_year, current_month=current_month, diary_dates=diary_dates
@@ -247,7 +409,14 @@ def diary_calendar():
 @login_required
 def diary_list():
     # 日記一覧を取得
-    diaries = db.get_diary_by_user_id(session["user_id"])
+    if session.get("user_type") == "family":
+        # 家族ユーザーの場合は親ユーザーの情報を取得
+        parent_user_id = session.get("parent_user_id")
+        diaries = db.get_diary_by_user_id(parent_user_id)
+    else:
+        # 本人ユーザーの場合
+        diaries = db.get_diary_by_user_id(session["user_id"])
+
     return render_template("diary_list.html", diaries=diaries)
 
 
@@ -255,15 +424,21 @@ def diary_list():
 @login_required
 def profile_table():
     # ユーザー基本情報を取得
-    user_data = db.get_user_by_id(session["user_id"])
-    # プロフィール詳細情報を取得
-    profile_data = db.get_profile_by_user_id(session["user_id"])
+    if session.get("user_type") == "family":
+        # 家族ユーザーの場合は親ユーザーの情報を取得
+        parent_user_id = session.get("parent_user_id")
+        user_data = db.get_user_by_id(parent_user_id)
+        profile_data = db.get_profile_by_user_id(parent_user_id)
+    else:
+        # 本人ユーザーの場合
+        user_data = db.get_user_by_id(session["user_id"])
+        profile_data = db.get_profile_by_user_id(session["user_id"])
 
     return render_template("profile_table.html", user=user_data, profile=profile_data)
 
 
 @app.route("/delete_profile", methods=["POST"])
-@login_required
+@self_user_required
 def delete_profile():
     # プロフィール詳細情報を削除
     user_id = session["user_id"]
@@ -279,7 +454,7 @@ def delete_profile():
 
 
 @app.route("/update_iwlm", methods=["POST"])
-@login_required
+@self_user_required
 def update_iwlm():
     # IWLM情報更新
     user_id = session["user_id"]
@@ -335,7 +510,7 @@ def update_iwlm():
 
 
 @app.route("/delete_iwlm", methods=["POST"])
-@login_required
+@self_user_required
 def delete_iwlm():
     # IWLM情報を削除
     user_id = session["user_id"]
@@ -354,8 +529,15 @@ def delete_iwlm():
 @login_required
 def iwlm_table():
     # IWLM情報を取得
-    user_data = db.get_user_by_id(session["user_id"])
-    iwlm_data = db.get_iwlm_by_user_id(session["user_id"])
+    if session.get("user_type") == "family":
+        # 家族ユーザーの場合は親ユーザーの情報を取得
+        parent_user_id = session.get("parent_user_id")
+        user_data = db.get_user_by_id(parent_user_id)
+        iwlm_data = db.get_iwlm_by_user_id(parent_user_id)
+    else:
+        # 本人ユーザーの場合
+        user_data = db.get_user_by_id(session["user_id"])
+        iwlm_data = db.get_iwlm_by_user_id(session["user_id"])
 
     return render_template("iwlm_table.html", user=user_data, iwlm=iwlm_data)
 
@@ -369,7 +551,13 @@ def howsitgoing():
 @app.route("/goals")
 @login_required
 def goals():
-    user_id = session["user_id"]
+    if session.get("user_type") == "family":
+        # 家族ユーザーの場合は親ユーザーの情報を取得
+        parent_user_id = session.get("parent_user_id")
+        user_id = parent_user_id
+    else:
+        # 本人ユーザーの場合
+        user_id = session["user_id"]
 
     # 更新後のリダイレクトかどうかチェック
     updated = request.args.get("updated", False)
@@ -391,7 +579,7 @@ def goals():
             saved_id = db.save_user_goals_forced(user_id, goals_data)
             is_new_goals = True
         else:
-            saved_id = db.save_user_goals(user_id, goals_data)
+            saved_id = db.save_user_goals_check(user_id, goals_data)
             is_new_goals = saved_id is not None
     else:
         # 保存された目標を使用
@@ -412,7 +600,7 @@ def goals():
 
 
 @app.route("/goals/update", methods=["POST"])
-@login_required
+@self_user_required
 def update_goals():
     """目標を手動で更新"""
     user_id = session["user_id"]
@@ -430,7 +618,7 @@ def update_goals():
         return redirect(url_for("goals", updated=True))
     else:
         # 通常の保存（重複チェック付き）
-        saved_id = db.save_user_goals(user_id, goals_data)
+        saved_id = db.save_user_goals_check(user_id, goals_data)
 
         if saved_id is not None:
             flash("目標を更新しました。")
@@ -441,7 +629,7 @@ def update_goals():
 
 
 @app.route("/goals/check-update", methods=["POST"])
-@login_required
+@self_user_required
 def check_goals_update():
     """データ変更時の目標更新確認"""
     user_id = session["user_id"]
@@ -462,7 +650,13 @@ def check_goals_update():
 @login_required
 def goals_history():
     """目標履歴を表示"""
-    user_id = session["user_id"]
+    if session.get("user_type") == "family":
+        # 家族ユーザーの場合は親ユーザーの情報を取得
+        parent_user_id = session.get("parent_user_id")
+        user_id = parent_user_id
+    else:
+        # 本人ユーザーの場合
+        user_id = session["user_id"]
 
     # 目標履歴を取得（最新10件）
     goals_history = db.get_user_goals(user_id, 10)
@@ -474,7 +668,7 @@ def goals_history():
 
 
 @app.route("/goals/delete/<int:goal_id>", methods=["POST"])
-@login_required
+@self_user_required
 def delete_goal(goal_id):
     """目標履歴を削除"""
     user_id = session["user_id"]
@@ -491,22 +685,34 @@ def delete_goal(goal_id):
 
 
 # 日記関連のAPIルート
-@app.route("/api/diary/<date>")
+@app.route("/api/diary/<diary_date>")
 @login_required
-def get_diary_by_date_api(date):
-    diary = db.get_diary_by_date(session["user_id"], date)
+def get_diary_by_date_api(diary_date):
+    if session.get("user_type") == "family":
+        # 家族ユーザーの場合は親ユーザーの情報を取得
+        parent_user_id = session.get("parent_user_id")
+        diary = db.get_diary_by_date(parent_user_id, diary_date)
+    else:
+        # 本人ユーザーの場合
+        diary = db.get_diary_by_date(session["user_id"], diary_date)
     return jsonify({"diary": diary})
 
 
 @app.route("/api/diary-dates/<int:year>/<int:month>")
 @login_required
 def get_diary_dates_api(year, month):
-    dates = db.get_diary_dates_with_entries(session["user_id"], year, month)
+    if session.get("user_type") == "family":
+        # 家族ユーザーの場合は親ユーザーの情報を取得
+        parent_user_id = session.get("parent_user_id")
+        dates = db.get_diary_dates_with_entries(parent_user_id, year, month)
+    else:
+        # 本人ユーザーの場合
+        dates = db.get_diary_dates_with_entries(session["user_id"], year, month)
     return jsonify({"dates": dates})
 
 
 @app.route("/save-diary", methods=["POST"])
-@login_required
+@self_user_required
 def save_diary():
     try:
         user_id = session["user_id"]
@@ -557,7 +763,7 @@ def save_diary():
 
 
 @app.route("/delete-diary", methods=["POST"])
-@login_required
+@self_user_required
 def delete_diary():
     try:
         user_id = session["user_id"]
@@ -583,6 +789,16 @@ def delete_diary():
 
     except Exception as e:
         return jsonify({"success": False, "error": str(e)})
+
+
+@app.route("/init_db")
+def init_database():
+    """データベース初期化（開発用）"""
+    try:
+        db.init_db()
+        return "Database initialized successfully"
+    except Exception as e:
+        return f"Database initialization failed: {str(e)}"
 
 
 if __name__ == "__main__":

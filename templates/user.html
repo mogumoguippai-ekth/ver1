@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
-{% block title %}プロフィール編集 - 私の望む暮らし{% endblock %}
+{% block title %}私について 基本情報編集 - 私の望む暮らし{% endblock %}
 
-{% block page_title %}プロフィール編集{% endblock %}
+{% block page_title %}私について 基本情報編集{% endblock %}
 
 {% block nickname %}{{ session.get('nickname', 'ゲスト') }}{% endblock %}
 
@@ -17,6 +17,41 @@
     </div>
     {% endif %}
     {% endwith %}
+
+    <!-- デバッグ情報（一時的） -->
+    <div style="background: #f0f0f0; padding: 10px; margin-bottom: 20px; border-radius: 5px; font-size: 12px;">
+        <strong>デバッグ情報:</strong><br>
+        ユーザータイプ: {{ session.get('user_type') }}<br>
+        ユーザーID: {{ session.get('user_id') }}<br>
+        親ユーザーID: {{ session.get('parent_user_id') }}<br>
+        family_living: {{ user[13] if user and user[13] else 'NULL' }}<br>
+        updated_at: {{ user[15] if user and user[15] else 'NULL' }}
+    </div>
+
+    <!-- 招待コード発行セクション（本人ユーザーのみ） -->
+    {% if session.get('user_type') == 'self' %}
+    <div class="invitation-section">
+        <h3>家族招待</h3>
+        <p>家族に招待コードを発行して、家族会員として登録してもらえます。</p>
+        <button type="button" id="generate-invitation-btn" class="invitation-btn">招待コードを発行</button>
+
+        <!-- 招待コード表示エリア -->
+        <div id="invitation-code-display" class="invitation-code-display" style="display: none;">
+            <h4>招待コード</h4>
+            <div class="code-container">
+                <span id="invitation-code-text" class="code-text"></span>
+                <button type="button" id="copy-code-btn" class="copy-btn">コピー</button>
+            </div>
+            <p class="expires-text">有効期限: <span id="expires-at"></span></p>
+            <p class="note-text">※このコードは30分間有効です</p>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info" style="background: #d1ecf1; color: #0c5460; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+        <strong>注意:</strong> 招待コード発行機能は本人ユーザーのみ利用できます。
+        現在のユーザータイプ: {{ session.get('user_type', '未設定') }}
+    </div>
+    {% endif %}
 
     <form method="POST" action="{{ url_for('update_user') }}" class="registration-form">
         <!-- ユーザーID (表示のみ) -->
@@ -88,7 +123,7 @@
 
         <!-- 家族情報 -->
         <div class="family-section">
-            <h3>家族情報</h3>
+            <h3 style="color: #CC3366;">家族情報</h3>
             <div class="form-group">
                 <label for="family_id1">家族ID1</label>
                 <input type="number" id="family_id1" name="family_id1" value="{{ user[10] if user and user[10] else '' }}" placeholder="家族ID1">
@@ -114,4 +149,69 @@
 </div>
 
 <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script>
+    // 招待コード発行機能
+    document.addEventListener('DOMContentLoaded', function () {
+        const generateBtn = document.getElementById('generate-invitation-btn');
+        const codeDisplay = document.getElementById('invitation-code-display');
+        const codeText = document.getElementById('invitation-code-text');
+        const expiresAt = document.getElementById('expires-at');
+        const copyBtn = document.getElementById('copy-code-btn');
+
+        if (generateBtn) {
+            generateBtn.addEventListener('click', function () {
+                // ボタンを無効化
+                generateBtn.disabled = true;
+                generateBtn.textContent = '発行中...';
+
+                // 招待コードを生成
+                fetch('/generate_invitation_code', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // 招待コードを表示
+                            codeText.textContent = data.code;
+                            expiresAt.textContent = data.expires_at;
+                            codeDisplay.style.display = 'block';
+
+                            // ボタンを元に戻す
+                            generateBtn.disabled = false;
+                            generateBtn.textContent = '招待コードを発行';
+                        } else {
+                            alert('エラー: ' + data.error);
+                            generateBtn.disabled = false;
+                            generateBtn.textContent = '招待コードを発行';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('招待コードの発行に失敗しました。');
+                        generateBtn.disabled = false;
+                        generateBtn.textContent = '招待コードを発行';
+                    });
+            });
+        }
+
+        // コピーボタン機能
+        if (copyBtn) {
+            copyBtn.addEventListener('click', function () {
+                const code = codeText.textContent;
+                navigator.clipboard.writeText(code).then(function () {
+                    copyBtn.textContent = 'コピー完了!';
+                    setTimeout(function () {
+                        copyBtn.textContent = 'コピー';
+                    }, 2000);
+                }).catch(function (err) {
+                    console.error('コピーに失敗しました: ', err);
+                    alert('コピーに失敗しました。手動でコピーしてください。');
+                });
+            });
+        }
+    });
+</script>
 {% endblock %}

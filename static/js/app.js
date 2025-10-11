@@ -576,11 +576,21 @@ function initDataChangeAlert(dataChanged, updateUrl) {
  * @param {string} tabName - タブ名
  */
 function switchTab(tabName) {
+  console.log('switchTab called with:', tabName);
+
   // タブボタンの切り替え
   document.querySelectorAll('.tab-button').forEach(button => {
     button.classList.remove('active');
   });
-  event.target.classList.add('active');
+
+  // 対応するタブボタンをアクティブにする
+  const targetButton = document.querySelector(`.tab-button[onclick*="${tabName}"]`);
+  if (targetButton) {
+    targetButton.classList.add('active');
+    console.log('Tab button activated for:', tabName);
+  } else {
+    console.log('Tab button not found for:', tabName);
+  }
 
   // タブコンテンツの切り替え
   document.querySelectorAll('.tab-content').forEach(content => {
@@ -589,6 +599,9 @@ function switchTab(tabName) {
   const targetTab = document.getElementById(tabName + '-tab');
   if (targetTab) {
     targetTab.classList.add('active');
+    console.log('Tab content activated for:', tabName);
+  } else {
+    console.log('Tab content not found for:', tabName);
   }
 }
 

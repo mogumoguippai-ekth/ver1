@@ -23,8 +23,8 @@
             <div class="table-info">
                 {% if user %}
                 <p><strong>ユーザーID:</strong> {{ user[1] }}</p>
-                <p><strong>作成日:</strong> {{ user[13] if user[13] else '未設定' }}</p>
-                <p><strong>更新日:</strong> {{ user[14] if user[14] else '未設定' }}</p>
+                <p><strong>作成日:</strong> {{ user[14] if user[14] else '未設定' }}</p>
+                <p><strong>更新日:</strong> {{ user[15] if user[15] else '未設定' }}</p>
                 {% endif %}
             </div>
             <div class="print-export">
@@ -102,32 +102,36 @@
                     <td class="data-cell">{{ profile[5] if profile and profile[5] else '未設定' }}</td>
                 </tr>
                 <tr>
-                    <td class="label-cell">治療の終わった病気</td>
-                    <td class="data-cell">{{ profile[6] if profile and profile[6] else '未設定' }}</td>
+                    <td class="label-cell">同居している親族</td>
+                    <td class="data-cell">{{ profile[15] if profile and profile[15] else '未設定' }}</td>
                 </tr>
                 <tr>
-                    <td class="label-cell">治療している病気</td>
+                    <td class="label-cell">治療の終わった病気</td>
                     <td class="data-cell">{{ profile[7] if profile and profile[7] else '未設定' }}</td>
                 </tr>
                 <tr>
-                    <td class="label-cell">かかっている医療機関</td>
+                    <td class="label-cell">治療している病気</td>
                     <td class="data-cell">{{ profile[8] if profile and profile[8] else '未設定' }}</td>
                 </tr>
                 <tr>
-                    <td class="label-cell">一番頼りにしている家族</td>
+                    <td class="label-cell">かかっている医療機関</td>
                     <td class="data-cell">{{ profile[9] if profile and profile[9] else '未設定' }}</td>
                 </tr>
                 <tr>
-                    <td class="label-cell">頼りにしている隣人</td>
+                    <td class="label-cell">一番頼りにしている家族</td>
                     <td class="data-cell">{{ profile[10] if profile and profile[10] else '未設定' }}</td>
                 </tr>
                 <tr>
-                    <td class="label-cell">よく相談している友人</td>
+                    <td class="label-cell">頼りにしている隣人</td>
                     <td class="data-cell">{{ profile[11] if profile and profile[11] else '未設定' }}</td>
                 </tr>
                 <tr>
-                    <td class="label-cell">私の暮らしを支えるお金</td>
+                    <td class="label-cell">よく相談している友人</td>
                     <td class="data-cell">{{ profile[12] if profile and profile[12] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">私の暮らしを支えるお金</td>
+                    <td class="data-cell">{{ profile[13] if profile and profile[13] else '未設定' }}</td>
                 </tr>
             </tbody>
         </table>

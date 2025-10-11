@@ -1,5 +1,4 @@
 import sqlite3
-import os
 import datetime
 
 
@@ -9,7 +8,12 @@ class Database:
 
     def get_connection(self):
         """データベース接続を取得"""
-        return sqlite3.connect(self.db_path)
+        conn = sqlite3.connect(self.db_path, timeout=30.0)
+        # WALモードを有効にして同時アクセスを改善
+        conn.execute("PRAGMA journal_mode=WAL")
+        # ロックタイムアウトを設定
+        conn.execute("PRAGMA busy_timeout=30000")  # 30秒
+        return conn
 
     def init_db(self):
         """データベースとテーブルを初期化"""
@@ -49,6 +53,7 @@ class Database:
                 spouse TEXT,
                 children_living TEXT,
                 children_separate TEXT,
+                family_living TEXT,
                 treated_illness TEXT,
                 under_treatment TEXT,
                 medical_facilities TEXT,
@@ -149,6 +154,64 @@ class Database:
             """
         )
 
+        # family_usersテーブル作成
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS family_users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                family_user_id VARCHAR(50) UNIQUE NOT NULL,
+                email VARCHAR(100) UNIQUE NOT NULL,
+                password VARCHAR(255) NOT NULL,
+                parent_user_id VARCHAR(50) NOT NULL,
+                invitation_code VARCHAR(8) NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (parent_user_id) REFERENCES users (user_id)
+            )
+            """
+        )
+
+        # invitation_codesテーブル作成
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS invitation_codes (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                code VARCHAR(8) UNIQUE NOT NULL,
+                user_id VARCHAR(50) NOT NULL,
+                expires_at TIMESTAMP NOT NULL,
+                used BOOLEAN DEFAULT FALSE,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users (user_id)
+            )
+            """
+        )
+
+        # 既存のprofilesテーブルにfamily_livingカラムを追加（マイグレーション）
+        try:
+            cursor.execute("ALTER TABLE profiles ADD COLUMN family_living TEXT")
+            print("Added family_living column to profiles table")
+        except sqlite3.OperationalError:
+            # カラムが既に存在する場合はエラーを無視
+            pass
+
+        # 既存のusersテーブルからfamily_livingカラムを削除（マイグレーション）
+        try:
+            # SQLiteではカラムの直接削除ができないため、新しいテーブルを作成してデータを移行
+            cursor.execute(
+                """
+                CREATE TABLE users_new AS 
+                SELECT id, user_id, email, password, user_type, name, furigana, nickname, 
+                       gender, birth_date, family_id1, family_id2, family_id3, 
+                       created_at, updated_at 
+                FROM users
+            """
+            )
+            cursor.execute("DROP TABLE users")
+            cursor.execute("ALTER TABLE users_new RENAME TO users")
+            print("Removed family_living column from users table")
+        except sqlite3.OperationalError as e:
+            # エラーが発生した場合は無視（カラムが存在しない場合など）
+            print(f"Migration skipped: {e}")
+
         conn.commit()
         conn.close()
 
@@ -188,7 +251,15 @@ class Database:
         conn = self.get_connection()
         cursor = conn.cursor()
 
-        cursor.execute("SELECT * FROM users WHERE user_id = ?", (user_id,))
+        cursor.execute(
+            """
+            SELECT id, user_id, email, password, user_type, name, furigana, nickname, 
+                   gender, birth_date, family_id1, family_id2, family_id3, 
+                   created_at, updated_at 
+            FROM users WHERE user_id = ?
+        """,
+            (user_id,),
+        )
         user = cursor.fetchone()
         conn.close()
         return user
@@ -234,6 +305,9 @@ class Database:
 
         if existing_profile:
             # 更新
+            family_living_value = profile_data.get("family_living")
+            print(f"DEBUG: Updating profile for user_id {user_id}, family_living: '{family_living_value}'")
+
             cursor.execute(
                 """
                 UPDATE profiles 
@@ -261,6 +335,11 @@ class Database:
             )
         else:
             # 新規作成
+            family_living_value = profile_data.get("family_living")
+            print(
+                f"DEBUG: Creating new profile for user_id {user_id}, family_living: '{family_living_value}'"
+            )
+
             cursor.execute(
                 """
                 INSERT INTO profiles (user_id, home, spouse, children_living, children_separate, family_living,
@@ -518,8 +597,7 @@ class Database:
         conn.close()
 
         # 分析結果に基づいて目標を生成
-        goals = self.generate_goals(user_data, profile_data, iwlm_data)
-        return goals
+        return self.generate_goals(user_data, profile_data, iwlm_data)
 
     def generate_goals(self, user_data, profile_data, iwlm_data):
         """データに基づいて個人化された目標を生成"""
@@ -555,7 +633,7 @@ class Database:
                     base_goals[0] = (
                         "キャリア形成と人間関係構築を両立させ、将来への基盤となる充実した生活を築く"
                     )
-            except:
+            except Exception:
                 pass
 
         # IWLMデータに基づく調整
@@ -770,7 +848,7 @@ class Database:
 
         return False
 
-    def save_user_goals(self, user_id, goals_data):
+    def save_user_goals_check(self, user_id, goals_data):
         """ユーザーの目標を保存（重複チェック付き）"""
         import json
 
@@ -937,6 +1015,153 @@ class Database:
         conn.commit()
         conn.close()
         return True
+
+    def generate_invitation_code(self, user_id):
+        """8桁の招待コードを生成し、30分間有効にする"""
+        import random
+        import datetime
+
+        conn = self.get_connection()
+        cursor = conn.cursor()
+
+        # 8桁のランダムな数字を生成
+        code = str(random.randint(10000000, 99999999))
+
+        # 有効期限（現在時刻から30分後）
+        expires_at = datetime.datetime.now() + datetime.timedelta(minutes=30)
+
+        # 招待コードを保存
+        cursor.execute(
+            "INSERT INTO invitation_codes (code, user_id, expires_at) VALUES (?, ?, ?)",
+            (code, user_id, expires_at),
+        )
+
+        conn.commit()
+        conn.close()
+
+        return code, expires_at
+
+    def validate_invitation_code(self, code):
+        """招待コードの有効性を検証"""
+        import datetime
+
+        conn = self.get_connection()
+        cursor = conn.cursor()
+
+        # コードが存在し、有効期限内で、未使用かチェック
+        cursor.execute(
+            "SELECT user_id, expires_at FROM invitation_codes WHERE code = ? AND used = FALSE", (code,)
+        )
+        result = cursor.fetchone()
+
+        conn.close()
+
+        if not result:
+            return False, None
+
+        user_id, expires_at = result
+        current_time = datetime.datetime.now()
+
+        # 有効期限チェック
+        if current_time > datetime.datetime.strptime(expires_at, "%Y-%m-%d %H:%M:%S"):
+            return False, None
+
+        return True, user_id
+
+    def use_invitation_code(self, code):
+        """招待コードを使用済みにマーク"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute("UPDATE invitation_codes SET used = TRUE WHERE code = ?", (code,))
+
+        conn.commit()
+        conn.close()
+
+    def create_family_user(self, family_data):
+        """家族ユーザーを作成"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            INSERT INTO family_users (family_user_id, email, password, parent_user_id, invitation_code)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (
+                family_data.get("family_user_id"),
+                family_data.get("email"),
+                family_data.get("password"),
+                family_data.get("parent_user_id"),
+                family_data.get("invitation_code"),
+            ),
+        )
+
+        family_id = cursor.lastrowid
+        conn.commit()
+        conn.close()
+
+        return family_id
+
+    def get_family_user_by_id(self, family_user_id):
+        """家族ユーザーIDで家族ユーザー情報を取得"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT * FROM family_users WHERE family_user_id = ?", (family_user_id,))
+        family_user = cursor.fetchone()
+        conn.close()
+        return family_user
+
+    def get_family_users_by_parent(self, parent_user_id):
+        """親ユーザーIDで家族ユーザー一覧を取得"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT * FROM family_users WHERE parent_user_id = ?", (parent_user_id,))
+        family_users = cursor.fetchall()
+        conn.close()
+        return family_users
+
+    def update_user_family_ids(self, user_id, family_ids):
+        """ユーザーの家族IDを更新"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute(
+            """
+            UPDATE users 
+            SET family_id1 = ?, family_id2 = ?, family_id3 = ?, updated_at = CURRENT_TIMESTAMP
+            WHERE user_id = ?
+            """,
+            (family_ids[0], family_ids[1], family_ids[2], user_id),
+        )
+
+        conn.commit()
+        conn.close()
+
+    def get_next_family_slot(self, user_id):
+        """次の家族スロット（family_id1-3）を取得"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT family_id1, family_id2, family_id3 FROM users WHERE user_id = ?", (user_id,))
+        result = cursor.fetchone()
+        conn.close()
+
+        if not result:
+            return None
+
+        family_id1, family_id2, family_id3 = result
+
+        if family_id1 is None:
+            return 1
+        elif family_id2 is None:
+            return 2
+        elif family_id3 is None:
+            return 3
+        else:
+            return None  # 3人まで登録済み
 
 
 # データベースインスタンス
