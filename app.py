@@ -584,18 +584,19 @@ def goals():
             profile_data = db.get_profile_by_user_id(user_id)
             iwlm_data = db.get_iwlm_by_user_id(user_id)
 
-            print(f"user_data: {user_data}")
-            print(type(user_data))
-            print(f"profile_data: {profile_data}")
-            print(type(profile_data))
-            print(f"iwlm_data: {iwlm_data}")
-            print(type(iwlm_data))
-            print(f"user_id: {user_id}")
-            print(type(user_id))
+            # print(f"user_data: {user_data}")
+            # print(type(user_data))
+            # print(f"profile_data: {profile_data}")
+            # print(type(profile_data))
+            # print(f"iwlm_data: {iwlm_data}")
+            # print(type(iwlm_data))
+            # print(f"user_id: {user_id}")
+            # print(type(user_id))
 
             # AI目標生成サービスを使用
             goals_data = ai_goal_service.generate_goals(
-                user_data=user_data, profile_data=profile_data, iwlm_data=iwlm_data, user_id=user_id
+                # user_data=user_data, profile_data=profile_data, iwlm_data=iwlm_data, user_id=user_id
+                user_data={"name": user_data[5]}
             )
 
         except Exception as e:

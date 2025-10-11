@@ -7,6 +7,118 @@
 {% block nickname %}{{ session.get('nickname', 'ゲスト') }}{% endblock %}
 
 {% block content %}
+<style>
+    .history-badge {
+        font-size: 0.8em;
+        background-color: #007bff;
+        color: white;
+        padding: 2px 8px;
+        border-radius: 12px;
+        margin-left: 10px;
+    }
+
+    .history-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .history-actions .delete-btn,
+    .history-actions .print-btn {
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9em;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+    }
+
+    .history-actions .delete-btn {
+        background-color: #dc3545;
+    }
+
+    .history-actions .delete-btn:hover {
+        background-color: #c82333;
+    }
+
+    .history-actions .print-btn {
+        background-color: #28a745;
+    }
+
+    .history-actions .print-btn:hover {
+        background-color: #218838;
+    }
+
+    .history-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .history-date {
+        font-size: 0.9em;
+        color: #666;
+        margin-top: 5px;
+    }
+
+    /* goals.htmlと同じ文字サイズに調整 */
+    .history-goal-text {
+        font-size: 18px;
+        line-height: 1.6;
+        color: #2c3e50;
+        margin-bottom: 15px;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 6px;
+        border-left: 4px solid #007bff;
+    }
+
+    .history-goal-theme {
+        color: #2c3e50;
+        font-size: 18px;
+        margin: 0 0 10px 0;
+        font-weight: bold;
+    }
+
+    .history-goal-content {
+        font-size: 16px;
+        line-height: 1.5;
+        color: #495057;
+        margin-bottom: 15px;
+    }
+
+    .history-goal-reason {
+        font-size: 14px;
+        color: #6c757d;
+        line-height: 1.4;
+    }
+
+    /* 印刷用スタイル */
+    @media print {
+
+        .history-actions,
+        .history-badge,
+        .no-print {
+            display: none !important;
+        }
+
+        .history-item {
+            break-inside: avoid;
+            page-break-inside: avoid;
+            margin-bottom: 20px;
+        }
+
+        .history-header {
+            border-bottom: 2px solid #333;
+        }
+    }
+</style>
+
 <div class="goals-history-page">
     <h2>目標履歴</h2>
 
@@ -26,23 +138,29 @@
     {% for goal in goals_history %}
     <div class="history-item">
         <div class="history-header">
-            <h3>目標提案 #{{ loop.index }}</h3>
-            <div class="history-date">
-                <strong>作成日:</strong> {{ goal[5] }}
+            <div>
+                <h3>目標提案 #{{ loop.index }}
+                    <span class="history-badge">{% if loop.first %}最新{% else %}{{ loop.revindex }}番目{% endif %}</span>
+                </h3>
+                <div class="history-date">
+                    <strong>作成日:</strong> {{ goal[5] }}
+                    {% if goal[6] %}
+                    <br><strong>更新日:</strong> {{ goal[6] }}
+                    {% endif %}
+                </div>
             </div>
-            {% if not loop.first %}
             <div class="history-actions">
+                <button type="button" class="print-btn" onclick="printGoal({{ loop.index }})">印刷</button>
                 <form method="POST" action="{{ url_for('delete_goal', goal_id=goal[0]) }}" style="display: inline;" onsubmit="return confirm('この目標履歴を削除してもよろしいですか？');">
                     <button type="submit" class="delete-btn">削除</button>
                 </form>
             </div>
-            {% endif %}
         </div>
 
-        <div class="history-content">
+        <div class="history-content" id="goal-{{ loop.index }}">
             <div class="goal-section">
                 <h4>🎯 長期目標（3年後）</h4>
-                <div class="goal-text">{{ goal[2] }}</div>
+                <div class="history-goal-text">{{ goal[2] }}</div>
             </div>
 
             <div class="short-goals-section">
@@ -51,9 +169,9 @@
                 <div class="short-goal-item">
                     <div class="goal-number">{{ loop.index }}</div>
                     <div class="goal-details">
-                        <h5 class="goal-title">{{ short_goal.title }}</h5>
-                        <div class="goal-description">{{ short_goal.description }}</div>
-                        <div class="goal-reason">
+                        <h5 class="history-goal-theme">{{ short_goal.theme }}</h5>
+                        <div class="history-goal-content">{{ short_goal.content }}</div>
+                        <div class="history-goal-reason">
                             <strong>理由：</strong>{{ short_goal.reason }}
                         </div>
                     </div>
@@ -75,4 +193,130 @@
         <a href="{{ url_for('dashboard') }}" class="back-btn">HOMEに戻る</a>
     </div>
 </div>
+
+<script>
+    function printGoal(goalNumber) {
+        // 印刷対象の履歴を取得
+        const goalElement = document.getElementById('goal-' + goalNumber);
+        if (!goalElement) {
+            alert('印刷対象の履歴が見つかりません。');
+            return;
+        }
+
+        // 新しいウィンドウを作成
+        const printWindow = window.open('', '_blank');
+
+        // 印刷用のHTMLを作成
+        const printContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>目標提案 #${goalNumber} - 私の望む暮らし</title>
+            <style>
+                body {
+                    font-family: 'Hiragino Sans', 'ヒラギノ角ゴシック', 'Yu Gothic', 'メイリオ', sans-serif;
+                    margin: 20px;
+                    line-height: 1.6;
+                }
+                .goal-section {
+                    margin-bottom: 30px;
+                }
+                .goal-section h4 {
+                    color: #2c3e50;
+                    border-bottom: 2px solid #007bff;
+                    padding-bottom: 5px;
+                }
+                .history-goal-text {
+                    font-size: 18px;
+                    line-height: 1.6;
+                    color: #2c3e50;
+                    margin-bottom: 15px;
+                    padding: 15px;
+                    background: #f8f9fa;
+                    border-radius: 6px;
+                    border-left: 4px solid #007bff;
+                }
+                .short-goal-item {
+                    margin-bottom: 20px;
+                    padding: 15px;
+                    border: 1px solid #ddd;
+                    border-radius: 6px;
+                    background: #fff;
+                }
+                .goal-number {
+                    display: inline-block;
+                    width: 30px;
+                    height: 30px;
+                    background: #007bff;
+                    color: white;
+                    border-radius: 50%;
+                    text-align: center;
+                    line-height: 30px;
+                    font-weight: bold;
+                    margin-right: 15px;
+                    vertical-align: top;
+                }
+                .goal-details {
+                    display: inline-block;
+                    width: calc(100% - 50px);
+                    vertical-align: top;
+                }
+                .history-goal-theme {
+                    color: #2c3e50;
+                    font-size: 18px;
+                    margin: 0 0 10px 0;
+                    font-weight: bold;
+                }
+                .history-goal-content {
+                    font-size: 16px;
+                    line-height: 1.5;
+                    color: #495057;
+                    margin-bottom: 15px;
+                }
+                .history-goal-reason {
+                    font-size: 14px;
+                    color: #6c757d;
+                    line-height: 1.4;
+                }
+                .print-header {
+                    text-align: center;
+                    margin-bottom: 30px;
+                    border-bottom: 2px solid #333;
+                    padding-bottom: 15px;
+                }
+                .print-header h1 {
+                    color: #2c3e50;
+                    margin: 0;
+                }
+                .print-date {
+                    color: #666;
+                    margin-top: 10px;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="print-header">
+                <h1>目標提案 #${goalNumber}</h1>
+                <div class="print-date">私の望む暮らし - 目標履歴</div>
+            </div>
+            ${goalElement.innerHTML}
+        </body>
+        </html>
+    `;
+
+        // 新しいウィンドウにHTMLを書き込み
+        printWindow.document.write(printContent);
+        printWindow.document.close();
+
+        // 印刷ダイアログを表示
+        printWindow.focus();
+        printWindow.print();
+
+        // 印刷後、ウィンドウを閉じる
+        printWindow.onafterprint = function () {
+            printWindow.close();
+        };
+    }
+</script>
 {% endblock %}

@@ -66,9 +66,9 @@
                 <div class="short-goal-item">
                     <div class="goal-number">{{ loop.index }}</div>
                     <div class="goal-details">
-                        <h4 class="goal-title">{{ goal.title }}</h4>
+                        <h4 class="goal-title">{{ goal.theme }}</h4>
                         <div class="goal-description">
-                            {{ goal.description }}
+                            {{ goal.content }}
                         </div>
                         <div class="goal-reason">
                             <strong>理由：</strong>{{ goal.reason }}
@@ -107,7 +107,7 @@
         <div class="goals-actions">
             <button onclick="printGoals()" class="print-btn">目標を印刷</button>
             <form method="POST" action="{{ url_for('update_goals') }}" style="display: inline;">
-                <button type="submit" class="update-btn" onclick="return confirm('目標を更新しますか？新しいデータに基づいて目標が再生成されます。')">目標を更新</button>
+                <button type="submit" class="update-btn" onclick="return confirm('目標を作成しますか？新しいデータに基づいて目標が再生成されます。')">目標を再作成</button>
             </form>
             <a href="{{ url_for('goals_history') }}" class="history-btn">目標履歴を見る</a>
             <a href="{{ url_for('profile_table') }}" class="profile-btn">私について を確認</a>
