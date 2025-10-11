@@ -124,20 +124,28 @@
         <!-- 家族情報 -->
         <div class="family-section">
             <h3 style="color: #CC3366;">家族情報</h3>
+            {% if family_users %}
+            {% for i in range(3) %}
+            <div class="form-group">
+                <label for="family_id{{ i + 1 }}">家族ID{{ i + 1 }}</label>
+                <input type="text" id="family_id{{ i + 1 }}" name="family_id{{ i + 1 }}" value="{{ family_users[i][1] if i < family_users|length else '' }}" placeholder="家族ID{{ i + 1 }}" readonly>
+            </div>
+            {% endfor %}
+            {% else %}
+            <!-- 家族ユーザーが登録されていない場合 -->
             <div class="form-group">
                 <label for="family_id1">家族ID1</label>
-                <input type="number" id="family_id1" name="family_id1" value="{{ user[10] if user and user[10] else '' }}" placeholder="家族ID1">
+                <input type="text" id="family_id1" name="family_id1" value="" placeholder="家族ID1" readonly>
             </div>
-
             <div class="form-group">
                 <label for="family_id2">家族ID2</label>
-                <input type="number" id="family_id2" name="family_id2" value="{{ user[11] if user and user[11] else '' }}" placeholder="家族ID2">
+                <input type="text" id="family_id2" name="family_id2" value="" placeholder="家族ID2" readonly>
             </div>
-
             <div class="form-group">
                 <label for="family_id3">家族ID3</label>
-                <input type="number" id="family_id3" name="family_id3" value="{{ user[12] if user and user[12] else '' }}" placeholder="家族ID3">
+                <input type="text" id="family_id3" name="family_id3" value="" placeholder="家族ID3" readonly>
             </div>
+            {% endif %}
         </div>
 
         <!-- ボタン -->
@@ -186,93 +194,110 @@
 
         <div class="family-section">
             <h3 style="color: #CC3366;">家族情報</h3>
+            {% if session.get('user_type') == 'family' %}
+            <!-- 家族ユーザーの場合：自分の家族IDを表示 -->
             <div class="form-group">
-                <label>家族ID1</label><br>
-                <div class="readonly-value">{{ user[10] if user and user[10] else '未設定' }}</div>
+                <label>家族ID</label><br>
+                <div class="readonly-value">{{ family_user[1] if family_user else '未設定' }}</div>
+            </div>
+            {% else %}
+            <!-- 本人ユーザーの場合：family_usersテーブルから家族IDを表示 -->
+            {% if family_users %}
+            {% for i in range(3) %}
+            <div class="form-group">
+                <label>家族ID{{ i + 1 }}</label><br>
+                <div class="readonly-value">{{ family_users[i][1] if i < family_users|length else '未設定' }}</div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <!-- 家族ユーザーが登録されていない場合 -->
+                <div class="form-group">
+                    <label>家族ID1</label><br>
+                    <div class="readonly-value">未設定</div>
+                </div>
+                <div class="form-group">
+                    <label>家族ID2</label><br>
+                    <div class="readonly-value">未設定</div>
+                </div>
+                <div class="form-group">
+                    <label>家族ID3</label><br>
+                    <div class="readonly-value">未設定</div>
+                </div>
+                {% endif %}
+                {% endif %}
             </div>
 
-            <div class="form-group">
-                <label>家族ID2</label><br>
-                <div class="readonly-value">{{ user[11] if user and user[11] else '未設定' }}</div>
-            </div>
-
-            <div class="form-group">
-                <label>家族ID3</label><br>
-                <div class="readonly-value">{{ user[12] if user and user[12] else '未設定' }}</div>
+            <div class="form-actions">
+                <button type="button" class="cancel-btn" onclick="window.location.href='{{ url_for('dashboard') }}'">戻る</button>
             </div>
         </div>
-
-        <div class="form-actions">
-            <button type="button" class="cancel-btn" onclick="window.location.href='{{ url_for('dashboard') }}'">戻る</button>
-        </div>
+        {% endif %}
     </div>
-    {% endif %}
-</div>
 
-<script src="{{ url_for('static', filename='js/app.js') }}"></script>
-<script>
-    // 招待コード発行機能
-    document.addEventListener('DOMContentLoaded', function () {
-        const generateBtn = document.getElementById('generate-invitation-btn');
-        const codeDisplay = document.getElementById('invitation-code-display');
-        const codeText = document.getElementById('invitation-code-text');
-        const expiresAt = document.getElementById('expires-at');
-        const copyBtn = document.getElementById('copy-code-btn');
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script>
+        // 招待コード発行機能
+        document.addEventListener('DOMContentLoaded', function () {
+            const generateBtn = document.getElementById('generate-invitation-btn');
+            const codeDisplay = document.getElementById('invitation-code-display');
+            const codeText = document.getElementById('invitation-code-text');
+            const expiresAt = document.getElementById('expires-at');
+            const copyBtn = document.getElementById('copy-code-btn');
 
-        if (generateBtn) {
-            generateBtn.addEventListener('click', function () {
-                // ボタンを無効化
-                generateBtn.disabled = true;
-                generateBtn.textContent = '発行中...';
+            if (generateBtn) {
+                generateBtn.addEventListener('click', function () {
+                    // ボタンを無効化
+                    generateBtn.disabled = true;
+                    generateBtn.textContent = '発行中...';
 
-                // 招待コードを生成
-                fetch('/generate_invitation_code', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            // 招待コードを表示
-                            codeText.textContent = data.code;
-                            expiresAt.textContent = data.expires_at;
-                            codeDisplay.style.display = 'block';
-
-                            // ボタンを元に戻す
-                            generateBtn.disabled = false;
-                            generateBtn.textContent = '招待コードを発行';
-                        } else {
-                            alert('エラー: ' + data.error);
-                            generateBtn.disabled = false;
-                            generateBtn.textContent = '招待コードを発行';
+                    // 招待コードを生成
+                    fetch('/generate_invitation_code', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
                         }
                     })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('招待コードの発行に失敗しました。');
-                        generateBtn.disabled = false;
-                        generateBtn.textContent = '招待コードを発行';
-                    });
-            });
-        }
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                // 招待コードを表示
+                                codeText.textContent = data.code;
+                                expiresAt.textContent = data.expires_at;
+                                codeDisplay.style.display = 'block';
 
-        // コピーボタン機能
-        if (copyBtn) {
-            copyBtn.addEventListener('click', function () {
-                const code = codeText.textContent;
-                navigator.clipboard.writeText(code).then(function () {
-                    copyBtn.textContent = 'コピー完了!';
-                    setTimeout(function () {
-                        copyBtn.textContent = 'コピー';
-                    }, 2000);
-                }).catch(function (err) {
-                    console.error('コピーに失敗しました: ', err);
-                    alert('コピーに失敗しました。手動でコピーしてください。');
+                                // ボタンを元に戻す
+                                generateBtn.disabled = false;
+                                generateBtn.textContent = '招待コードを発行';
+                            } else {
+                                alert('エラー: ' + data.error);
+                                generateBtn.disabled = false;
+                                generateBtn.textContent = '招待コードを発行';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('招待コードの発行に失敗しました。');
+                            generateBtn.disabled = false;
+                            generateBtn.textContent = '招待コードを発行';
+                        });
                 });
-            });
-        }
-    });
-</script>
-{% endblock %}
+            }
+
+            // コピーボタン機能
+            if (copyBtn) {
+                copyBtn.addEventListener('click', function () {
+                    const code = codeText.textContent;
+                    navigator.clipboard.writeText(code).then(function () {
+                        copyBtn.textContent = 'コピー完了!';
+                        setTimeout(function () {
+                            copyBtn.textContent = 'コピー';
+                        }, 2000);
+                    }).catch(function (err) {
+                        console.error('コピーに失敗しました: ', err);
+                        alert('コピーに失敗しました。手動でコピーしてください。');
+                    });
+                });
+            }
+        });
+    </script>
+    {% endblock %}

@@ -122,7 +122,7 @@ def register():
             family_users = db.get_family_users_by_parent(parent_user_id)
             family_ids = [None, None, None]
             for i, family_user in enumerate(family_users[:3]):
-                family_ids[i] = family_user[0]  # family_usersテーブルのid
+                family_ids[i] = family_user[1]  # family_usersテーブルのfamily_user_id
 
             db.update_user_family_ids(parent_user_id, family_ids)
 
@@ -220,10 +220,18 @@ def user():
     if session.get("user_type") == "family":
         # 家族ユーザーの場合は親ユーザーの情報を取得
         user_data = db.get_user_by_id(session["parent_user_id"])
+        # 家族ユーザー自身の情報も取得
+        family_user_data = db.get_family_user_by_id(session["user_id"])
+        family_users_list = None
     else:
         # 本人ユーザーの場合は自分の情報を取得
         user_data = db.get_user_by_id(session["user_id"])
-    return render_template("user.html", user=user_data)
+        family_user_data = None
+        # 本人ユーザーの家族ユーザー一覧を取得
+        family_users_list = db.get_family_users_by_parent(session["user_id"])
+    return render_template(
+        "user.html", user=user_data, family_user=family_user_data, family_users=family_users_list
+    )
 
 
 @app.route("/hide_tooltip", methods=["POST"])

@@ -52,21 +52,27 @@
                 <li class="nav-item dropdown">
                     <a href="{{ url_for('diary_calendar') }}" class="nav-link">ダイアリー</a>
                     <div class="dropdown-menu">
+                        {% if session.get('user_type') != 'family' %}
                         <a href="{{ url_for('diary_calendar') }}" class="dropdown-item">ダイアリー 登録</a>
+                        {% endif %}
                         <a href="{{ url_for('diary_list') }}" class="dropdown-item">ダイアリー 一覧</a>
                     </div>
                 </li>
                 <li class="nav-item dropdown">
                     <a href="{{ url_for('profile') }}" class="nav-link">私について</a>
                     <div class="dropdown-menu">
+                        {% if session.get('user_type') != 'family' %}
                         <a href="{{ url_for('profile') }}" class="dropdown-item">私について 登録</a>
+                        {% endif %}
                         <a href="{{ url_for('profile_table') }}" class="dropdown-item">私について 一覧</a>
                     </div>
                 </li>
                 <li class="nav-item dropdown">
                     <a href="{{ url_for('iwlm') }}" class="nav-link">私の暮らし</a>
                     <div class="dropdown-menu">
+                        {% if session.get('user_type') != 'family' %}
                         <a href="{{ url_for('iwlm') }}" class="dropdown-item">私の暮らし 登録</a>
+                        {% endif %}
                         <a href="{{ url_for('iwlm_table') }}" class="dropdown-item">私の暮らし 一覧</a>
                     </div>
                 </li>
@@ -98,7 +104,9 @@
             <div class="footer-section">
                 <a href="{{ url_for('diary_calendar') }}" class="footer-main-link">ダイアリー</a>
                 <div class="footer-sub-links">
+                    {% if session.get('user_type') != 'family' %}
                     <a href="{{ url_for('diary_calendar') }}" class="footer-sub-link">ダイアリー 登録</a>
+                    {% endif %}
                     <a href="{{ url_for('diary_list') }}" class="footer-sub-link">ダイアリー 一覧</a>
                 </div>
             </div>
@@ -107,7 +115,9 @@
             <div class="footer-section">
                 <a href="{{ url_for('profile') }}" class="footer-main-link">私について</a>
                 <div class="footer-sub-links">
+                    {% if session.get('user_type') != 'family' %}
                     <a href="{{ url_for('profile') }}" class="footer-sub-link">私について 登録</a>
+                    {% endif %}
                     <a href="{{ url_for('profile_table') }}" class="footer-sub-link">私について 一覧</a>
                 </div>
             </div>
@@ -116,7 +126,9 @@
             <div class="footer-section">
                 <a href="{{ url_for('iwlm') }}" class="footer-main-link">私の暮らし</a>
                 <div class="footer-sub-links">
+                    {% if session.get('user_type') != 'family' %}
                     <a href="{{ url_for('iwlm') }}" class="footer-sub-link">私の暮らし 登録</a>
+                    {% endif %}
                     <a href="{{ url_for('iwlm_table') }}" class="footer-sub-link">私の暮らし 一覧</a>
                 </div>
             </div>
