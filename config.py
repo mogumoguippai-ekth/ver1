@@ -1,5 +1,6 @@
 import sqlite3
 import datetime
+from ai_goal_service import AIGoalService
 
 
 class Database:
@@ -796,7 +797,8 @@ class Database:
         last_created = datetime.datetime.strptime(result[0], "%Y-%m-%d %H:%M:%S")
         days_diff = (datetime.datetime.now() - last_created).days
 
-        return days_diff >= 90  # 90日以上経過している場合は更新
+        # return days_diff >= 90  # 90日以上経過している場合は更新
+        return True
 
     def has_data_changed(self, user_id):
         """ユーザーデータに変更があるかどうかを判定"""

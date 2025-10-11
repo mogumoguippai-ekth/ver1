@@ -555,6 +555,7 @@ def howsitgoing():
 @app.route("/goals")
 @login_required
 def goals():
+    print("goals")
     if session.get("user_type") == "family":
         # 家族ユーザーの場合は親ユーザーの情報を取得
         parent_user_id = session.get("parent_user_id")
@@ -577,15 +578,26 @@ def goals():
     if not latest_goals or needs_update:
         # AIサービスを使用して目標を生成
         try:
+            print("try")
             # ユーザー情報を取得
             user_data = db.get_user_by_id(user_id)
             profile_data = db.get_profile_by_user_id(user_id)
             iwlm_data = db.get_iwlm_by_user_id(user_id)
 
+            print(f"user_data: {user_data}")
+            print(type(user_data))
+            print(f"profile_data: {profile_data}")
+            print(type(profile_data))
+            print(f"iwlm_data: {iwlm_data}")
+            print(type(iwlm_data))
+            print(f"user_id: {user_id}")
+            print(type(user_id))
+
             # AI目標生成サービスを使用
             goals_data = ai_goal_service.generate_goals(
                 user_data=user_data, profile_data=profile_data, iwlm_data=iwlm_data, user_id=user_id
             )
+
         except Exception as e:
             print(f"AI目標生成に失敗しました: {e}")
             # フォールバック: 従来の固定ロジックで目標を生成
