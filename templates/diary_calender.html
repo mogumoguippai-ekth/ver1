@@ -99,6 +99,9 @@
 
 <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 <script>
+    // ユーザータイプを設定
+    window.userType = '{{ session.get('user_type', 'self') }}';
+
     // 初期化データを設定
     document.addEventListener('DOMContentLoaded', function () {
         initDiaryCalendar({{ current_year }}, {{ current_month }}, {{ diary_entries | tojson }});

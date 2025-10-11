@@ -128,7 +128,11 @@
             {% for i in range(3) %}
             <div class="form-group">
                 <label for="family_id{{ i + 1 }}">家族ID{{ i + 1 }}</label>
-                <input type="text" id="family_id{{ i + 1 }}" name="family_id{{ i + 1 }}" value="{{ family_users[i][1] if i < family_users|length else '' }}" placeholder="家族ID{{ i + 1 }}" readonly>
+                <div class="family-id-container">
+                    <input type="text" id="family_id{{ i + 1 }}" name="family_id{{ i + 1 }}" value="{{ family_users[i][1] if i < family_users|length else '' }}" placeholder="家族ID{{ i + 1 }}" readonly class="family-id-input">
+                    {% if i < family_users|length %} <button type="button" class="delete-family-btn" onclick="deleteFamilyUser('{{ family_users[i][1] }}', {{ i + 1 }})" title="家族ユーザーを削除">×</button>
+                        {% endif %}
+                </div>
             </div>
             {% endfor %}
             {% else %}
@@ -299,5 +303,51 @@
                 });
             }
         });
+
+        // 家族ユーザー削除機能
+        function deleteFamilyUser(familyUserId, familySlot) {
+            const displayName = familyUserId || `家族ID${familySlot}`;
+            console.log(`DEBUG: deleteFamilyUser called with familyUserId="${familyUserId}", familySlot=${familySlot}`);
+
+            if (confirm(`家族ユーザー「${displayName}」を削除しますか？\nこの操作は取り消せません。`)) {
+                const requestData = {};
+                if (familyUserId && familyUserId.trim() !== '') {
+                    requestData.family_user_id = familyUserId;
+                    console.log('DEBUG: Using family_user_id method');
+                } else {
+                    requestData.family_slot = familySlot;
+                    console.log('DEBUG: Using family_slot method');
+                }
+
+                console.log('DEBUG: Request data:', requestData);
+
+                console.log('DEBUG: Sending request to /delete_family_user');
+                fetch('/delete_family_user', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData)
+                })
+                    .then(response => {
+                        console.log('DEBUG: Response received:', response.status);
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('DEBUG: Response data:', data);
+                        if (data.success) {
+                            alert('家族ユーザーを削除しました。');
+                            // ページをリロードして更新された家族情報を表示
+                            window.location.reload();
+                        } else {
+                            alert('エラー: ' + data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('DEBUG: Fetch error:', error);
+                        alert('家族ユーザーの削除に失敗しました。');
+                    });
+            }
+        }
     </script>
     {% endblock %}

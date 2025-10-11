@@ -27,7 +27,7 @@
             <div class="header-right">
                 <div class="user-info">
                     <div class="user-name-container">
-                        <a href="{{ url_for('user') }}" class="user-link">
+                        <a href="{{ url_for('user') }}" class="user-link" style="text-decoration: underline;">
                             <span class="nickname">{% block nickname %}ゲスト{% endblock %} さん</span>
                         </a>
                         {% if session.get('show_basic_info_tooltip') %}
@@ -54,6 +54,8 @@
                     <div class="dropdown-menu">
                         {% if session.get('user_type') != 'family' %}
                         <a href="{{ url_for('diary_calendar') }}" class="dropdown-item">ダイアリー 登録</a>
+                        {% else %}
+                        <a href="{{ url_for('diary_calendar') }}" class="dropdown-item">ダイアリー カレンダー</a>
                         {% endif %}
                         <a href="{{ url_for('diary_list') }}" class="dropdown-item">ダイアリー 一覧</a>
                     </div>
@@ -106,6 +108,8 @@
                 <div class="footer-sub-links">
                     {% if session.get('user_type') != 'family' %}
                     <a href="{{ url_for('diary_calendar') }}" class="footer-sub-link">ダイアリー 登録</a>
+                    {% else %}
+                    <a href="{{ url_for('diary_calendar') }}" class="footer-sub-link">カレンダー</a>
                     {% endif %}
                     <a href="{{ url_for('diary_list') }}" class="footer-sub-link">ダイアリー 一覧</a>
                 </div>

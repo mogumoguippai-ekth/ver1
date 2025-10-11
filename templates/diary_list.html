@@ -2,13 +2,17 @@
 
 {% block title %}日記一覧 - 私の望む暮らし{% endblock %}
 
-{% block page_title %}日記一覧{% endblock %}
+{% block page_title %}{% if target_date %}{{ target_date }}の日記{% else %}日記一覧{% endif %}{% endblock %}
 
 {% block nickname %}{{ session.get('nickname', 'ゲスト') }}{% endblock %}
 
 {% block content %}
 <div class="diary-list-page">
+    {% if target_date %}
+    <h2>{{ target_date }}の日記</h2>
+    {% else %}
     <h2>日記一覧</h2>
+    {% endif %}
 
     {% with messages = get_flashed_messages() %}
     {% if messages %}
@@ -17,6 +21,13 @@
     </div>
     {% endif %}
     {% endwith %}
+
+    {% if target_date %}
+    <div class="info-message">
+        <p>カレンダーから選択された日付の日記を表示しています。</p>
+        <a href="{{ url_for('diary_list') }}" class="link-btn">全ての日記を見る</a>
+    </div>
+    {% endif %}
 
     <div class="diary-list-container">
         {% if diaries %}
@@ -52,8 +63,15 @@
         {% endfor %}
         {% else %}
         <div class="no-diaries">
+            {% if target_date %}
+            <p>{{ target_date }}の日記はありません。</p>
+            <p><a href="{{ url_for('diary_list') }}" class="link-btn">全ての日記を見る</a></p>
+            {% else %}
             <p>まだ日記がありません。</p>
+            {% if session.get('user_type') != 'family' %}
             <p><a href="{{ url_for('diary_calendar') }}" class="link-btn">カレンダーで日記を書く</a></p>
+            {% endif %}
+            {% endif %}
         </div>
         {% endif %}
     </div>

@@ -907,101 +907,101 @@ class Database:
         conn.close()
         return cursor.lastrowid
 
-    def generate_ai_goals(self, user_id):
-        """AIを使用して目標を生成する"""
-        try:
-            from ai_goal_service import create_goal_service
+    # def generate_ai_goals(self, user_id):
+    # """AIを使用して目標を生成する"""
+    # try:
+    #     from ai_goal_service import create_goal_service
 
-            # ユーザー情報を取得
-            user = self.get_user_by_id(user_id)
-            if not user:
-                return None
+    #     # ユーザー情報を取得
+    #     user = self.get_user_by_id(user_id)
+    #     if not user:
+    #         return None
 
-            # プロフィール情報を取得
-            profile = self.get_user_profile(user_id)
+    #     # プロフィール情報を取得
+    #     profile = self.get_user_profile(user_id)
 
-            # IWLM情報を取得
-            iwlm = self.get_user_iwlm(user_id)
+    #     # IWLM情報を取得
+    #     iwlm = self.get_user_iwlm(user_id)
 
-            # ユーザーデータを辞書形式に変換
-            user_data = {
-                "user_id": user[1],
-                "name": user[5],
-                "nickname": user[7],
-                "gender": user[3],
-                "birth_date": user[4],
-            }
+    #     # ユーザーデータを辞書形式に変換
+    #     user_data = {
+    #         "user_id": user[1],
+    #         "name": user[5],
+    #         "nickname": user[7],
+    #         "gender": user[3],
+    #         "birth_date": user[4],
+    #     }
 
-            # プロフィールデータを辞書形式に変換
-            profile_data = None
-            if profile:
-                profile_data = {
-                    "address": profile[2],
-                    "family_members": profile[3],
-                    "spouse_info": profile[4],
-                    "family_feelings": profile[5],
-                    "friend_relationships": profile[6],
-                    "reliable_people": profile[7],
-                    "strengths_weaknesses": profile[8],
-                    "personality": profile[9],
-                    "interests": profile[10],
-                    "others": profile[11],
-                }
+    #     # プロフィールデータを辞書形式に変換
+    #     profile_data = None
+    #     if profile:
+    #         profile_data = {
+    #             "address": profile[2],
+    #             "family_members": profile[3],
+    #             "spouse_info": profile[4],
+    #             "family_feelings": profile[5],
+    #             "friend_relationships": profile[6],
+    #             "reliable_people": profile[7],
+    #             "strengths_weaknesses": profile[8],
+    #             "personality": profile[9],
+    #             "interests": profile[10],
+    #             "others": profile[11],
+    #         }
 
-            # IWLMデータを辞書形式に変換
-            iwlm_data = None
-            if iwlm:
-                iwlm_data = {
-                    "meal_frequency": iwlm[2],
-                    "morning_meal_type": iwlm[3],
-                    "lunch_meal_type": iwlm[4],
-                    "dinner_meal_type": iwlm[5],
-                    "snac": iwlm[6],
-                    "habits_alc_smoke": iwlm[7],
-                    "wakeup_time": iwlm[8],
-                    "bedtime": iwlm[9],
-                    "daily_chores": iwlm[10],
-                    "free_times": iwlm[11],
-                    "people_met": iwlm[12],
-                    "toilet_style": iwlm[13],
-                    "bathing_habits": iwlm[14],
-                    "grooming_habits": iwlm[15],
-                    "haircut_salon": iwlm[16],
-                    "favorite_color": iwlm[17],
-                    "favorite_clothing": iwlm[18],
-                    "favorite_footwear": iwlm[19],
-                    "favorite_music": iwlm[20],
-                    "favorite_tv_radio": iwlm[21],
-                    "leisure_activities": iwlm[22],
-                    "favorite_place": iwlm[23],
-                    "job_status": iwlm[24],
-                    "interests": iwlm[25],
-                    "strengths_and_weaknesses": iwlm[26],
-                    "characteristics": iwlm[27],
-                    "others": iwlm[28],
-                    "keep_doing": iwlm[29],
-                    "keep_doing_other": iwlm[30],
-                    "future_activities": iwlm[31],
-                    "future_activities_other": iwlm[32],
-                    "residence_type": iwlm[33],
-                    "residence_type_other": iwlm[34],
-                    "anxiety_and_sadness": iwlm[35],
-                    "anxiety_and_sadness_other": iwlm[36],
-                    "areas_of_support": iwlm[37],
-                    "areas_of_support_other": iwlm[38],
-                    "future_care_plan": iwlm[39],
-                    "future_care_plan_other": iwlm[40],
-                }
+    #     # IWLMデータを辞書形式に変換
+    #     iwlm_data = None
+    #     if iwlm:
+    #         iwlm_data = {
+    #             "meal_frequency": iwlm[2],
+    #             "morning_meal_type": iwlm[3],
+    #             "lunch_meal_type": iwlm[4],
+    #             "dinner_meal_type": iwlm[5],
+    #             "snac": iwlm[6],
+    #             "habits_alc_smoke": iwlm[7],
+    #             "wakeup_time": iwlm[8],
+    #             "bedtime": iwlm[9],
+    #             "daily_chores": iwlm[10],
+    #             "free_times": iwlm[11],
+    #             "people_met": iwlm[12],
+    #             "toilet_style": iwlm[13],
+    #             "bathing_habits": iwlm[14],
+    #             "grooming_habits": iwlm[15],
+    #             "haircut_salon": iwlm[16],
+    #             "favorite_color": iwlm[17],
+    #             "favorite_clothing": iwlm[18],
+    #             "favorite_footwear": iwlm[19],
+    #             "favorite_music": iwlm[20],
+    #             "favorite_tv_radio": iwlm[21],
+    #             "leisure_activities": iwlm[22],
+    #             "favorite_place": iwlm[23],
+    #             "job_status": iwlm[24],
+    #             "interests": iwlm[25],
+    #             "strengths_and_weaknesses": iwlm[26],
+    #             "characteristics": iwlm[27],
+    #             "others": iwlm[28],
+    #             "keep_doing": iwlm[29],
+    #             "keep_doing_other": iwlm[30],
+    #             "future_activities": iwlm[31],
+    #             "future_activities_other": iwlm[32],
+    #             "residence_type": iwlm[33],
+    #             "residence_type_other": iwlm[34],
+    #             "anxiety_and_sadness": iwlm[35],
+    #             "anxiety_and_sadness_other": iwlm[36],
+    #             "areas_of_support": iwlm[37],
+    #             "areas_of_support_other": iwlm[38],
+    #             "future_care_plan": iwlm[39],
+    #             "future_care_plan_other": iwlm[40],
+    #         }
 
-            # AIサービスを使用して目標を生成
-            ai_service = create_goal_service()
-            goals_data = ai_service.generate_goals(user_data, profile_data, iwlm_data)
+    #     # AIサービスを使用して目標を生成
+    #     ai_service = create_goal_service()
+    #     goals_data = ai_service.generate_goals(user_data, profile_data, iwlm_data)
 
-            return goals_data
+    #     return goals_data
 
-        except Exception as e:
-            print(f"AI目標生成中にエラーが発生しました: {e}")
-            return None
+    # except Exception as e:
+    #     print(f"AI目標生成中にエラーが発生しました: {e}")
+    #     return None
 
     def save_user_goals_forced(self, user_id, goals_data):
         """ユーザーの目標を強制保存（重複チェックなし）"""
@@ -1191,6 +1191,223 @@ class Database:
             return 3
         else:
             return None  # 3人まで登録済み
+
+    def delete_family_user(self, parent_user_id, family_user_id=None, family_slot=None):
+        """家族ユーザーを削除し、親ユーザーの家族IDを更新
+
+        Args:
+            parent_user_id: 親ユーザーID
+            family_user_id: 家族ユーザーID（優先）
+            family_slot: family_id1-3の位置（1, 2, 3）
+        """
+        # データベースロック対策：複数の短いトランザクションに分割
+        try:
+            # ステップ1: 家族ユーザーを削除
+            success = self._delete_family_user_record(parent_user_id, family_user_id, family_slot)
+            if not success:
+                return False
+
+            # ステップ2: 親ユーザーの家族IDを更新（別の接続で）
+            success = self._update_parent_family_ids(parent_user_id)
+            return success
+
+        except Exception as e:
+            print(f"ERROR: Exception occurred during family user deletion: {e}")
+            print(f"ERROR: Exception type: {type(e)}")
+            import traceback
+
+            print(f"ERROR: Traceback: {traceback.format_exc()}")
+            return False
+
+    def _delete_family_user_record(self, parent_user_id, family_user_id=None, family_slot=None):
+        """家族ユーザーレコードを削除（短いトランザクション）"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+
+        try:
+            # デバッグ情報を出力
+            print(
+                f"DEBUG: _delete_family_user_record called with parent_user_id={parent_user_id}, family_user_id={family_user_id}, family_slot={family_slot}"
+            )
+
+            # 削除対象の家族ユーザーを特定
+            if family_user_id:
+                # family_user_idが指定されている場合
+                print(f"DEBUG: Method 1 - Deleting with family_user_id='{family_user_id}'")
+                cursor.execute(
+                    "DELETE FROM family_users WHERE family_user_id = ? AND parent_user_id = ?",
+                    (family_user_id, parent_user_id),
+                )
+                print(f"DEBUG: Method 1 result: rowcount={cursor.rowcount}")
+            elif family_slot and 1 <= family_slot <= 3:
+                # family_slotが指定されている場合（family_user_idが空の場合）
+                print(f"DEBUG: Method 2 - Using family_slot={family_slot}")
+                # まず親ユーザーのfamily_id1-3から該当するfamily_user_idを取得
+                cursor.execute(
+                    "SELECT family_id1, family_id2, family_id3 FROM users WHERE user_id = ?",
+                    (parent_user_id,),
+                )
+                result = cursor.fetchone()
+                print(f"DEBUG: Parent user family_ids result: {result}")
+                if result:
+                    family_ids = [result[0], result[1], result[2]]
+                    target_family_user_id = family_ids[family_slot - 1]
+                    print(f"DEBUG: Retrieved family_ids: {family_ids}")
+                    print(
+                        f"DEBUG: target_family_user_id: '{target_family_user_id}', type: {type(target_family_user_id)}"
+                    )
+
+                    # family_user_idが有効な値の場合（NULLでも空文字列でもない）
+                    if (
+                        target_family_user_id is not None
+                        and isinstance(target_family_user_id, str)
+                        and target_family_user_id.strip()
+                    ):
+                        print(f"DEBUG: Method 2 - Valid family_user_id found: '{target_family_user_id}'")
+                        cursor.execute(
+                            "DELETE FROM family_users WHERE family_user_id = ? AND parent_user_id = ?",
+                            (target_family_user_id, parent_user_id),
+                        )
+                        print(f"DEBUG: Method 2 result: rowcount={cursor.rowcount}")
+                    else:
+                        # family_user_idが空またはNULLの場合
+                        print(f"DEBUG: family_user_id is empty/null, trying multiple methods")
+                        print(
+                            f"DEBUG: target_family_user_id='{target_family_user_id}', type={type(target_family_user_id)}"
+                        )
+
+                        # 方法1: 空文字列で直接削除を試す
+                        if target_family_user_id is not None:
+                            # 型を文字列に変換して安全に処理
+                            safe_family_user_id = str(target_family_user_id)
+                            print(
+                                f"DEBUG: Method 2a - Trying to delete with empty family_user_id='{safe_family_user_id}'"
+                            )
+                            cursor.execute(
+                                "DELETE FROM family_users WHERE family_user_id = ? AND parent_user_id = ?",
+                                (safe_family_user_id, parent_user_id),
+                            )
+                            print(f"DEBUG: Method 2a result: rowcount={cursor.rowcount}")
+                            if cursor.rowcount > 0:
+                                print(f"DEBUG: Successfully deleted with empty family_user_id")
+                            else:
+                                print(
+                                    f"DEBUG: Failed to delete with empty family_user_id, trying NULL method"
+                                )
+
+                        # 方法2: NULLで削除を試す（方法1が失敗した場合）
+                        if cursor.rowcount == 0:
+                            print(f"DEBUG: Method 2b - Trying to delete with NULL family_user_id")
+                            cursor.execute(
+                                "DELETE FROM family_users WHERE family_user_id IS NULL AND parent_user_id = ?",
+                                (parent_user_id,),
+                            )
+                            print(f"DEBUG: Method 2b result: rowcount={cursor.rowcount}")
+                            if cursor.rowcount > 0:
+                                print(f"DEBUG: Successfully deleted with NULL family_user_id")
+
+                        # 方法3: family_slotの位置で削除を試す（方法1,2が失敗した場合）
+                        if cursor.rowcount == 0:
+                            print(f"DEBUG: Using family_slot method as fallback")
+                            cursor.execute(
+                                "SELECT id, family_user_id FROM family_users WHERE parent_user_id = ? ORDER BY id",
+                                (parent_user_id,),
+                            )
+                            family_users = cursor.fetchall()
+                            print(f"DEBUG: Found {len(family_users)} family_users records: {family_users}")
+
+                            # family_slotの位置に対応するレコードを削除
+                            if len(family_users) >= family_slot:
+                                target_record = family_users[family_slot - 1]
+                                print(
+                                    f"DEBUG: Deleting record with id={target_record[0]}, family_user_id='{target_record[1]}'"
+                                )
+                                cursor.execute(
+                                    "DELETE FROM family_users WHERE id = ?",
+                                    (target_record[0],),
+                                )
+                            else:
+                                print(
+                                    f"DEBUG: Not enough family_users records (need {family_slot}, have {len(family_users)})"
+                                )
+                                conn.close()
+                                return False  # 該当するレコードが存在しない
+                else:
+                    conn.close()
+                    return False  # 親ユーザーが見つからない
+            else:
+                conn.close()
+                return False  # 有効なパラメータが指定されていない
+
+            print(f"DEBUG: DELETE query executed, rowcount={cursor.rowcount}")
+
+            if cursor.rowcount == 0:
+                conn.close()
+                return False  # 削除対象が見つからない
+
+            conn.commit()
+            return True
+
+        except Exception as e:
+            conn.rollback()
+            print(f"ERROR: Exception in _delete_family_user_record: {e}")
+            return False
+        finally:
+            conn.close()
+
+    def _update_parent_family_ids(self, parent_user_id):
+        """親ユーザーの家族IDを更新（短いトランザクション）"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+
+        try:
+            print(f"DEBUG: _update_parent_family_ids called for parent_user_id={parent_user_id}")
+
+            # 現在の家族ユーザーを取得
+            family_users = self.get_family_users_by_parent(parent_user_id)
+            family_ids = [None, None, None]
+            for i, family_user in enumerate(family_users[:3]):
+                family_ids[i] = family_user[1]  # family_user_id
+
+            print(f"DEBUG: Updating family_ids to: {family_ids}")
+
+            cursor.execute(
+                """
+                UPDATE users 
+                SET family_id1 = ?, family_id2 = ?, family_id3 = ?, updated_at = CURRENT_TIMESTAMP
+                WHERE user_id = ?
+                """,
+                (family_ids[0], family_ids[1], family_ids[2], parent_user_id),
+            )
+
+            print(f"DEBUG: UPDATE query executed, rowcount={cursor.rowcount}")
+            conn.commit()
+            return True
+
+        except Exception as e:
+            conn.rollback()
+            print(f"ERROR: Exception in _update_parent_family_ids: {e}")
+            return False
+        finally:
+            conn.close()
+
+    def _update_user_family_ids_with_new_connection(self, user_id, family_ids):
+        """新しいデータベース接続で家族IDを更新（ロック回避用）"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+
+        try:
+            cursor.execute(
+                """
+                UPDATE users 
+                SET family_id1 = ?, family_id2 = ?, family_id3 = ?, updated_at = CURRENT_TIMESTAMP
+                WHERE user_id = ?
+                """,
+                (family_ids[0], family_ids[1], family_ids[2], user_id),
+            )
+            conn.commit()
+        finally:
+            conn.close()
 
 
 # データベースインスタンス

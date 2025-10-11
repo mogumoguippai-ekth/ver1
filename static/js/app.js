@@ -349,6 +349,12 @@ function changeMonth(direction) {
  * @param {string} date - 日付
  */
 function openDiaryModal(date) {
+  // 家族ユーザーの場合は日記一覧ページに移動
+  if (window.userType === 'family') {
+    window.location.href = `/diary_list?date=${date}`;
+    return;
+  }
+
   document.getElementById('selected-date').value = date;
   document.getElementById('modal-date-title').textContent = `${date} の日記`;
 

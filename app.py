@@ -280,6 +280,42 @@ def generate_invitation_code():
         return jsonify({"success": False, "error": str(e)})
 
 
+@app.route("/delete_family_user", methods=["POST"])
+@self_user_required
+def delete_family_user():
+    """家族ユーザーを削除"""
+    try:
+        user_id = session["user_id"]
+        data = request.get_json()
+        family_user_id = data.get("family_user_id")
+        family_slot = data.get("family_slot")
+
+        print(
+            f"DEBUG: delete_family_user endpoint called with user_id={user_id}, family_user_id={family_user_id}, family_slot={family_slot}"
+        )
+        print(f"DEBUG: Request data: {data}")
+
+        # family_user_idまたはfamily_slotのいずれかが必要
+        if not family_user_id and not family_slot:
+            print(f"DEBUG: Missing required parameters")
+            return jsonify(
+                {"success": False, "error": "家族ユーザーIDまたは家族スロットが指定されていません"}
+            )
+
+        print(f"DEBUG: Calling db.delete_family_user...")
+        # 家族ユーザーを削除
+        success = db.delete_family_user(user_id, family_user_id, family_slot)
+        print(f"DEBUG: db.delete_family_user returned: {success}")
+
+        if success:
+            return jsonify({"success": True, "message": "家族ユーザーを削除しました"})
+        else:
+            return jsonify({"success": False, "error": "家族ユーザーの削除に失敗しました"})
+
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)})
+
+
 @app.route("/update_user", methods=["POST"])
 @self_user_required
 def update_user():
@@ -303,7 +339,7 @@ def update_user():
     # 基本情報更新
     cursor.execute(
         """
-        UPDATE users 
+        UPDATE users
         SET name = ?, furigana = ?, nickname = ?, gender = ?, birth_date = ?, updated_at = CURRENT_TIMESTAMP
         WHERE user_id = ?
     """,
@@ -436,16 +472,27 @@ def diary_calendar():
 @app.route("/diary_list")
 @login_required
 def diary_list():
-    # 日記一覧を取得
-    if session.get("user_type") == "family":
-        # 家族ユーザーの場合は親ユーザーの情報を取得
-        parent_user_id = session.get("parent_user_id")
-        diaries = db.get_diary_by_user_id(parent_user_id)
-    else:
-        # 本人ユーザーの場合
-        diaries = db.get_diary_by_user_id(session["user_id"])
+    # 特定の日付が指定されている場合は、その日記のみを取得
+    target_date = request.args.get("date")
 
-    return render_template("diary_list.html", diaries=diaries)
+    if target_date:
+        # 特定の日付の日記を取得
+        if session.get("user_type") == "family":
+            parent_user_id = session.get("parent_user_id")
+            diary = db.get_diary_by_date(parent_user_id, target_date)
+            diaries = [diary] if diary else []
+        else:
+            diary = db.get_diary_by_date(session["user_id"], target_date)
+            diaries = [diary] if diary else []
+    else:
+        # 全ての日記を取得
+        if session.get("user_type") == "family":
+            parent_user_id = session.get("parent_user_id")
+            diaries = db.get_diary_by_user_id(parent_user_id)
+        else:
+            diaries = db.get_diary_by_user_id(session["user_id"])
+
+    return render_template("diary_list.html", diaries=diaries, target_date=target_date)
 
 
 @app.route("/profile_table")
