@@ -15,9 +15,13 @@ from werkzeug.utils import secure_filename
 import os
 from PIL import Image
 from datetime import datetime
+from ai_goal_service import AIGoalService
 
 app = Flask(__name__)
 app.secret_key = "your-secret-key-here-change-in-production"  # セッション用の秘密鍵
+
+# AI目標生成サービスのインスタンスを作成
+ai_goal_service = AIGoalService()
 
 # ファイルアップロード設定
 UPLOAD_FOLDER = "static/uploads"
@@ -571,8 +575,21 @@ def goals():
 
     # 目標が存在しないか、90日以上経過している場合は新規生成
     if not latest_goals or needs_update:
-        # 従来の固定ロジックで目標を生成
-        goals_data = db.analyze_user_goals(user_id)
+        # AIサービスを使用して目標を生成
+        try:
+            # ユーザー情報を取得
+            user_data = db.get_user_by_id(user_id)
+            profile_data = db.get_profile_by_user_id(user_id)
+            iwlm_data = db.get_iwlm_by_user_id(user_id)
+
+            # AI目標生成サービスを使用
+            goals_data = ai_goal_service.generate_goals(
+                user_data=user_data, profile_data=profile_data, iwlm_data=iwlm_data, user_id=user_id
+            )
+        except Exception as e:
+            print(f"AI目標生成に失敗しました: {e}")
+            # フォールバック: 従来の固定ロジックで目標を生成
+            goals_data = db.analyze_user_goals(user_id)
 
         # データ変更があった場合は強制保存、そうでなければ重複チェック付き保存
         if data_changed:
@@ -608,8 +625,21 @@ def update_goals():
     # データ変更があったかチェック
     data_changed = db.has_data_changed(user_id)
 
-    # 従来の固定ロジックで目標を生成
-    goals_data = db.analyze_user_goals(user_id)
+    # AIサービスを使用して目標を生成
+    try:
+        # ユーザー情報を取得
+        user_data = db.get_user_by_id(user_id)
+        profile_data = db.get_profile_by_user_id(user_id)
+        iwlm_data = db.get_iwlm_by_user_id(user_id)
+
+        # AI目標生成サービスを使用
+        goals_data = ai_goal_service.generate_goals(
+            user_data=user_data, profile_data=profile_data, iwlm_data=iwlm_data, user_id=user_id
+        )
+    except Exception as e:
+        print(f"AI目標生成に失敗しました: {e}")
+        # フォールバック: 従来の固定ロジックで目標を生成
+        goals_data = db.analyze_user_goals(user_id)
 
     # データ変更があった場合は強制保存、そうでなければ重複チェック付き保存
     if data_changed:
