@@ -12,8 +12,8 @@ from config import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from werkzeug.utils import secure_filename
-import os
 from PIL import Image
+import os
 from datetime import datetime
 from ai_goal_service import AIGoalService
 
@@ -46,6 +46,19 @@ def create_thumbnail(image_path, output_path, size=(200, 150)):
     with Image.open(image_path) as img:
         img.thumbnail(size, Image.Resampling.LANCZOS)
         img.save(output_path, optimize=True, quality=85)
+
+
+def remove_exif_data(image_path):
+    """画像からEXIFデータ（位置情報など）を削除"""
+    try:
+        with Image.open(image_path) as img:
+            # EXIFデータを削除した新しい画像を作成
+            data = list(img.getdata())
+            image_without_exif = Image.new(img.mode, img.size)
+            image_without_exif.putdata(data)
+            image_without_exif.save(image_path)
+    except Exception as e:
+        print(f"EXIFデータの削除に失敗しました: {e}")
 
 
 # ログイン必須デコレーター
@@ -403,17 +416,20 @@ def diary_calendar():
     current_year = now.year
     current_month = now.month
 
-    # 今月の日記がある日付を取得
+    # 今月の日記がある日付とタイトルを取得
     if session.get("user_type") == "family":
         # 家族ユーザーの場合は親ユーザーの情報を取得
         parent_user_id = session.get("parent_user_id")
-        diary_dates = db.get_diary_dates_with_entries(parent_user_id, current_year, current_month)
+        diary_entries = db.get_diary_dates_with_entries(parent_user_id, current_year, current_month)
     else:
         # 本人ユーザーの場合
-        diary_dates = db.get_diary_dates_with_entries(session["user_id"], current_year, current_month)
+        diary_entries = db.get_diary_dates_with_entries(session["user_id"], current_year, current_month)
 
     return render_template(
-        "diary_calender.html", current_year=current_year, current_month=current_month, diary_dates=diary_dates
+        "diary_calender.html",
+        current_year=current_year,
+        current_month=current_month,
+        diary_entries=diary_entries,
     )
 
 
@@ -777,11 +793,11 @@ def get_diary_dates_api(year, month):
     if session.get("user_type") == "family":
         # 家族ユーザーの場合は親ユーザーの情報を取得
         parent_user_id = session.get("parent_user_id")
-        dates = db.get_diary_dates_with_entries(parent_user_id, year, month)
+        diary_entries = db.get_diary_dates_with_entries(parent_user_id, year, month)
     else:
         # 本人ユーザーの場合
-        dates = db.get_diary_dates_with_entries(session["user_id"], year, month)
-    return jsonify({"dates": dates})
+        diary_entries = db.get_diary_dates_with_entries(session["user_id"], year, month)
+    return jsonify({"diary_entries": diary_entries})
 
 
 @app.route("/save-diary", methods=["POST"])
@@ -811,6 +827,9 @@ def save_diary():
                 os.makedirs(photo_dir, exist_ok=True)
                 photo_path = os.path.join(photo_dir, filename)
                 file.save(photo_path)
+
+                # EXIFデータ（位置情報など）を削除
+                remove_exif_data(photo_path)
 
                 # リサイズ
                 resize_image(photo_path, photo_path, 1200, 800)
@@ -857,6 +876,35 @@ def delete_diary():
 
         # データベースから削除
         db.delete_diary(user_id, diary_date)
+
+        return jsonify({"success": True})
+
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)})
+
+
+@app.route("/delete-photo", methods=["POST"])
+@self_user_required
+def delete_photo():
+    try:
+        user_id = session["user_id"]
+        data = request.get_json()
+        diary_date = data.get("date")
+
+        # 既存の写真ファイルを削除
+        diary = db.get_diary_by_date(user_id, diary_date)
+        if diary and diary[5]:  # photo_path
+            photo_path = diary[5].replace("/static/", "static/")
+            if os.path.exists(photo_path):
+                os.remove(photo_path)
+
+        if diary and diary[6]:  # thumbnail_path
+            thumbnail_path = diary[6].replace("/static/", "static/")
+            if os.path.exists(thumbnail_path):
+                os.remove(thumbnail_path)
+
+        # データベースから写真パスのみを削除
+        db.delete_photo_paths(user_id, diary_date)
 
         return jsonify({"success": True})
 

@@ -10,7 +10,7 @@
 // 日記カレンダー用変数
 let currentYear = 0;
 let currentMonth = 0;
-let diaryDates = [];
+let diaryEntries = {};
 
 // =============================================================================
 // 共通機能 - モーダル管理
@@ -300,10 +300,12 @@ function generateCalendar() {
     const dateStr = `${currentYear}-${currentMonth.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
     dayElement.onclick = () => openDiaryModal(dateStr);
 
-    // 日記がある日はマークを表示
-    if (diaryDates.includes(dateStr)) {
+    // 日記がある日はタイトルを表示
+    if (diaryEntries[dateStr]) {
       dayElement.classList.add('has-diary');
-      dayElement.innerHTML = `<span class="day-number">${day}</span><span class="diary-mark">●</span>`;
+      const title = diaryEntries[dateStr];
+      const shortTitle = title.length > 5 ? title.substring(0, 5) + '...' : title;
+      dayElement.innerHTML = `<span class="day-number">${day}</span><span class="diary-title">${shortTitle}</span>`;
     }
 
     calendarDays.appendChild(dayElement);
@@ -333,7 +335,7 @@ function changeMonth(direction) {
   fetch(`/api/diary-dates/${currentYear}/${currentMonth}`)
     .then(response => response.json())
     .then(data => {
-      diaryDates = data.dates;
+      diaryEntries = data.diary_entries;
       generateCalendar();
     })
     .catch(error => {
@@ -356,15 +358,19 @@ function openDiaryModal(date) {
     .then(data => {
       if (data.diary) {
         // 既存の日記がある場合
-        document.getElementById('diary-title').value = data.diary.title || '';
-        document.getElementById('diary-content').value = data.diary.content || '';
-        document.getElementById('char-count').textContent = (data.diary.content || '').length;
+        document.getElementById('diary-title').value = data.diary[3] || ''; // title
+        document.getElementById('diary-content').value = data.diary[4] || ''; // content
+        document.getElementById('char-count').textContent = (data.diary[4] || '').length;
 
-        if (data.diary.photo_path) {
+        if (data.diary[5]) { // photo_path
           document.getElementById('existing-photo').style.display = 'block';
-          document.getElementById('existing-photo-img').src = data.diary.photo_path;
+          document.getElementById('existing-photo-img').src = data.diary[5];
+          // 写真がある場合はアップロード欄を非表示
+          document.querySelector('.form-group:has(#diary-photo)').style.display = 'none';
         } else {
           document.getElementById('existing-photo').style.display = 'none';
+          // 写真がない場合はアップロード欄を表示
+          document.querySelector('.form-group:has(#diary-photo)').style.display = 'block';
         }
 
         document.getElementById('delete-btn').style.display = 'inline-block';
@@ -374,6 +380,8 @@ function openDiaryModal(date) {
         document.getElementById('diary-content').value = '';
         document.getElementById('char-count').textContent = '0';
         document.getElementById('existing-photo').style.display = 'none';
+        // 写真がない場合はアップロード欄を表示
+        document.querySelector('.form-group:has(#diary-photo)').style.display = 'block';
         document.getElementById('delete-btn').style.display = 'none';
         document.getElementById('photo-preview').innerHTML = '';
       }
@@ -448,9 +456,8 @@ function saveDiary() {
         alert('日記を保存しました。');
         closeDiaryModal();
         // カレンダーを更新
-        if (!diaryDates.includes(date)) {
-          diaryDates.push(date);
-        }
+        const title = formData.get('title') || '';
+        diaryEntries[date] = title;
         generateCalendar();
       } else {
         alert('エラーが発生しました: ' + data.error);
@@ -482,11 +489,41 @@ function deleteDiary() {
           alert('日記を削除しました。');
           closeDiaryModal();
           // カレンダーから日付を削除
-          const index = diaryDates.indexOf(date);
-          if (index > -1) {
-            diaryDates.splice(index, 1);
-          }
+          delete diaryEntries[date];
           generateCalendar();
+        } else {
+          alert('エラーが発生しました: ' + data.error);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('エラーが発生しました。');
+      });
+  }
+}
+
+/**
+ * 写真のみを削除
+ */
+function deletePhoto() {
+  if (confirm('この写真を削除しますか？')) {
+    const date = document.getElementById('selected-date').value;
+
+    fetch('/delete-photo', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ date: date })
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert('写真を削除しました。');
+          // 既存写真表示を非表示にする
+          document.getElementById('existing-photo').style.display = 'none';
+          // アップロード欄を表示する
+          document.querySelector('.form-group:has(#diary-photo)').style.display = 'block';
         } else {
           alert('エラーが発生しました: ' + data.error);
         }
@@ -662,12 +699,12 @@ function initIwlmForm(checkboxData) {
  * 日記カレンダーを初期化
  * @param {number} year - 年
  * @param {number} month - 月
- * @param {Array} dates - 日記がある日付の配列
+ * @param {Object} entries - 日記がある日付とタイトルの辞書
  */
-function initDiaryCalendar(year, month, dates) {
+function initDiaryCalendar(year, month, entries) {
   currentYear = year;
   currentMonth = month;
-  diaryDates = dates;
+  diaryEntries = entries;
 
   setupCharCount();
   generateCalendar();

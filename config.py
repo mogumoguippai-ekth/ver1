@@ -538,16 +538,19 @@ class Database:
         return diary
 
     def get_diary_dates_with_entries(self, user_id, year, month):
-        """指定月に日記がある日付のリストを取得"""
+        """指定月に日記がある日付とタイトルの辞書を取得"""
         conn = self.get_connection()
         cursor = conn.cursor()
         cursor.execute(
-            "SELECT date FROM diary WHERE user_id = ? AND strftime('%Y', date) = ? AND strftime('%m', date) = ?",
+            "SELECT date, title FROM diary WHERE user_id = ? AND strftime('%Y', date) = ? AND strftime('%m', date) = ?",
             (user_id, str(year), str(month).zfill(2)),
         )
-        dates = [row[0] for row in cursor.fetchall()]
+        diary_entries = {}
+        for row in cursor.fetchall():
+            date, title = row
+            diary_entries[date] = title if title else ""
         conn.close()
-        return dates
+        return diary_entries
 
     def create_or_update_diary(self, user_id, date, title, content, photo_path=None, thumbnail_path=None):
         """日記を作成または更新"""
@@ -585,6 +588,17 @@ class Database:
         conn = self.get_connection()
         cursor = conn.cursor()
         cursor.execute("DELETE FROM diary WHERE user_id = ? AND date = ?", (user_id, date))
+        conn.commit()
+        conn.close()
+
+    def delete_photo_paths(self, user_id, date):
+        """指定日の日記の写真パスのみを削除"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            "UPDATE diary SET photo_path = NULL, thumbnail_path = NULL WHERE user_id = ? AND date = ?",
+            (user_id, date),
+        )
         conn.commit()
         conn.close()
 

@@ -74,6 +74,9 @@
                     <div class="existing-photo" id="existing-photo" style="display: none;">
                         <h4>現在の写真</h4>
                         <img id="existing-photo-img" src="" alt="現在の写真">
+                        {% if session.get('user_type') != 'family' %}
+                        <button type="button" onclick="deletePhoto()" class="delete-photo-btn">写真を削除</button>
+                        {% endif %}
                     </div>
 
                     <div class="modal-actions">
@@ -98,7 +101,7 @@
 <script>
     // 初期化データを設定
     document.addEventListener('DOMContentLoaded', function () {
-        initDiaryCalendar({{ current_year }}, {{ current_month }}, {{ diary_dates | tojson }});
+        initDiaryCalendar({{ current_year }}, {{ current_month }}, {{ diary_entries | tojson }});
     });
 </script>
 {% endblock %}
