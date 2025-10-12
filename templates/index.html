@@ -12,10 +12,11 @@
     <div class="main-container">
         <!-- 左側：メインコンテンツ -->
         <div class="main-content">
-            <p class="catchcopy">今と明日の<br>幸せな生活のために</p>
+            <p class="catchcopy">今と明日の幸せな生活のために<br>I want to live my life</p>
             <br>
             <h1>私の望む暮らし</h1>
             <img src="{{ url_for('static', filename='images/logomark.svg') }}" alt="logomark">
+            <div class="version-info">iwlm.Ver1.0</div>
         </div>
 
         <!-- 右側：ログインエリア -->
@@ -133,6 +134,21 @@
             color: #6c757d;
             margin: 0;
             font-style: italic;
+        }
+
+        /* バージョン情報のスタイル */
+        .version-info {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 10px;
+            color: #000;
+            font-family: monospace;
+            opacity: 0.7;
+        }
+
+        .main-content {
+            position: relative;
         }
     </style>
     <script>

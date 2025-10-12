@@ -308,6 +308,16 @@ img {
     width: auto;
 }
 
+/* ヘッダーバージョン情報（全ページ共通） */
+.header-version {
+    margin-left: 10px;
+    font-size: 10px;
+    color: #000;
+    font-family: monospace;
+    opacity: 0.7;
+    vertical-align: middle;
+}
+
 /* ヘッダー中央（全ページ共通） */
 .header-center {
     flex: 1;
