@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>私について一覧 - 印刷用</title>
+    <style>
+        @page {
+            margin: 0.5in;
+            size: A4;
+        }
+
+        @media print {
+
+            .action-buttons,
+            .print-export,
+            .goals-actions,
+            .goal-period,
+            .goal-explanation,
+            .analysis-section {
+                display: none;
+            }
+
+            .profile-table-page,
+            .goals-page {
+                max-width: none;
+                margin: 0;
+                padding: 10px;
+            }
+
+            .table-container {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+
+            .profile-table,
+            .goal-section {
+                font-size: 10pt;
+                line-height: 1.3;
+                border-collapse: collapse;
+                border: 2px solid #333;
+                width: 100%;
+                table-layout: fixed;
+                margin-bottom: 20px;
+                page-break-inside: avoid;
+                padding: 8px;
+                box-sizing: border-box;
+            }
+
+            .profile-table th,
+            .goal-header h3 {
+                border: 1px solid #333;
+                background: #f5f5f5;
+                padding: 6px;
+                font-weight: bold;
+                width: 30%;
+                vertical-align: top;
+                font-size: 10pt;
+            }
+
+            .profile-table td {
+                border: 1px solid #333;
+                padding: 6px;
+                vertical-align: top;
+                font-size: 10pt;
+                word-wrap: break-word;
+            }
+
+            .label-cell {
+                background: #f9f9f9;
+                font-weight: bold;
+                width: 30%;
+            }
+
+            .data-cell {
+                width: 70%;
+            }
+
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 10px;
+                background: white;
+            }
+
+            h1,
+            h2 {
+                color: #333;
+                margin: 0 0 20px 0;
+                text-align: center;
+            }
+
+            .table-info {
+                margin-bottom: 15px;
+                padding: 10px;
+                background: #f5f5f5;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+            }
+
+            .table-info p {
+                margin: 5px 0;
+                font-size: 12pt;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>私について一覧</h1>
+
+    <div class="table-container">
+        <div class="table-header">
+            <div class="table-info">
+                {% if user %}
+                <p><strong>ユーザーID:</strong> {{ user[1] }}</p>
+                <p><strong>作成日:</strong> {{ user[14] if user[14] else '未設定' }}</p>
+                <p><strong>更新日:</strong> {{ user[15] if user[15] else '未設定' }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <table class="profile-table" id="profileTable">
+            <thead>
+                <tr>
+                    <th colspan="2">私の基本情報</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="label-cell">ユーザーID</td>
+                    <td class="data-cell">{{ user[1] if user else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">メールアドレス</td>
+                    <td class="data-cell">{{ user[2] if user else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">氏名</td>
+                    <td class="data-cell">{{ user[5] if user and user[5] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">フリガナ</td>
+                    <td class="data-cell">{{ user[6] if user and user[6] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">ニックネーム</td>
+                    <td class="data-cell">{{ user[7] if user and user[7] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">性別</td>
+                    <td class="data-cell">{{ user[8] if user and user[8] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">生年月日</td>
+                    <td class="data-cell">{{ user[9] if user and user[9] else '未設定' }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        {% if profile %}
+        <table class="profile-table">
+            <thead>
+                <tr>
+                    <th colspan="2">私について 詳細情報</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="label-cell">住居</td>
+                    <td class="data-cell">{{ profile[2] if profile[2] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">配偶者について</td>
+                    <td class="data-cell">{{ profile[3] if profile[3] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">同居している子ども</td>
+                    <td class="data-cell">{{ profile[4] if profile[4] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">別居している子ども</td>
+                    <td class="data-cell">{{ profile[5] if profile[5] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">家族との同居状況</td>
+                    <td class="data-cell">{{ profile[6] if profile[6] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">治療中の病気</td>
+                    <td class="data-cell">{{ profile[7] if profile[7] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">現在の治療状況</td>
+                    <td class="data-cell">{{ profile[8] if profile[8] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">通院先</td>
+                    <td class="data-cell">{{ profile[9] if profile[9] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">最も頼りにしている家族</td>
+                    <td class="data-cell">{{ profile[10] if profile[10] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">信頼できる近隣の方</td>
+                    <td class="data-cell">{{ profile[11] if profile[11] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">相談できる友人</td>
+                    <td class="data-cell">{{ profile[12] if profile[12] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">収入源</td>
+                    <td class="data-cell">{{ profile[13] if profile[13] else '未設定' }}</td>
+                </tr>
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+
+    <script>
+        // 印刷ダイアログを自動表示
+        window.onload = function () {
+            window.print();
+        };
+    </script>
+</body>
+
+</html>

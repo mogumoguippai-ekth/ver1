@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>私の暮らし一覧 - 印刷用</title>
+    <style>
+        @page {
+            margin: 0.5in;
+            size: A4;
+        }
+
+        @media print {
+
+            .action-buttons,
+            .print-export,
+            .goals-actions,
+            .goal-period,
+            .goal-explanation,
+            .analysis-section {
+                display: none;
+            }
+
+            .profile-table-page {
+                max-width: none;
+                margin: 0;
+                padding: 10px;
+            }
+
+            .table-container {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+
+            .profile-table {
+                font-size: 10pt;
+                line-height: 1.3;
+                border-collapse: collapse;
+                border: 2px solid #333;
+                width: 100%;
+                table-layout: fixed;
+                margin-bottom: 20px;
+                page-break-inside: avoid;
+                padding: 8px;
+                box-sizing: border-box;
+            }
+
+            .profile-table th {
+                border: 1px solid #333;
+                background: #f5f5f5;
+                padding: 6px;
+                font-weight: bold;
+                width: 30%;
+                vertical-align: top;
+                font-size: 10pt;
+            }
+
+            .profile-table td {
+                border: 1px solid #333;
+                padding: 6px;
+                vertical-align: top;
+                font-size: 10pt;
+                word-wrap: break-word;
+            }
+
+            .label-cell {
+                background: #f9f9f9;
+                font-weight: bold;
+                width: 30%;
+            }
+
+            .data-cell {
+                width: 70%;
+            }
+
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 10px;
+                background: white;
+            }
+
+            h1,
+            h2 {
+                color: #333;
+                margin: 0 0 20px 0;
+                text-align: center;
+            }
+
+            .table-info {
+                margin-bottom: 15px;
+                padding: 10px;
+                background: #f5f5f5;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+            }
+
+            .table-info p {
+                margin: 5px 0;
+                font-size: 12pt;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>私の暮らし一覧</h1>
+
+    <div class="table-container">
+        <div class="table-header">
+            <div class="table-info">
+                {% if user %}
+                <p><strong>ユーザーID:</strong> {{ user[1] }}</p>
+                <p><strong>作成日:</strong> {{ iwlm[1] if iwlm and iwlm[1] else '未設定' }}</p>
+                <p><strong>更新日:</strong> {{ iwlm[41] if iwlm and iwlm[41] else '未設定' }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if iwlm %}
+        <table class="profile-table">
+            <thead>
+                <tr>
+                    <th colspan="2">私らしい暮らし</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="label-cell">普段の食事の回数</td>
+                    <td class="data-cell">{{ iwlm[2] if iwlm[2] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">普段の朝ごはん</td>
+                    <td class="data-cell">{{ iwlm[3] if iwlm[3] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">普段の昼ごはん</td>
+                    <td class="data-cell">{{ iwlm[4] if iwlm[4] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">普段の夜ごはん</td>
+                    <td class="data-cell">{{ iwlm[5] if iwlm[5] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">普段の間食</td>
+                    <td class="data-cell">{{ iwlm[6] if iwlm[6] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">お酒やタバコ</td>
+                    <td class="data-cell">{{ iwlm[7] if iwlm[7] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">起床時間</td>
+                    <td class="data-cell">{{ iwlm[8] if iwlm[8] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">就寝時間</td>
+                    <td class="data-cell">{{ iwlm[9] if iwlm[9] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">日中の家事</td>
+                    <td class="data-cell">{{ iwlm[10] if iwlm[10] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">自由時間の過ごし方</td>
+                    <td class="data-cell">{{ iwlm[11] if iwlm[11] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">会う人</td>
+                    <td class="data-cell">{{ iwlm[12] if iwlm[12] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">トイレの様式</td>
+                    <td class="data-cell">{{ iwlm[13] if iwlm[13] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">入浴習慣</td>
+                    <td class="data-cell">{{ iwlm[14] if iwlm[14] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">身だしなみ</td>
+                    <td class="data-cell">{{ iwlm[15] if iwlm[15] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">美容院・散髪</td>
+                    <td class="data-cell">{{ iwlm[16] if iwlm[16] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">好きな色</td>
+                    <td class="data-cell">{{ iwlm[17] if iwlm[17] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">好きな服装</td>
+                    <td class="data-cell">{{ iwlm[18] if iwlm[18] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">好きな履物</td>
+                    <td class="data-cell">{{ iwlm[19] if iwlm[19] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">好きな音楽</td>
+                    <td class="data-cell">{{ iwlm[20] if iwlm[20] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">好きなTV・ラジオ</td>
+                    <td class="data-cell">{{ iwlm[21] if iwlm[21] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">レジャー活動</td>
+                    <td class="data-cell">{{ iwlm[22] if iwlm[22] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">お気に入りの場所</td>
+                    <td class="data-cell">{{ iwlm[23] if iwlm[23] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">仕事状況</td>
+                    <td class="data-cell">{{ iwlm[24] if iwlm[24] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">興味・関心</td>
+                    <td class="data-cell">{{ iwlm[25] if iwlm[25] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">得意・苦手</td>
+                    <td class="data-cell">{{ iwlm[26] if iwlm[26] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">性格・特徴</td>
+                    <td class="data-cell">{{ iwlm[27] if iwlm[27] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">その他</td>
+                    <td class="data-cell">{{ iwlm[28] if iwlm[28] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">続けたいこと</td>
+                    <td class="data-cell">{{ iwlm[29] if iwlm[29] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">もっとやりたいこと</td>
+                    <td class="data-cell">{{ iwlm[31] if iwlm[31] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">暮らしたい場所</td>
+                    <td class="data-cell">{{ iwlm[33] if iwlm[33] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">不安・悲しみ</td>
+                    <td class="data-cell">{{ iwlm[35] if iwlm[35] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">手伝ってほしいこと</td>
+                    <td class="data-cell">{{ iwlm[37] if iwlm[37] else '未設定' }}</td>
+                </tr>
+                <tr>
+                    <td class="label-cell">将来のケア計画</td>
+                    <td class="data-cell">{{ iwlm[39] if iwlm[39] else '未設定' }}</td>
+                </tr>
+            </tbody>
+        </table>
+        {% else %}
+        <table class="profile-table">
+            <thead>
+                <tr>
+                    <th colspan="2">私の暮らし情報</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="label-cell">情報</td>
+                    <td class="data-cell">暮らし情報が登録されていません</td>
+                </tr>
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+
+    <script>
+        // 印刷ダイアログを自動表示
+        window.onload = function () {
+            window.print();
+        };
+    </script>
+</body>
+
+</html>

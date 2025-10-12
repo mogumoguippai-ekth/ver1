@@ -959,6 +959,54 @@ def delete_photo():
         return jsonify({"success": False, "error": str(e)})
 
 
+@app.route("/print/<content_type>")
+@login_required
+def print_content(content_type):
+    """印刷専用ページ"""
+    if content_type == "profile":
+        # プロフィール印刷用
+        if session.get("user_type") == "family":
+            parent_user_id = session.get("parent_user_id")
+            user_data = db.get_user_by_id(parent_user_id)
+            profile_data = db.get_profile_by_user_id(parent_user_id)
+        else:
+            user_data = db.get_user_by_id(session["user_id"])
+            profile_data = db.get_profile_by_user_id(session["user_id"])
+
+        return render_template("print_profile.html", user=user_data, profile=profile_data)
+
+    elif content_type == "goals":
+        # 目標印刷用
+        if session.get("user_type") == "family":
+            parent_user_id = session.get("parent_user_id")
+            user_id = parent_user_id
+        else:
+            user_id = session["user_id"]
+
+        # 最新の目標を取得
+        latest_goals = db.get_latest_user_goals(user_id)
+        user_data = db.get_user_by_id(user_id)
+
+        if latest_goals:
+            goals_data = {"long_term_goal": latest_goals[2], "short_term_goals": latest_goals[3]}
+        else:
+            goals_data = {"long_term_goal": "目標が設定されていません", "short_term_goals": []}
+
+        return render_template("print_goals.html", goals=goals_data, user=user_data)
+
+    elif content_type == "iwlm":
+        # 暮らし情報印刷用
+        if session.get("user_type") == "family":
+            parent_user_id = session.get("parent_user_id")
+            user_data = db.get_user_by_id(parent_user_id)
+            iwlm_data = db.get_iwlm_by_user_id(parent_user_id)
+        else:
+            user_data = db.get_user_by_id(session["user_id"])
+            iwlm_data = db.get_iwlm_by_user_id(session["user_id"])
+
+        return render_template("print_iwlm.html", user=user_data, iwlm=iwlm_data)
+
+
 @app.route("/init_db")
 def init_database():
     """データベース初期化（開発用）"""

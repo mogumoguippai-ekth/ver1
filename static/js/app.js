@@ -573,7 +573,7 @@ function closeImageModal() {
  * 目標を印刷
  */
 function printGoals() {
-  printContent('私の目標提案', '.goals-container');
+  window.open('/print/goals', '_blank');
 }
 
 /**
@@ -656,14 +656,14 @@ function switchTab(tabName) {
  * 私の暮らし一覧を印刷
  */
 function printIwlm() {
-  printContent('私の暮らし一覧', '.table-container', '#printHeaderInfo');
+  window.open('/print/iwlm', '_blank');
 }
 
 /**
  * 私について一覧を印刷
  */
 function printProfile() {
-  printContent('私について一覧', '.table-container', '.table-info');
+  window.open('/print/profile', '_blank');
 }
 
 // =============================================================================
