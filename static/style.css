@@ -2643,10 +2643,10 @@ img {
 
 .tooltip {
     position: absolute;
-    bottom: 100%;
+    top: 100%;
     left: 50%;
     transform: translateX(-50%);
-    margin-bottom: 8px;
+    margin-top: 8px;
     z-index: 1000;
 }
 
@@ -2664,11 +2664,11 @@ img {
 .tooltip-content::after {
     content: '';
     position: absolute;
-    top: 100%;
+    bottom: 100%;
     left: 50%;
     transform: translateX(-50%);
     border: 5px solid transparent;
-    border-top-color: #333;
+    border-bottom-color: #333;
 }
 
 /* アニメーション */
@@ -2679,7 +2679,7 @@ img {
 @keyframes fadeInTooltip {
     from {
         opacity: 0;
-        transform: translateX(-50%) translateY(-5px);
+        transform: translateX(-50%) translateY(5px);
     }
 
     to {

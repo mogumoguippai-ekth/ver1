@@ -31,7 +31,7 @@
                         <a href="{{ url_for('user') }}" class="user-link">
                             <span class="nickname">{% block nickname %}ゲスト{% endblock %} さん</span>
                         </a>
-                        {% if session.get('show_basic_info_tooltip') %}
+                        {% if session.get('show_basic_info_tooltip') and session.get('user_type') != 'family' %}
                         <div class="tooltip">
                             <div class="tooltip-content">
                                 最初に基本情報を入力しましょう
