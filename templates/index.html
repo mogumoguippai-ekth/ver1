@@ -197,6 +197,13 @@
             const invitationCodeSection = document.getElementById('invitation-code-section');
             const invitationCodeInput = document.getElementById('invitation-code');
 
+            // 初期状態の設定：本人が選択されている場合、招待コードセクションを非表示にする
+            const initialSelectedRadio = document.querySelector('input[name="user-type"]:checked');
+            if (initialSelectedRadio && initialSelectedRadio.value === 'self') {
+                invitationCodeSection.style.display = 'none';
+                console.log('Initial state: Self selected, invitation code section hidden');
+            }
+
             // ラジオボタンの変更を監視
             userTypeRadios.forEach(radio => {
                 radio.addEventListener('change', function () {

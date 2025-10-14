@@ -23,7 +23,7 @@ let diaryEntries = {};
 function closeModal(modalId) {
   const modal = document.getElementById(modalId);
   if (modal) {
-    modal.style.display = 'none';
+    modal.classList.remove('show');
   }
 }
 
@@ -396,7 +396,7 @@ function openDiaryModal(date) {
       console.error('Error:', error);
     });
 
-  document.getElementById('diary-modal').style.display = 'block';
+  document.getElementById('diary-modal').classList.add('show');
 }
 
 /**
